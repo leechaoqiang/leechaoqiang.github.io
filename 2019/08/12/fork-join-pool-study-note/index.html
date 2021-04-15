@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html  lang="zh-CN" >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="#fff" id="theme-color">
+  <meta name="description" content="不以物喜，不以己悲。">
+  <link rel="icon" href="/images/logo.jpg">
+  <title>使用Folk/Join框架实现多核并行计算学习笔记</title>
+  
+  
+  <meta property="og:title" content="使用Folk/Join框架实现多核并行计算学习笔记">
+  
+  
+  <meta property="og:url" content="http://leechaoqiang.github.io/2019/08/12/fork-join-pool-study-note/index.html">
+  
+  
+  <meta property="og:img" content="/images/logo.jpg">
+  
+  
+  <meta property="og:img" content="&lt;h2 id=&#34;背景&#34;&gt;&lt;a href=&#34;#背景&#34; class=&#34;headerlink&#34; title=&#34;背景&#34;&gt;&lt;/a&gt;背景&lt;/h2&gt;&lt;p&gt;最近温习《Java虚拟机精讲》的时候，里面有提到使用Folk/Join框架实现多核并行计算，似乎有点陌生又有点熟悉，原来真的好久没用了，根据书上的相关资料，自Java7开始新增在java.util.concurrent包下面新增了基于细粒度的多核并行计算Folk/Join框架。它的主要思想就是讲一个大任务分割成若干小任务，最终汇总每个小任务的结果得到这个大任务的结果。这种思想和开源基金会Apache提供的Hadoop里面MapReduce很像（input –&amp;gt; split –&amp;gt; map –&amp;gt; reduce –&amp;gt; output）&lt;/p&gt;
+&lt;h3 id=&#34;主要有两步：&#34;&gt;&lt;a href=&#34;#主要有两步：&#34; class=&#34;headerlink&#34; title=&#34;主要有两步：&#34;&gt;&lt;/a&gt;主要有两步：&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;第一、任务切分（Folk）&lt;/li&gt;
+&lt;li&gt;第二、结果合并 (Join)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;使用说明&#34;&gt;&lt;a href=&#34;#使用说明&#34; class=&#34;headerlink&#34; title=&#34;使用说明&#34;&gt;&lt;/a&gt;使用说明&lt;/h2&gt;&lt;p&gt;自JDK1.7开始，java.util.concurrent包下提供了ForkJoinPool来支持将一个任务拆分成多个“小任务”并行计算，再把多个“小任务”的结果合并成总的计算结果。多线程ForkJoinPool运用了Fork/Join原理，使用“分而治之”的思想，将大任务分拆成小任务分配给多个线程执行，最后合并得到最终结果，加快运算。&lt;br&gt;&lt;/p&gt;">
+  
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:published_time" content="2019-08-12">
+  <meta property="og:article:modified_time" content="2021-04-15">
+  <meta property="og:article:author" content="李猿外">
+  
+  
+  <meta property="og:article:tag" content="Java">
+  
+  <meta property="og:article:tag" content="多线程">
+  
+  <meta property="og:article:tag" content="ForkJoinPool">
+  
+  
+  
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+    var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+      }
+    };
+    setDarkmode();
+  </script>
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  </script>
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_f7g5jnuftcf.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  <link rel="preload" href="//cdn.jsdelivr.net/npm/fslightbox@3.1.0/index.min.js" as="script">
+  
+  
+  <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+  <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">
+  
+  
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_f7g5jnuftcf.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 5.0.2"></head>
+
+
+<body>
+  <div class="wrapper">
+    
+    <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+      <img class="navbar-logo-img" src="/images/logo.jpg" alt="logo">
+      
+      <span class="navbar-logo-dsc">攻城狮李猿外</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+    <a href="/" class="navbar-menu-item">
+    
+    首页
+    
+    </a>
+    
+    <a href="/archives" class="navbar-menu-item">
+    
+    归档
+    
+    </a>
+    
+    <a href="/tags" class="navbar-menu-item">
+    
+    标签
+    
+    </a>
+    
+    <a href="/categories" class="navbar-menu-item">
+    
+    分类
+    
+    </a>
+    
+    <a href="/about" class="navbar-menu-item">
+    
+    关于
+    
+    </a>
+    
+    <a href="/links" class="navbar-menu-item">
+    
+    友链
+    
+    </a>
+    
+    <a class="navbar-menu-item darknavbar" id="dark"><i class="iconfont icon-weather"></i></a>
+    <a class="navbar-menu-item searchnavbar" id="search"><i class="iconfont icon-search" style="font-size: 1.2rem; font-weight: 400;"></i></a>
+  </div>
+</nav>
+    
+    <div id="local-search" style="display: none;">
+      <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容...">
+      <div id="search-content"></div>
+    </div>
+    
+    <div class="section-wrap">
+      <div class="container">
+        <div class="columns">
+          <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      使用Folk/Join框架实现多核并行计算学习笔记
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2019-08-11T17:12:28.000Z">
+      <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+      <span>2019-08-12</span>
+    </time>
+    
+    <span class="dot"></span>
+    
+    <a href="/categories/博客/" class="post-meta-link">博客</a>
+    
+    <a href="/categories/博客/Java/" class="post-meta-link">Java</a>
+    
+    
+    
+    <span class="dot"></span>
+    <span>2.3k 字</span>
+    
+  </div>
+  
+  <div class="post-meta post-show-meta" style="margin-top: -10px;">
+    <div style="display: flex; align-items: center;">
+      <i class="iconfont icon-biaoqian" style="margin-right: 2px; font-size: 1.15rem;"></i>
+      
+      
+        <a href="/tags/Java/" class="post-meta-link">Java</a>
+      
+      
+      <span class="dot"></span>
+      
+        <a href="/tags/多线程/" class="post-meta-link">多线程</a>
+      
+      
+      <span class="dot"></span>
+      
+        <a href="/tags/ForkJoinPool/" class="post-meta-link">ForkJoinPool</a>
+      
+    </div>
+  </div>
+  
+  </header>
+  <div id="section" class="post-content">
+    <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>最近温习《Java虚拟机精讲》的时候，里面有提到使用Folk/Join框架实现多核并行计算，似乎有点陌生又有点熟悉，原来真的好久没用了，根据书上的相关资料，自Java7开始新增在java.util.concurrent包下面新增了基于细粒度的多核并行计算Folk/Join框架。它的主要思想就是讲一个大任务分割成若干小任务，最终汇总每个小任务的结果得到这个大任务的结果。这种思想和开源基金会Apache提供的Hadoop里面MapReduce很像（input –&gt; split –&gt; map –&gt; reduce –&gt; output）</p>
+<h3 id="主要有两步："><a href="#主要有两步：" class="headerlink" title="主要有两步："></a>主要有两步：</h3><ul>
+<li>第一、任务切分（Folk）</li>
+<li>第二、结果合并 (Join)</li>
+</ul>
+<h2 id="使用说明"><a href="#使用说明" class="headerlink" title="使用说明"></a>使用说明</h2><p>自JDK1.7开始，java.util.concurrent包下提供了ForkJoinPool来支持将一个任务拆分成多个“小任务”并行计算，再把多个“小任务”的结果合并成总的计算结果。多线程ForkJoinPool运用了Fork/Join原理，使用“分而治之”的思想，将大任务分拆成小任务分配给多个线程执行，最后合并得到最终结果，加快运算。<br><a id="more"></a><br><img src="https://raw.githubusercontent.com/leechaoqiang/blog_resource/master/leechaoqiang.github.io/folkjoin/folkjoin_desc.png" alt="Folk_Join原理图片" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://raw.githubusercontent.com/leechaoqiang/blog_resource/master/leechaoqiang.github.io/folkjoin/folkjoin_desc.png" class="lozad post-image"><br>它的模型大致是这样的：线程池中的每个线程都有自己的工作队列（这一点和ThreadPoolExecutor不同，ThreadPoolExecutor是所有线程共用一个工作队列。<br>ForkJoinPool是ExecutorService的实现类，因此是一种特殊的线程池。</p>
+<p>使用方法：创建了ForkJoinPool实例之后，就可以调用ForkJoinPool的submit(ForkJoinTask<T> task) 或invoke(ForkJoinTask<T> task)方法来执行指定任务了。</T></T></p>
+<p>其中ForkJoinTask代表一个可以并行、合并的任务。ForkJoinTask是一个抽象类，它还有两个抽象子类：RecusiveAction和RecusiveTask。其中RecusiveTask代表有返回值的任务，而RecusiveAction代表没有返回值的任务。</p>
+<h2 id="代码DEMO"><a href="#代码DEMO" class="headerlink" title="代码DEMO"></a>代码DEMO</h2><ul>
+<li>Demo 1.使用ForkJoinPool完成一个任务的分段执行<blockquote>
+<p>简单的打印0-500的数值。用多线程实现并行执行实现</p>
+<pre class="highlight"><span class="line"><span class="keyword">package</span> com.vincent.demo.folkjoin;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.ForkJoinPool;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.RecursiveAction;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.TimeUnit;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Desc</span> 使用ForkJoinPool完成一个任务的分段执行</span></span><br><span class="line"><span class="comment"> * 简单的打印0-500的数值。用多线程实现并行执行</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span>   vincent.li</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span>   1.0</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span>    JDK 1.7</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ForkJoinPoolAction</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        PrintTask task = <span class="keyword">new</span> PrintTask(<span class="number">0</span>, <span class="number">500</span>);</span><br><span class="line">        <span class="comment">//创建实例，并执行分割任务</span></span><br><span class="line">        ForkJoinPool forkJoinPool = <span class="keyword">new</span> ForkJoinPool();</span><br><span class="line">        forkJoinPool.submit(task);</span><br><span class="line">        <span class="comment">//线程阻塞，等待所有任务完成</span></span><br><span class="line">        forkJoinPool.awaitTermination(<span class="number">2</span>, TimeUnit.SECONDS);</span><br><span class="line">        forkJoinPool.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Desc</span>: 继承RecursiveAction来实现“可分解”的任务。</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> vincent.li</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> JDK 1.7</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PrintTask</span> <span class="keyword">extends</span> <span class="title">RecursiveAction</span> </span>&#123;</span><br><span class="line">    <span class="comment">//最多只能打印50个数</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> THRESHOLD = <span class="number">50</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> start;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> end;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">PrintTask</span><span class="params">(<span class="keyword">int</span> start, <span class="keyword">int</span> end)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>();</span><br><span class="line">        <span class="keyword">this</span>.start = start;</span><br><span class="line">        <span class="keyword">this</span>.end = end;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">compute</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(end - start &lt; THRESHOLD)&#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> i = start; i &lt; end; i++)&#123;</span><br><span class="line">                System.out.println(Thread.currentThread().getName()+<span class="string">&quot;打印i值&gt;&gt;&gt;&quot;</span>+i);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">int</span> middle = (start + end) / <span class="number">2</span>;</span><br><span class="line">            PrintTask left = <span class="keyword">new</span> PrintTask(start, middle);</span><br><span class="line">            PrintTask right = <span class="keyword">new</span> PrintTask(middle, end);</span><br><span class="line">            <span class="comment">//并行执行两个“小任务”</span></span><br><span class="line">            left.fork();</span><br><span class="line">            right.fork();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></blockquote>
+</li>
+<li>执行结果如下：<pre class="highlight"><span class="line">······</span><br><span class="line">······</span><br><span class="line">······</span><br><span class="line">ForkJoinPool<span class="number">-1</span>-worker<span class="number">-6</span>打印i值&gt;&gt;&gt;<span class="number">282</span></span><br><span class="line">ForkJoinPool<span class="number">-1</span>-worker<span class="number">-2</span>打印i值&gt;&gt;&gt;<span class="number">219</span></span><br><span class="line">ForkJoinPool<span class="number">-1</span>-worker<span class="number">-3</span>打印i值&gt;&gt;&gt;<span class="number">343</span></span><br><span class="line">ForkJoinPool<span class="number">-1</span>-worker<span class="number">-4</span>打印i值&gt;&gt;&gt;<span class="number">97</span></span><br><span class="line">ForkJoinPool<span class="number">-1</span>-worker<span class="number">-0</span>打印i值&gt;&gt;&gt;<span class="number">31</span></span><br><span class="line">ForkJoinPool<span class="number">-1</span>-worker<span class="number">-4</span>打印i值&gt;&gt;&gt;<span class="number">98</span></span><br><span class="line">ForkJoinPool<span class="number">-1</span>-worker<span class="number">-3</span>打印i值&gt;&gt;&gt;<span class="number">344</span></span><br><span class="line">ForkJoinPool<span class="number">-1</span>-worker<span class="number">-2</span>打印i值&gt;&gt;&gt;<span class="number">220</span></span><br><span class="line">ForkJoinPool<span class="number">-1</span>-worker<span class="number">-6</span>打印i值&gt;&gt;&gt;<span class="number">283</span></span><br><span class="line">ForkJoinPool<span class="number">-1</span>-worker<span class="number">-7</span>打印i值&gt;&gt;&gt;<span class="number">2</span></span><br><span class="line">ForkJoinPool<span class="number">-1</span>-worker<span class="number">-5</span>打印i值&gt;&gt;&gt;<span class="number">408</span></span><br><span class="line">······</span><br><span class="line">······</span><br><span class="line">······</span><br></pre>
+</li>
+</ul>
+<blockquote>
+<p>我的Macbook是2.2 GHz Intel Core i7,是8核的，由线程名称可以知道，8个CPU都参与了执行，其实我们ForkJoinPool默认会开启和CPU核数一样的线程数。</p>
+</blockquote>
+<ul>
+<li>Demo 2.对一个长度为100000000的数组的元素进行累加求和<pre class="highlight"><span class="line"><span class="keyword">package</span> com.vincent.demo.folkjoin;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Random;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.ForkJoinPool;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Future;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.RecursiveTask;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Desc</span> 对一个长度为100000000的数组的元素进行累加求和</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span>   vincent.li</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span>   1.0</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span>    JDK 1.7</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ForJoinPollTask</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">long</span>[] arr = <span class="keyword">new</span> <span class="keyword">long</span>[<span class="number">100000000</span>];</span><br><span class="line">        Random random = <span class="keyword">new</span> Random();</span><br><span class="line">        <span class="keyword">long</span> total =<span class="number">0L</span>;</span><br><span class="line">        <span class="keyword">int</span> len = arr.length;</span><br><span class="line">        <span class="comment">//初始化10000000个数组元素</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;len; i++)&#123;</span><br><span class="line">            <span class="keyword">int</span> temp = random.nextInt(<span class="number">50</span>);</span><br><span class="line">            arr[i]=Long.valueOf(temp).longValue() ;</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;数组初始化完成。。。&quot;</span>);</span><br><span class="line">        <span class="keyword">long</span> start = System.currentTimeMillis();</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;len; i++)&#123;</span><br><span class="line">            <span class="comment">//对数组元素赋值，并将数组元素的值添加到sum总和中</span></span><br><span class="line">            total += arr[i];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">long</span> timeCost = System.currentTimeMillis() - start;</span><br><span class="line">        System.out.println(<span class="string">&quot;for循环累加求和结果：&quot;</span> + total + <span class="string">&quot;,耗时：&quot;</span> + timeCost + <span class="string">&quot; ms&quot;</span>);</span><br><span class="line">        start = System.currentTimeMillis();</span><br><span class="line">        SumTask task = <span class="keyword">new</span> SumTask(arr, <span class="number">0</span>, len);</span><br><span class="line"><span class="comment">//        创建一个通用池，这个是jdk1.8提供的功能</span></span><br><span class="line">        ForkJoinPool pool = ForkJoinPool.commonPool();</span><br><span class="line">        Future&lt;Long&gt; future = pool.submit(task); <span class="comment">//提交分解的SumTask 任务</span></span><br><span class="line">        timeCost = System.currentTimeMillis() - start;</span><br><span class="line">        System.out.println(<span class="string">&quot;多线程执行求和结果：&quot;</span>+future.get()+ <span class="string">&quot;,耗时：&quot;</span> + timeCost + <span class="string">&quot; ms&quot;</span>);</span><br><span class="line">        pool.shutdown(); <span class="comment">//关闭线程池</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Desc</span>: 继承抽象类RecursiveTask，通过返回的结果，来实现数组的多线程分段累累加</span></span><br><span class="line"><span class="comment"> *  RecursiveTask 具有返回值</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> vincent.li</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> JDK 1.7</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SumTask</span> <span class="keyword">extends</span> <span class="title">RecursiveTask</span>&lt;<span class="title">Long</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> THRESHOLD = <span class="number">50</span>; <span class="comment">//每个小任务 最多只累加50个数</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">long</span> arry[];</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> start;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> end;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Creates a new instance of SumTask.</span></span><br><span class="line"><span class="comment">     * 累加从start到end的arry数组</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> arry</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> start</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> end</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">SumTask</span><span class="params">(<span class="keyword">long</span>[] arry, <span class="keyword">int</span> start, <span class="keyword">int</span> end)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>();</span><br><span class="line">        <span class="keyword">this</span>.arry = arry;</span><br><span class="line">        <span class="keyword">this</span>.start = start;</span><br><span class="line">        <span class="keyword">this</span>.end = end;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> Long <span class="title">compute</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">long</span> sum = <span class="number">0L</span>;</span><br><span class="line">        <span class="comment">//当end与start之间的差小于threshold时，开始进行实际的累加</span></span><br><span class="line">        <span class="keyword">if</span>(end - start &lt; THRESHOLD)&#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> i = start; i &lt; end; i++)&#123;</span><br><span class="line">                sum += arry[i];</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> sum;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">//当end与start之间的差大于threshold，即要累加的数超过50个时候，将大任务分解成小任务</span></span><br><span class="line">            <span class="keyword">int</span> middle = (start+ end)/<span class="number">2</span>;</span><br><span class="line">            SumTask left = <span class="keyword">new</span> SumTask(arry, start, middle);</span><br><span class="line">            SumTask right = <span class="keyword">new</span> SumTask(arry, middle, end);</span><br><span class="line">            <span class="comment">//并行执行两个 小任务</span></span><br><span class="line">            left.fork();</span><br><span class="line">            right.fork();</span><br><span class="line">            <span class="comment">//把两个小任务累加的结果合并起来</span></span><br><span class="line">            <span class="keyword">return</span> left.join()+right.join();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></li>
+<li>执行结果如下：<pre class="highlight"><span class="line">数组初始化完成。。。</span><br><span class="line"><span class="keyword">for</span>循环累加求和结果：<span class="number">2450102493</span>,耗时：<span class="number">86</span> ms</span><br><span class="line">多线程执行求和结果：<span class="number">2450102493</span>,耗时：<span class="number">3</span> ms</span><br></pre>
+我们这次是针对长度1亿的数组的所有元素求和，很明显看出多核并行计算执行效率缴传统for循环累加高了20多将近30倍，如果我们采用这个多核并行计算框架来处理海量数据，那效率必须杠杠的。</li>
+</ul>
+<h3 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h3><p>自JDK1.7开始，Java中引入了可以多核并行计算一种新的线程池：ForkJoinPool。它同ThreadPoolExecutor一样，也实现了Executor和ExecutorService接口。它使用了一个无限队列来保存需要执行的任务，而线程的数量则是通过构造函数传入，如果没有向构造函数中传入希望的线程数量，那么当前计算机可用的CPU数量会被设置为线程数量作为默认值。<br>ForkJoinPool主要用来使用 <strong><em>分治算法</em></strong>(Divide-and-Conquer Algorithm)来解决问题。典型的应用比如快速排序算法。</p>
+<p>他们区别在于，ForkJoinPool可以使用相对少的线程来处理大量的任务，对于有限资源可以充分使用。</p>
+<p>比如要对1000万个数据进行排序，那么会将这个任务分割成两个500万的排序任务和一个针对这两组500万数据的合并任务。以此类推，对于500万的数据也会做出同样的分割处理，到最后会设置一个阈值来规定当数据规模到多少时，停止这样的分割处理。比如，当元素的数量小于10时，会停止分割，转而使用插入排序对它们进行排序。</p>
+<p>那么到最后，所有的任务加起来会有大概2000000+个。问题的关键在于，对于一个任务而言，只有当它所有的子任务完成之后，它才能够被执行。</p>
+<p>所以当使用ThreadPoolExecutor时，使用分治法会存在问题，因为ThreadPoolExecutor中的线程无法像任务队列中再添加一个任务并且在等待该任务完成之后再继续执行。而使用ForkJoinPool时，就能够让其中的线程创建新的任务，并挂起当前的任务，此时线程就能够从队列中选择子任务执行。</p>
+<p> 以上程序的关键方法是fork()和join()方法。在ForkJoinPool使用的线程中，会使用一个内部队列来对需要执行的任务以及子任务进行操作来保证它们的执行顺序。</p>
+<p>那么使用ThreadPoolExecutor或者ForkJoinPool，会有什么性能的差异呢？</p>
+<p>首先，使用ForkJoinPool能够使用数量有限的线程来完成非常多的具有父子关系的任务，比如使用4个线程来完成超过200万个任务。但是，使用ThreadPoolExecutor时，是不可能完成的，因为ThreadPoolExecutor中的Thread无法选择优先执行子任务，需要完成200万个具有父子关系的任务时，也需要200万个线程，显然这是不可行的。</p>
+<p><strong><em>Notice:</em></strong> ForkJoinPool在执行过程中，会创建大量的子任务，这会导致GC进行垃圾回收，这里可能带来一些系统卡顿的风险。</p>
+
+  </div>
+  <div>
+  
+  <div class="post-note note-warning copyright" style="margin-top: 42px">
+    <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="http://leechaoqiang.github.io/about">李猿外</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="http://leechaoqiang.github.io/2019/08/12/fork-join-pool-study-note/">http://leechaoqiang.github.io/2019/08/12/fork-join-pool-study-note/</a></p>
+    <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+  </div>
+  
+  </div>
+</article>
+<div class="nav">
+  
+  <div class="nav-item-prev">
+    <a href="/2019/09/04/springcloud-app-kafka/" class="nav-link">
+      <i class="iconfont icon-left nav-prev-icon"></i>
+      <div>
+        <div class="nav-label">上一篇</div>
+        
+        <div class="nav-title">Kafka简析以及SpringBoot整合Kafka应用实践 </div>
+        
+      </div>
+    </a>
+  </div>
+  
+  
+  <div class="nav-item-next">
+    <a href="/2019/08/10/rabbitmq-quitstart-practise/" class="nav-link">
+      <div>
+        <div class="nav-label">下一篇</div>
+        
+        <div class="nav-title">RabbitMQ分析全解之快速开始实现一个demo </div>
+        
+      </div>
+      <i class="iconfont icon-right nav-next-icon"></i>
+    </a>
+  </div>
+  
+</div>
+
+<div class="card card-content comment-card" style="margin-top: 16px;">
+  <div class="comment-card-title">评论</div>
+  
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: 'SnVYhldRRlqYatvAs4y3N2qF-MdYXbMMI',
+        appKey: '2SwmjMzPEwYhnB7hqqNgknXM',
+        placeholder: '都来了，留句话呗...',
+        path: window.location.pathname,
+        avatar: 'wavatar',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'false',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+</div>
+
+<div class="card card-content toc-card" id="mobiletoc">
+  <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">背景</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BB%E8%A6%81%E6%9C%89%E4%B8%A4%E6%AD%A5%EF%BC%9A"><span class="toc-text">主要有两步：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E"><span class="toc-text">使用说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81DEMO"><span class="toc-text">代码DEMO</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-text">分析</span></a></li></ol></li></ol>
+</div></main>
+          <aside class="left-column">
+            
+            <div class="card card-author">
+              
+<img src="/images/logo.jpg" class="author-img">
+
+<p class="author-name">李猿外</p>
+<p class="author-description">爱智求真,共同进步。</p>
+<div class="author-message">
+  <a class="author-posts-count" href="/archives">
+    <span>27</span>
+    <span>文章</span>
+  </a>
+  <a class="author-categories-count" href="/categories">
+    <span>30</span>
+    <span>分类</span>
+  </a>
+  <a class="author-tags-count" href="/tags">
+    <span>58</span>
+    <span>标签</span>
+  </a>
+</div>
+
+<div class="author-card-society">
+  
+    <div class="author-card-society-icon">
+      <a target="_blank" rel="noopener" href="https://github.com/leechaoqiang">
+        <i class="iconfont icon-github society-icon"></i>
+      </a>
+    </div>
+  
+    <div class="author-card-society-icon">
+      <a href="mailto:vincentlee99@126.com">
+        <i class="iconfont icon-mail society-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+            </div>
+            
+            <div class="sticky-tablet">
+  
+  
+  <article class="display-when-two-columns spacer">
+    <div class="card card-content toc-card">
+      <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">背景</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BB%E8%A6%81%E6%9C%89%E4%B8%A4%E6%AD%A5%EF%BC%9A"><span class="toc-text">主要有两步：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E"><span class="toc-text">使用说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81DEMO"><span class="toc-text">代码DEMO</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-text">分析</span></a></li></ol></li></ol>
+    </div>
+  </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header"><i class="iconfont icon-fenlei" style="padding-right: 2px;"></i>分类</div>
+  <div class="categories-list">
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">16</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Docker">
+        <div class="categories-list-item">
+          Docker
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/缓存">
+        <div class="categories-list-item">
+          缓存
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/mybatis">
+        <div class="categories-list-item">
+          mybatis
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/摄影">
+        <div class="categories-list-item">
+          摄影
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/RabbitMQ">
+        <div class="categories-list-item">
+          RabbitMQ
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/tensorflow">
+        <div class="categories-list-item">
+          tensorflow
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+      <a href="/categories/问题">
+        <div class="categories-list-item">
+          问题
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+      <a href="/categories/并发">
+        <div class="categories-list-item">
+          并发
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringBoot">
+        <div class="categories-list-item">
+          SpringBoot
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Mysql">
+        <div class="categories-list-item">
+          Mysql
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Restful">
+        <div class="categories-list-item">
+          Restful
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/thread">
+        <div class="categories-list-item">
+          thread
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Tomcat">
+        <div class="categories-list-item">
+          Tomcat
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/消息队列">
+        <div class="categories-list-item">
+          消息队列
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/消息队列">
+        <div class="categories-list-item">
+          消息队列
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/分布式">
+        <div class="categories-list-item">
+          分布式
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/多线程">
+        <div class="categories-list-item">
+          多线程
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringBoot">
+        <div class="categories-list-item">
+          SpringBoot
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/kafka">
+        <div class="categories-list-item">
+          kafka
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringCloud">
+        <div class="categories-list-item">
+          SpringCloud
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/消息队列">
+        <div class="categories-list-item">
+          消息队列
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/kafka">
+        <div class="categories-list-item">
+          kafka
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringBoot">
+        <div class="categories-list-item">
+          SpringBoot
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header"><i class="iconfont icon-biaoqian" style="padding-right: 2px;"></i>热门标签</div>
+  <div class="tags-list">
+    
+    <a href="\tags\Java" title="Java"><div class="tags-list-item">Java</div></a>
+    
+    <a href="\tags\MQ" title="MQ"><div class="tags-list-item">MQ</div></a>
+    
+    <a href="\tags\消息队列" title="消息队列"><div class="tags-list-item">消息队列</div></a>
+    
+    <a href="\tags\多线程" title="多线程"><div class="tags-list-item">多线程</div></a>
+    
+    <a href="\tags\SpringBoot" title="SpringBoot"><div class="tags-list-item">SpringBoot</div></a>
+    
+    <a href="\tags\分布式" title="分布式"><div class="tags-list-item">分布式</div></a>
+    
+    <a href="\tags\Mysql" title="Mysql"><div class="tags-list-item">Mysql</div></a>
+    
+    <a href="\tags\Tomcat" title="Tomcat"><div class="tags-list-item">Tomcat</div></a>
+    
+    <a href="\tags\RabbitMQ" title="RabbitMQ"><div class="tags-list-item">RabbitMQ</div></a>
+    
+    <a href="\tags\kafka" title="kafka"><div class="tags-list-item">kafka</div></a>
+    
+    <a href="\tags\并发" title="并发"><div class="tags-list-item">并发</div></a>
+    
+    <a href="\tags\jackson" title="jackson"><div class="tags-list-item">jackson</div></a>
+    
+    <a href="\tags\Json" title="Json"><div class="tags-list-item">Json</div></a>
+    
+    <a href="\tags\zookeeper" title="zookeeper"><div class="tags-list-item">zookeeper</div></a>
+    
+    <a href="\tags\安全漏洞" title="安全漏洞"><div class="tags-list-item">安全漏洞</div></a>
+    
+    <a href="\tags\SpringCloud" title="SpringCloud"><div class="tags-list-item">SpringCloud</div></a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+          <aside class="right-column">
+            <div class="sticky-widescreen">
+  
+  
+  <article class="card card-content toc-card">
+    <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">背景</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BB%E8%A6%81%E6%9C%89%E4%B8%A4%E6%AD%A5%EF%BC%9A"><span class="toc-text">主要有两步：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E"><span class="toc-text">使用说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81DEMO"><span class="toc-text">代码DEMO</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E6%9E%90"><span class="toc-text">分析</span></a></li></ol></li></ol>
+  </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header"><i class="iconfont icon-wenzhang_huaban" style="padding-right: 2px;"></i>最近文章</div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-03-01</div>
+        <a href="/2021/03/01/lowcase-start-word-json-serialize-error/"><div class="recent-posts-item-content">uName类似首字符小写属性Json序列化接收不到数据问题及解决办法</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2020-09-16</div>
+        <a href="/2020/09/16/photo/"><div class="recent-posts-item-content">手机摄影之城市一角（一）</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2020-09-01</div>
+        <a href="/2020/09/01/jvm-local-cache-case-caffeine/"><div class="recent-posts-item-content">JVM高性能本地缓存Caffeine使用案例</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2020-08-25</div>
+        <a href="/2020/08/25/mysql-procedure-batch-create-table-pratise/"><div class="recent-posts-item-content">减少重复劳动,使用Mysql存储过程批量创建表</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>Copyright ©
+          
+          2016 -
+          
+          2021
+        </span>
+        &nbsp;
+        <a href="/" class="footer-link">攻城狮李猿外 </a>
+      </div>
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+        本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+        <span>&nbsp;|&nbsp;</span>
+        
+        
+        本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+    <script>
+    //百度链接提交
+      (function(){
+          var bp = document.createElement('script');
+          var curProtocol = window.location.protocol.split(':')[0];
+          if (curProtocol === 'https'){
+          bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else{
+          bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(bp, s);
+      })();
+    </script>
+    
+    <script>
+    //百度统计
+      var _hmt = _hmt || [];
+      (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?57e94335f06e1ca57d2246529a0150c7";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+</footer>
+  <a role="button" id="scrollbutton" class="basebutton"  aria-label="回到顶部">
+  <i class="iconfont icon-arrowleft button-icon"></i>
+</a>
+<a role="button" id="menubutton" class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a role="button" id="popbutton" class="basebutton" aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a role="button" id="darkbutton" class="basebutton darkwidget" aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a role="button" id="searchbutton" class="basebutton searchwidget" aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+
+  
+  
+  
+  <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img');
+    var i;
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a');
+      wrapper.setAttribute('data-fslightbox', 'gallery');
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'));
+      wrapper.setAttribute('aria-label', 'illustration');
+      wrapper.style.cssText = 'width: 100%; display: flex; justify-content: center;';
+      img[i].before(wrapper);
+      wrapper.append(img[i]);
+    }
+    refreshFsLightbox();
+  }
+</script>
+<script>loadScript("//cdn.jsdelivr.net/npm/fslightbox@3.1.0/index.min.js", addImgLayout)</script>
+  
+  
+  
+<script src="/js/main.js"></script>
+
+  
+  <script>loadScript("/js/lib/busuanzi.min.js")</script>
+  
+  
+  <script>
+    var addLazyload = function () {
+      var observer = lozad('.lozad', {
+        load: function (el) {
+          el.srcset = el.getAttribute('data-src');
+        },
+        loaded: function (el) {
+          el.classList.add('loaded');
+        }
+      });
+      observer.observe();
+    }
+  </script>
+  <script>loadScript("/js/lib/lozad.min.js", addLazyload)</script>
+  
+  
+</body>
+
+</html>

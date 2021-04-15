@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html  lang="zh-CN" >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="#fff" id="theme-color">
+  <meta name="description" content="不以物喜，不以己悲。">
+  <link rel="icon" href="/images/logo.jpg">
+  <title>Docker容器化部署SpringBoot应用实践</title>
+  
+  
+  <meta property="og:title" content="Docker容器化部署SpringBoot应用实践">
+  
+  
+  <meta property="og:url" content="http://leechaoqiang.github.io/2019/06/19/docker-java-app-practise/index.html">
+  
+  
+  <meta property="og:img" content="/images/logo.jpg">
+  
+  
+  <meta property="og:img" content="不以物喜，不以己悲。">
+  
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:published_time" content="2019-06-19">
+  <meta property="og:article:modified_time" content="2021-04-15">
+  <meta property="og:article:author" content="李猿外">
+  
+  
+  <meta property="og:article:tag" content="Java">
+  
+  <meta property="og:article:tag" content="Docker">
+  
+  <meta property="og:article:tag" content="容器化">
+  
+  <meta property="og:article:tag" content="SpringBoot">
+  
+  
+  
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+    var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+      }
+    };
+    setDarkmode();
+  </script>
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  </script>
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_f7g5jnuftcf.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  <link rel="preload" href="//cdn.jsdelivr.net/npm/fslightbox@3.1.0/index.min.js" as="script">
+  
+  
+  <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+  <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">
+  
+  
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_f7g5jnuftcf.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 5.0.2"></head>
+
+
+<body>
+  <div class="wrapper">
+    
+    <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+      <img class="navbar-logo-img" src="/images/logo.jpg" alt="logo">
+      
+      <span class="navbar-logo-dsc">攻城狮李猿外</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+    <a href="/" class="navbar-menu-item">
+    
+    首页
+    
+    </a>
+    
+    <a href="/archives" class="navbar-menu-item">
+    
+    归档
+    
+    </a>
+    
+    <a href="/tags" class="navbar-menu-item">
+    
+    标签
+    
+    </a>
+    
+    <a href="/categories" class="navbar-menu-item">
+    
+    分类
+    
+    </a>
+    
+    <a href="/about" class="navbar-menu-item">
+    
+    关于
+    
+    </a>
+    
+    <a href="/links" class="navbar-menu-item">
+    
+    友链
+    
+    </a>
+    
+    <a class="navbar-menu-item darknavbar" id="dark"><i class="iconfont icon-weather"></i></a>
+    <a class="navbar-menu-item searchnavbar" id="search"><i class="iconfont icon-search" style="font-size: 1.2rem; font-weight: 400;"></i></a>
+  </div>
+</nav>
+    
+    <div id="local-search" style="display: none;">
+      <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容...">
+      <div id="search-content"></div>
+    </div>
+    
+    <div class="section-wrap">
+      <div class="container">
+        <div class="columns">
+          <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      Docker容器化部署SpringBoot应用实践
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2019-06-19T01:24:59.000Z">
+      <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+      <span>2019-06-19</span>
+    </time>
+    
+    <span class="dot"></span>
+    
+    <a href="/categories/Docker/" class="post-meta-link">Docker</a>
+    
+    <a href="/categories/Docker/SpringBoot/" class="post-meta-link">SpringBoot</a>
+    
+    
+    
+    <span class="dot"></span>
+    <span>1.5k 字</span>
+    
+  </div>
+  
+  <div class="post-meta post-show-meta" style="margin-top: -10px;">
+    <div style="display: flex; align-items: center;">
+      <i class="iconfont icon-biaoqian" style="margin-right: 2px; font-size: 1.15rem;"></i>
+      
+      
+        <a href="/tags/Java/" class="post-meta-link">Java</a>
+      
+      
+      <span class="dot"></span>
+      
+        <a href="/tags/Docker/" class="post-meta-link">Docker</a>
+      
+      
+      <span class="dot"></span>
+      
+        <a href="/tags/容器化/" class="post-meta-link">容器化</a>
+      
+      
+      <span class="dot"></span>
+      
+        <a href="/tags/SpringBoot/" class="post-meta-link">SpringBoot</a>
+      
+    </div>
+  </div>
+  
+  </header>
+  <div id="section" class="post-content">
+    <h3 id="一、Background"><a href="#一、Background" class="headerlink" title="一、Background"></a>一、Background</h3><p><img src="/images/springboot/springboot-micro-service.png" alt="springboot-micro-service" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/images/springboot/springboot-micro-service.png" class="lozad post-image"></p>
+<pre class="highlight"><span class="line">Spring Boot makes <span class="keyword">it</span> easy <span class="keyword">to</span> create stand-alone, production-grade Spring based Applications <span class="keyword">that</span> you can <span class="string">&quot;just run&quot;</span>.</span><br></pre>
+<p>用SpringBoot开发构建基于Spring的SpringBoot Apps应用服务是超级简单，但是多个实例同时部署到虚机，需要先上传包然后使用类似<strong>java -Dserver.port=8080 -jar app.jar</strong>命令启动。现在docker容器化技术已经发展很成熟，采用docker容器化部署SpringBoot Apps也是so easy.</p>
+<h3 id="二、构建基于SpringBoot的Java应用容器化Docker部署"><a href="#二、构建基于SpringBoot的Java应用容器化Docker部署" class="headerlink" title="二、构建基于SpringBoot的Java应用容器化Docker部署"></a>二、构建基于SpringBoot的Java应用容器化Docker部署</h3><h4 id="1-项目结构"><a href="#1-项目结构" class="headerlink" title="1. 项目结构"></a>1. 项目结构</h4><p><img src="/images/springboot/docker-project-arch.jpg" alt="docker-project-arch" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/images/springboot/docker-project-arch.jpg" class="lozad post-image"></p>
+<h4 id="2-基于SpringBoot的Java应用构建准备"><a href="#2-基于SpringBoot的Java应用构建准备" class="headerlink" title="2. 基于SpringBoot的Java应用构建准备"></a>2. 基于SpringBoot的Java应用构建准备</h4><ul>
+<li>pom.xml</li>
+</ul>
+<pre class="highlight"><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">project</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0&quot;</span> <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">parent</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>springcloud-app-docker<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.licq<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">parent</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">modelVersion</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">modelVersion</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>springcloud-app-docker-java-helloworld<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>springcloud-app-docker-java-helloworld<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">packaging</span>&gt;</span>jar<span class="tag">&lt;/<span class="name">packaging</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">description</span>&gt;</span>docker-java应用helloworld<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">project.build.sourceEncoding</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">project.build.sourceEncoding</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">maven.compiler.source</span>&gt;</span>1.8<span class="tag">&lt;/<span class="name">maven.compiler.source</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">maven.compiler.target</span>&gt;</span>1.8<span class="tag">&lt;/<span class="name">maven.compiler.target</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">java.version</span>&gt;</span>1.8<span class="tag">&lt;/<span class="name">java.version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-test<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">finalName</span>&gt;</span>$&#123;project.artifactId&#125;<span class="tag">&lt;/<span class="name">finalName</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">pluginManagement</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">skip</span>&gt;</span>true<span class="tag">&lt;/<span class="name">skip</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">pluginManagement</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.maven.plugins<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-compiler-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">source</span>&gt;</span>8<span class="tag">&lt;/<span class="name">source</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">target</span>&gt;</span>8<span class="tag">&lt;/<span class="name">target</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></span><br><span class="line"></span><br></pre>
+<ul>
+<li><p>创建一个Api测试HelloController</p>
+<pre class="highlight"><span class="line"><span class="keyword">package</span> com.vincent.springcloud.app.docker.controller;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.alibaba.fastjson.JSONObject;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Value;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.GetMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.PathVariable;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.ResponseBody;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RestController;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> vincent.li</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Description</span> docker-app-hello-world</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 2019/6/29</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Value(&quot;$&#123;server.port&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String serverPort;</span><br><span class="line">    <span class="meta">@Value(&quot;$&#123;spring.application.name&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String applicationName;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@ResponseBody</span></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/hello/&#123;name&#125;&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> JSONObject <span class="title">hello</span><span class="params">(<span class="meta">@PathVariable(&quot;name&quot;)</span> String name)</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> JSONObject()</span><br><span class="line">                .fluentPut(<span class="string">&quot;hello&quot;</span>, name)</span><br><span class="line">                .fluentPut(<span class="string">&quot;application&quot;</span>, applicationName)</span><br><span class="line">                .fluentPut(<span class="string">&quot;port&quot;</span>, serverPort);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre>
+</li>
+<li><p>SpringBoot应用启动类</p>
+</li>
+</ul>
+<pre class="highlight"><span class="line"><span class="keyword">package</span> com.vincent.springcloud.app.docker;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.SpringApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.TimeZone;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> vincent.li</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Description</span> api提供服务</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 2019/6/29</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@SpringBootApplication(scanBasePackages = &#123;&quot;com.vincent.springcloud.app.docker&quot;&#125;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpringCloudAppDockerApplication</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        TimeZone.setDefault(TimeZone.getTimeZone(<span class="string">&quot;Asia/Shanghai&quot;</span>));</span><br><span class="line">        SpringApplication.run(SpringCloudAppDockerApplication.class, args);</span><br><span class="line">        System.out.println(<span class="string">&quot;(#^.^#)   【SpringCloud-docker-app-hello-world】启动成功      (#^.^#)&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre>
+<h4 id="3-SpringBoot应用打包成jar"><a href="#3-SpringBoot应用打包成jar" class="headerlink" title="3. SpringBoot应用打包成jar"></a>3. SpringBoot应用打包成jar</h4><pre class="highlight"><span class="line"><span class="keyword">mvn</span> clean install -DskipTests</span><br></pre>
+<h4 id="4-编写Dockerfile"><a href="#4-编写Dockerfile" class="headerlink" title="4. 编写Dockerfile"></a>4. 编写Dockerfile</h4><pre class="highlight"><span class="line"><span class="comment">#从公共仓库下载java:8到本地容器</span></span><br><span class="line"><span class="keyword">FROM</span> java:<span class="number">8</span></span><br><span class="line"><span class="comment">#申明作者可以不写</span></span><br><span class="line"><span class="keyword">MAINTAINER</span> vincent.li vincentlee99@<span class="number">126</span>.com</span><br><span class="line"><span class="comment">#WORKDIR：工作目录，类似于cd命令</span></span><br><span class="line"><span class="comment">#把maven打包好的jar拷贝到容器中并命名为app.jar</span></span><br><span class="line"><span class="keyword">COPY</span><span class="bash"> target/springcloud-app-docker-java-helloworld.jar app.jar</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#ENV：设置环境变量</span></span><br><span class="line"><span class="keyword">ENV</span> LANG C.UTF-<span class="number">8</span></span><br><span class="line"><span class="comment">#配置容器，使其可执行化。配合CMD可省去&quot;application&quot;，只使用参数。</span></span><br><span class="line"><span class="keyword">ENTRYPOINT</span><span class="bash"> [<span class="string">&quot;java&quot;</span>, <span class="string">&quot;-jar&quot;</span>, <span class="string">&quot;/app.jar&quot;</span>]</span></span><br><span class="line"><span class="comment">#EXPOSE：指定于外界交互的端口</span></span><br><span class="line"><span class="keyword">EXPOSE</span> <span class="number">8080</span></span><br><span class="line"><span class="comment">#VOLUME：用于指定持久化目录</span></span><br></pre>
+<h4 id="5-构建Docker镜像"><a href="#5-构建Docker镜像" class="headerlink" title="5. 构建Docker镜像"></a>5. 构建Docker镜像</h4><p>在Dockerfile文件所在的目录执行以下docker命令构建镜像</p>
+<pre class="highlight"><span class="line">docker build -t demo-helloworld .</span><br></pre>
+<p>镜像构建完成后可以采用以下docker命令查看我们自己构建的镜像</p>
+<pre class="highlight"><span class="line">docker image ls</span><br></pre>
+<p><img src="/images/springboot/docker-image-ls.png" alt="docker-image-ls" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/images/springboot/docker-image-ls.png" class="lozad post-image"></p>
+<h4 id="6-使用镜像启动容器"><a href="#6-使用镜像启动容器" class="headerlink" title="6. 使用镜像启动容器"></a>6. 使用镜像启动容器</h4><p>执行如下docker命令可以启动镜像</p>
+<pre class="highlight"><span class="line">docker run -d -p <span class="number">8099</span>:<span class="number">8080</span> demo-helloworld</span><br></pre>
+<p>启动命令中<strong>-d</strong>是以后台守护进程的方式执行，<strong>-p</strong>映射宿主机和容器内部执行应用服务的端口，上面的命令是把宿主机的8099端口映射到容器的8080端口，通过这些配置，我们就把docker容器的8080端口对应的服务提供给外面访问了。</p>
+<h3 id="三、验证容器化部署应用"><a href="#三、验证容器化部署应用" class="headerlink" title="三、验证容器化部署应用"></a>三、验证容器化部署应用</h3><blockquote>
+<p>我可以通过docker命令查看容器进程,可以查看到我们demo-helloworld镜像的容器在运行,以及相关端口映射信息。</p>
+</blockquote>
+<pre class="highlight"><span class="line"><span class="attribute">docker ps</span></span><br></pre>
+<p>命令执行结果如下图：</p>
+<p><img src="/images/springboot/docker-ps.png" alt="docker-ps.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/images/springboot/docker-ps.png" class="lozad post-image"></p>
+<blockquote>
+<p>也可以通过执行下面的docker命令进入容器内部查看应用的jar包位置。<br><pre class="highlight"><span class="line"><span class="attribute">docker</span> exec -it <span class="number">3156</span>c<span class="number">04</span>e<span class="number">6</span>d<span class="number">6</span>c /bin/bash</span><br></pre><br>其中3156c04e6d6c为对应的容器id.命令执行结果如下图：</p>
+</blockquote>
+<p><img src="/images/springboot/docker-exec-it.png" alt="docker-exec-it.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/images/springboot/docker-exec-it.png" class="lozad post-image"></p>
+<h4 id="通过http请求调用验证我们的应用是否能正常提供服务，在宿主上的浏览器上打开链接-http-localhost-8099-hello-docker，可以看到如下返回就说明服务正常了。"><a href="#通过http请求调用验证我们的应用是否能正常提供服务，在宿主上的浏览器上打开链接-http-localhost-8099-hello-docker，可以看到如下返回就说明服务正常了。" class="headerlink" title="通过http请求调用验证我们的应用是否能正常提供服务，在宿主上的浏览器上打开链接 http://localhost:8099/hello/docker，可以看到如下返回就说明服务正常了。"></a>通过http请求调用验证我们的应用是否能正常提供服务，在宿主上的浏览器上打开链接 <strong><a target="_blank" rel="noopener" href="http://localhost:8099/hello/docker">http://localhost:8099/hello/docker</a></strong>，可以看到如下返回就说明服务正常了。</h4><pre class="highlight"><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;application&quot;</span>:<span class="string">&quot;springcloud-docker-app-hello-world&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;port&quot;</span>:<span class="string">&quot;8080&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;hello&quot;</span>:<span class="string">&quot;docker&quot;</span></span><br><span class="line">&#125;</span><br></pre>
+<p>也可以使用<strong>curl <a target="_blank" rel="noopener" href="http://localhost:8099/hello/docker">http://localhost:8099/hello/docker</a></strong>命令验证。</p>
+<h3 id="One-More-Thing"><a href="#One-More-Thing" class="headerlink" title="One More Thing"></a>One More Thing</h3><p>我们如果想在同一台虚机上采用容器化部署多个应用怎么做了呢？很简单，只需要执行以下类似命令多条就可以实现，很方便。</p>
+<pre class="highlight"><span class="line">docker run -d -p <span class="number">8081</span>:<span class="number">8080</span> demo-helloworld</span><br><span class="line">docker run -d -p <span class="number">8082</span>:<span class="number">8080</span> demo-helloworld</span><br><span class="line">docker run -d -p <span class="number">8083</span>:<span class="number">8080</span> demo-helloworld</span><br><span class="line"></span><br></pre>
+<p>当然实际情况我们不可能是只有一台虚机，是多台虚机资源来部署，重复一条一条去执行命令肯定是不行的，这个可以结合jenkins,gitlab等工具，这个后面就涉及到CI/CD以及使用k8s来管理虚机资源和docker容器化服务治理和编排，后面有时间的时候再写一篇关于k8s可落地实践的文章。</p>
+
+  </div>
+  <div>
+  
+  <div class="post-note note-warning copyright" style="margin-top: 42px">
+    <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="http://leechaoqiang.github.io/about">李猿外</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="http://leechaoqiang.github.io/2019/06/19/docker-java-app-practise/">http://leechaoqiang.github.io/2019/06/19/docker-java-app-practise/</a></p>
+    <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+  </div>
+  
+  </div>
+</article>
+<div class="nav">
+  
+  <div class="nav-item-prev">
+    <a href="/2019/07/29/seconds-kill-when-reduce-sku-stock-design/" class="nav-link">
+      <i class="iconfont icon-left nav-prev-icon"></i>
+      <div>
+        <div class="nav-label">上一篇</div>
+        
+        <div class="nav-title">秒杀系统扣减库存的常见几种设计 </div>
+        
+      </div>
+    </a>
+  </div>
+  
+  
+  <div class="nav-item-next">
+    <a href="/2018/11/25/tensorflow-open-practise/" class="nav-link">
+      <div>
+        <div class="nav-label">下一篇</div>
+        
+        <div class="nav-title">TensorFlow初探（一） </div>
+        
+      </div>
+      <i class="iconfont icon-right nav-next-icon"></i>
+    </a>
+  </div>
+  
+</div>
+
+<div class="card card-content comment-card" style="margin-top: 16px;">
+  <div class="comment-card-title">评论</div>
+  
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: 'SnVYhldRRlqYatvAs4y3N2qF-MdYXbMMI',
+        appKey: '2SwmjMzPEwYhnB7hqqNgknXM',
+        placeholder: '都来了，留句话呗...',
+        path: window.location.pathname,
+        avatar: 'wavatar',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'false',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+</div>
+
+<div class="card card-content toc-card" id="mobiletoc">
+  <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81Background"><span class="toc-text">一、Background</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%9E%84%E5%BB%BA%E5%9F%BA%E4%BA%8ESpringBoot%E7%9A%84Java%E5%BA%94%E7%94%A8%E5%AE%B9%E5%99%A8%E5%8C%96Docker%E9%83%A8%E7%BD%B2"><span class="toc-text">二、构建基于SpringBoot的Java应用容器化Docker部署</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84"><span class="toc-text">1. 项目结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%9F%BA%E4%BA%8ESpringBoot%E7%9A%84Java%E5%BA%94%E7%94%A8%E6%9E%84%E5%BB%BA%E5%87%86%E5%A4%87"><span class="toc-text">2. 基于SpringBoot的Java应用构建准备</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-SpringBoot%E5%BA%94%E7%94%A8%E6%89%93%E5%8C%85%E6%88%90jar"><span class="toc-text">3. SpringBoot应用打包成jar</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E7%BC%96%E5%86%99Dockerfile"><span class="toc-text">4. 编写Dockerfile</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E6%9E%84%E5%BB%BADocker%E9%95%9C%E5%83%8F"><span class="toc-text">5. 构建Docker镜像</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-%E4%BD%BF%E7%94%A8%E9%95%9C%E5%83%8F%E5%90%AF%E5%8A%A8%E5%AE%B9%E5%99%A8"><span class="toc-text">6. 使用镜像启动容器</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E9%AA%8C%E8%AF%81%E5%AE%B9%E5%99%A8%E5%8C%96%E9%83%A8%E7%BD%B2%E5%BA%94%E7%94%A8"><span class="toc-text">三、验证容器化部署应用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%80%9A%E8%BF%87http%E8%AF%B7%E6%B1%82%E8%B0%83%E7%94%A8%E9%AA%8C%E8%AF%81%E6%88%91%E4%BB%AC%E7%9A%84%E5%BA%94%E7%94%A8%E6%98%AF%E5%90%A6%E8%83%BD%E6%AD%A3%E5%B8%B8%E6%8F%90%E4%BE%9B%E6%9C%8D%E5%8A%A1%EF%BC%8C%E5%9C%A8%E5%AE%BF%E4%B8%BB%E4%B8%8A%E7%9A%84%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%8A%E6%89%93%E5%BC%80%E9%93%BE%E6%8E%A5-http-localhost-8099-hello-docker%EF%BC%8C%E5%8F%AF%E4%BB%A5%E7%9C%8B%E5%88%B0%E5%A6%82%E4%B8%8B%E8%BF%94%E5%9B%9E%E5%B0%B1%E8%AF%B4%E6%98%8E%E6%9C%8D%E5%8A%A1%E6%AD%A3%E5%B8%B8%E4%BA%86%E3%80%82"><span class="toc-text">通过http请求调用验证我们的应用是否能正常提供服务，在宿主上的浏览器上打开链接 http:&#x2F;&#x2F;localhost:8099&#x2F;hello&#x2F;docker，可以看到如下返回就说明服务正常了。</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#One-More-Thing"><span class="toc-text">One More Thing</span></a></li></ol>
+</div></main>
+          <aside class="left-column">
+            
+            <div class="card card-author">
+              
+<img src="/images/logo.jpg" class="author-img">
+
+<p class="author-name">李猿外</p>
+<p class="author-description">爱智求真,共同进步。</p>
+<div class="author-message">
+  <a class="author-posts-count" href="/archives">
+    <span>27</span>
+    <span>文章</span>
+  </a>
+  <a class="author-categories-count" href="/categories">
+    <span>30</span>
+    <span>分类</span>
+  </a>
+  <a class="author-tags-count" href="/tags">
+    <span>58</span>
+    <span>标签</span>
+  </a>
+</div>
+
+<div class="author-card-society">
+  
+    <div class="author-card-society-icon">
+      <a target="_blank" rel="noopener" href="https://github.com/leechaoqiang">
+        <i class="iconfont icon-github society-icon"></i>
+      </a>
+    </div>
+  
+    <div class="author-card-society-icon">
+      <a href="mailto:vincentlee99@126.com">
+        <i class="iconfont icon-mail society-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+            </div>
+            
+            <div class="sticky-tablet">
+  
+  
+  <article class="display-when-two-columns spacer">
+    <div class="card card-content toc-card">
+      <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81Background"><span class="toc-text">一、Background</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%9E%84%E5%BB%BA%E5%9F%BA%E4%BA%8ESpringBoot%E7%9A%84Java%E5%BA%94%E7%94%A8%E5%AE%B9%E5%99%A8%E5%8C%96Docker%E9%83%A8%E7%BD%B2"><span class="toc-text">二、构建基于SpringBoot的Java应用容器化Docker部署</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84"><span class="toc-text">1. 项目结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%9F%BA%E4%BA%8ESpringBoot%E7%9A%84Java%E5%BA%94%E7%94%A8%E6%9E%84%E5%BB%BA%E5%87%86%E5%A4%87"><span class="toc-text">2. 基于SpringBoot的Java应用构建准备</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-SpringBoot%E5%BA%94%E7%94%A8%E6%89%93%E5%8C%85%E6%88%90jar"><span class="toc-text">3. SpringBoot应用打包成jar</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E7%BC%96%E5%86%99Dockerfile"><span class="toc-text">4. 编写Dockerfile</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E6%9E%84%E5%BB%BADocker%E9%95%9C%E5%83%8F"><span class="toc-text">5. 构建Docker镜像</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-%E4%BD%BF%E7%94%A8%E9%95%9C%E5%83%8F%E5%90%AF%E5%8A%A8%E5%AE%B9%E5%99%A8"><span class="toc-text">6. 使用镜像启动容器</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E9%AA%8C%E8%AF%81%E5%AE%B9%E5%99%A8%E5%8C%96%E9%83%A8%E7%BD%B2%E5%BA%94%E7%94%A8"><span class="toc-text">三、验证容器化部署应用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%80%9A%E8%BF%87http%E8%AF%B7%E6%B1%82%E8%B0%83%E7%94%A8%E9%AA%8C%E8%AF%81%E6%88%91%E4%BB%AC%E7%9A%84%E5%BA%94%E7%94%A8%E6%98%AF%E5%90%A6%E8%83%BD%E6%AD%A3%E5%B8%B8%E6%8F%90%E4%BE%9B%E6%9C%8D%E5%8A%A1%EF%BC%8C%E5%9C%A8%E5%AE%BF%E4%B8%BB%E4%B8%8A%E7%9A%84%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%8A%E6%89%93%E5%BC%80%E9%93%BE%E6%8E%A5-http-localhost-8099-hello-docker%EF%BC%8C%E5%8F%AF%E4%BB%A5%E7%9C%8B%E5%88%B0%E5%A6%82%E4%B8%8B%E8%BF%94%E5%9B%9E%E5%B0%B1%E8%AF%B4%E6%98%8E%E6%9C%8D%E5%8A%A1%E6%AD%A3%E5%B8%B8%E4%BA%86%E3%80%82"><span class="toc-text">通过http请求调用验证我们的应用是否能正常提供服务，在宿主上的浏览器上打开链接 http:&#x2F;&#x2F;localhost:8099&#x2F;hello&#x2F;docker，可以看到如下返回就说明服务正常了。</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#One-More-Thing"><span class="toc-text">One More Thing</span></a></li></ol>
+    </div>
+  </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header"><i class="iconfont icon-fenlei" style="padding-right: 2px;"></i>分类</div>
+  <div class="categories-list">
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">16</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Docker">
+        <div class="categories-list-item">
+          Docker
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/缓存">
+        <div class="categories-list-item">
+          缓存
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/mybatis">
+        <div class="categories-list-item">
+          mybatis
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/摄影">
+        <div class="categories-list-item">
+          摄影
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/RabbitMQ">
+        <div class="categories-list-item">
+          RabbitMQ
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/tensorflow">
+        <div class="categories-list-item">
+          tensorflow
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+      <a href="/categories/问题">
+        <div class="categories-list-item">
+          问题
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+      <a href="/categories/并发">
+        <div class="categories-list-item">
+          并发
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringBoot">
+        <div class="categories-list-item">
+          SpringBoot
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Mysql">
+        <div class="categories-list-item">
+          Mysql
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Restful">
+        <div class="categories-list-item">
+          Restful
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/thread">
+        <div class="categories-list-item">
+          thread
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Tomcat">
+        <div class="categories-list-item">
+          Tomcat
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/消息队列">
+        <div class="categories-list-item">
+          消息队列
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/消息队列">
+        <div class="categories-list-item">
+          消息队列
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/分布式">
+        <div class="categories-list-item">
+          分布式
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/多线程">
+        <div class="categories-list-item">
+          多线程
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringBoot">
+        <div class="categories-list-item">
+          SpringBoot
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/kafka">
+        <div class="categories-list-item">
+          kafka
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringCloud">
+        <div class="categories-list-item">
+          SpringCloud
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/消息队列">
+        <div class="categories-list-item">
+          消息队列
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/kafka">
+        <div class="categories-list-item">
+          kafka
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringBoot">
+        <div class="categories-list-item">
+          SpringBoot
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header"><i class="iconfont icon-biaoqian" style="padding-right: 2px;"></i>热门标签</div>
+  <div class="tags-list">
+    
+    <a href="\tags\Java" title="Java"><div class="tags-list-item">Java</div></a>
+    
+    <a href="\tags\MQ" title="MQ"><div class="tags-list-item">MQ</div></a>
+    
+    <a href="\tags\消息队列" title="消息队列"><div class="tags-list-item">消息队列</div></a>
+    
+    <a href="\tags\多线程" title="多线程"><div class="tags-list-item">多线程</div></a>
+    
+    <a href="\tags\SpringBoot" title="SpringBoot"><div class="tags-list-item">SpringBoot</div></a>
+    
+    <a href="\tags\分布式" title="分布式"><div class="tags-list-item">分布式</div></a>
+    
+    <a href="\tags\Mysql" title="Mysql"><div class="tags-list-item">Mysql</div></a>
+    
+    <a href="\tags\Tomcat" title="Tomcat"><div class="tags-list-item">Tomcat</div></a>
+    
+    <a href="\tags\RabbitMQ" title="RabbitMQ"><div class="tags-list-item">RabbitMQ</div></a>
+    
+    <a href="\tags\kafka" title="kafka"><div class="tags-list-item">kafka</div></a>
+    
+    <a href="\tags\并发" title="并发"><div class="tags-list-item">并发</div></a>
+    
+    <a href="\tags\jackson" title="jackson"><div class="tags-list-item">jackson</div></a>
+    
+    <a href="\tags\Json" title="Json"><div class="tags-list-item">Json</div></a>
+    
+    <a href="\tags\zookeeper" title="zookeeper"><div class="tags-list-item">zookeeper</div></a>
+    
+    <a href="\tags\安全漏洞" title="安全漏洞"><div class="tags-list-item">安全漏洞</div></a>
+    
+    <a href="\tags\SpringCloud" title="SpringCloud"><div class="tags-list-item">SpringCloud</div></a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+          <aside class="right-column">
+            <div class="sticky-widescreen">
+  
+  
+  <article class="card card-content toc-card">
+    <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81Background"><span class="toc-text">一、Background</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%9E%84%E5%BB%BA%E5%9F%BA%E4%BA%8ESpringBoot%E7%9A%84Java%E5%BA%94%E7%94%A8%E5%AE%B9%E5%99%A8%E5%8C%96Docker%E9%83%A8%E7%BD%B2"><span class="toc-text">二、构建基于SpringBoot的Java应用容器化Docker部署</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84"><span class="toc-text">1. 项目结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%9F%BA%E4%BA%8ESpringBoot%E7%9A%84Java%E5%BA%94%E7%94%A8%E6%9E%84%E5%BB%BA%E5%87%86%E5%A4%87"><span class="toc-text">2. 基于SpringBoot的Java应用构建准备</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-SpringBoot%E5%BA%94%E7%94%A8%E6%89%93%E5%8C%85%E6%88%90jar"><span class="toc-text">3. SpringBoot应用打包成jar</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E7%BC%96%E5%86%99Dockerfile"><span class="toc-text">4. 编写Dockerfile</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E6%9E%84%E5%BB%BADocker%E9%95%9C%E5%83%8F"><span class="toc-text">5. 构建Docker镜像</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-%E4%BD%BF%E7%94%A8%E9%95%9C%E5%83%8F%E5%90%AF%E5%8A%A8%E5%AE%B9%E5%99%A8"><span class="toc-text">6. 使用镜像启动容器</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E9%AA%8C%E8%AF%81%E5%AE%B9%E5%99%A8%E5%8C%96%E9%83%A8%E7%BD%B2%E5%BA%94%E7%94%A8"><span class="toc-text">三、验证容器化部署应用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%80%9A%E8%BF%87http%E8%AF%B7%E6%B1%82%E8%B0%83%E7%94%A8%E9%AA%8C%E8%AF%81%E6%88%91%E4%BB%AC%E7%9A%84%E5%BA%94%E7%94%A8%E6%98%AF%E5%90%A6%E8%83%BD%E6%AD%A3%E5%B8%B8%E6%8F%90%E4%BE%9B%E6%9C%8D%E5%8A%A1%EF%BC%8C%E5%9C%A8%E5%AE%BF%E4%B8%BB%E4%B8%8A%E7%9A%84%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%8A%E6%89%93%E5%BC%80%E9%93%BE%E6%8E%A5-http-localhost-8099-hello-docker%EF%BC%8C%E5%8F%AF%E4%BB%A5%E7%9C%8B%E5%88%B0%E5%A6%82%E4%B8%8B%E8%BF%94%E5%9B%9E%E5%B0%B1%E8%AF%B4%E6%98%8E%E6%9C%8D%E5%8A%A1%E6%AD%A3%E5%B8%B8%E4%BA%86%E3%80%82"><span class="toc-text">通过http请求调用验证我们的应用是否能正常提供服务，在宿主上的浏览器上打开链接 http:&#x2F;&#x2F;localhost:8099&#x2F;hello&#x2F;docker，可以看到如下返回就说明服务正常了。</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#One-More-Thing"><span class="toc-text">One More Thing</span></a></li></ol>
+  </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header"><i class="iconfont icon-wenzhang_huaban" style="padding-right: 2px;"></i>最近文章</div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-03-01</div>
+        <a href="/2021/03/01/lowcase-start-word-json-serialize-error/"><div class="recent-posts-item-content">uName类似首字符小写属性Json序列化接收不到数据问题及解决办法</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2020-09-16</div>
+        <a href="/2020/09/16/photo/"><div class="recent-posts-item-content">手机摄影之城市一角（一）</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2020-09-01</div>
+        <a href="/2020/09/01/jvm-local-cache-case-caffeine/"><div class="recent-posts-item-content">JVM高性能本地缓存Caffeine使用案例</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2020-08-25</div>
+        <a href="/2020/08/25/mysql-procedure-batch-create-table-pratise/"><div class="recent-posts-item-content">减少重复劳动,使用Mysql存储过程批量创建表</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>Copyright ©
+          
+          2016 -
+          
+          2021
+        </span>
+        &nbsp;
+        <a href="/" class="footer-link">攻城狮李猿外 </a>
+      </div>
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+        本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+        <span>&nbsp;|&nbsp;</span>
+        
+        
+        本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+    <script>
+    //百度链接提交
+      (function(){
+          var bp = document.createElement('script');
+          var curProtocol = window.location.protocol.split(':')[0];
+          if (curProtocol === 'https'){
+          bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else{
+          bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(bp, s);
+      })();
+    </script>
+    
+    <script>
+    //百度统计
+      var _hmt = _hmt || [];
+      (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?57e94335f06e1ca57d2246529a0150c7";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+</footer>
+  <a role="button" id="scrollbutton" class="basebutton"  aria-label="回到顶部">
+  <i class="iconfont icon-arrowleft button-icon"></i>
+</a>
+<a role="button" id="menubutton" class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a role="button" id="popbutton" class="basebutton" aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a role="button" id="darkbutton" class="basebutton darkwidget" aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a role="button" id="searchbutton" class="basebutton searchwidget" aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+
+  
+  
+  
+  <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img');
+    var i;
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a');
+      wrapper.setAttribute('data-fslightbox', 'gallery');
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'));
+      wrapper.setAttribute('aria-label', 'illustration');
+      wrapper.style.cssText = 'width: 100%; display: flex; justify-content: center;';
+      img[i].before(wrapper);
+      wrapper.append(img[i]);
+    }
+    refreshFsLightbox();
+  }
+</script>
+<script>loadScript("//cdn.jsdelivr.net/npm/fslightbox@3.1.0/index.min.js", addImgLayout)</script>
+  
+  
+  
+<script src="/js/main.js"></script>
+
+  
+  <script>loadScript("/js/lib/busuanzi.min.js")</script>
+  
+  
+  <script>
+    var addLazyload = function () {
+      var observer = lozad('.lozad', {
+        load: function (el) {
+          el.srcset = el.getAttribute('data-src');
+        },
+        loaded: function (el) {
+          el.classList.add('loaded');
+        }
+      });
+      observer.observe();
+    }
+  </script>
+  <script>loadScript("/js/lib/lozad.min.js", addLazyload)</script>
+  
+  
+</body>
+
+</html>

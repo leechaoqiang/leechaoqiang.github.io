@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html  lang="zh-CN" >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="#fff" id="theme-color">
+  <meta name="description" content="不以物喜，不以己悲。">
+  <link rel="icon" href="/images/logo.jpg">
+  <title>RESTful-WebService初识入门NO.1</title>
+  
+  
+  <meta property="og:title" content="RESTful-WebService初识入门NO.1">
+  
+  
+  <meta property="og:url" content="http://leechaoqiang.github.io/2016/09/06/restful-webservice-learning-greenhand-note-001/index.html">
+  
+  
+  <meta property="og:img" content="/images/logo.jpg">
+  
+  
+  <meta property="og:img" content="&lt;p&gt;RESTful WebService是把一切对象方法看做资源，开发RESTful WebService意味着支持在多种媒体类型以及抽象底层的客户端-服务器通信细节，如果没有一个好的工具包可用，会变得不那么容易。为了简化使用JAVA开发RESTful WebService及其客户端，一个轻量级的标准被提出：JAX-RS API。&lt;br&gt;Jersey RESTful WebService框架是一个开源的、产品级别的JAVA框架，支持JAX-RS API并且是一个JAX-RS(JSR 311和 JSR 339)的参考实现。&lt;br&gt;&lt;/p&gt;">
+  
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:published_time" content="2016-09-06">
+  <meta property="og:article:modified_time" content="2021-04-15">
+  <meta property="og:article:author" content="李猿外">
+  
+  
+  <meta property="og:article:tag" content="restful">
+  
+  <meta property="og:article:tag" content="webservice">
+  
+  
+  
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+    var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+      }
+    };
+    setDarkmode();
+  </script>
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  </script>
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_f7g5jnuftcf.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  <link rel="preload" href="//cdn.jsdelivr.net/npm/fslightbox@3.1.0/index.min.js" as="script">
+  
+  
+  <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+  <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">
+  
+  
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_f7g5jnuftcf.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 5.0.2"></head>
+
+
+<body>
+  <div class="wrapper">
+    
+    <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+      <img class="navbar-logo-img" src="/images/logo.jpg" alt="logo">
+      
+      <span class="navbar-logo-dsc">攻城狮李猿外</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+    <a href="/" class="navbar-menu-item">
+    
+    首页
+    
+    </a>
+    
+    <a href="/archives" class="navbar-menu-item">
+    
+    归档
+    
+    </a>
+    
+    <a href="/tags" class="navbar-menu-item">
+    
+    标签
+    
+    </a>
+    
+    <a href="/categories" class="navbar-menu-item">
+    
+    分类
+    
+    </a>
+    
+    <a href="/about" class="navbar-menu-item">
+    
+    关于
+    
+    </a>
+    
+    <a href="/links" class="navbar-menu-item">
+    
+    友链
+    
+    </a>
+    
+    <a class="navbar-menu-item darknavbar" id="dark"><i class="iconfont icon-weather"></i></a>
+    <a class="navbar-menu-item searchnavbar" id="search"><i class="iconfont icon-search" style="font-size: 1.2rem; font-weight: 400;"></i></a>
+  </div>
+</nav>
+    
+    <div id="local-search" style="display: none;">
+      <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容...">
+      <div id="search-content"></div>
+    </div>
+    
+    <div class="section-wrap">
+      <div class="container">
+        <div class="columns">
+          <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      RESTful-WebService初识入门NO.1
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2016-09-06T02:40:59.000Z">
+      <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+      <span>2016-09-06</span>
+    </time>
+    
+    <span class="dot"></span>
+    
+    <a href="/categories/博客/" class="post-meta-link">博客</a>
+    
+    <a href="/categories/博客/Restful/" class="post-meta-link">Restful</a>
+    
+    
+    
+    <span class="dot"></span>
+    <span>985 字</span>
+    
+  </div>
+  
+  <div class="post-meta post-show-meta" style="margin-top: -10px;">
+    <div style="display: flex; align-items: center;">
+      <i class="iconfont icon-biaoqian" style="margin-right: 2px; font-size: 1.15rem;"></i>
+      
+      
+        <a href="/tags/restful/" class="post-meta-link">restful</a>
+      
+      
+      <span class="dot"></span>
+      
+        <a href="/tags/webservice/" class="post-meta-link">webservice</a>
+      
+    </div>
+  </div>
+  
+  </header>
+  <div id="section" class="post-content">
+    <p>RESTful WebService是把一切对象方法看做资源，开发RESTful WebService意味着支持在多种媒体类型以及抽象底层的客户端-服务器通信细节，如果没有一个好的工具包可用，会变得不那么容易。为了简化使用JAVA开发RESTful WebService及其客户端，一个轻量级的标准被提出：JAX-RS API。<br>Jersey RESTful WebService框架是一个开源的、产品级别的JAVA框架，支持JAX-RS API并且是一个JAX-RS(JSR 311和 JSR 339)的参考实现。<br><a id="more"></a><br>Jersey不仅仅是一个JAX-RS的参考实现，Jersey提供自己的API，其API继承自JAX-RS，提供更多的特性和功能以进一步简化RESTful service和客户端的开发。Jersey2.1版本之前默认HK2作为Ioc容器，后面才增加了Spring的支持。同时默认采用glassfish作为web容器。<br></p>
+<h2 id="接下里我们-使用-maven来-实践-一个-小-练习。"><a href="#接下里我们-使用-maven来-实践-一个-小-练习。" class="headerlink" title="接下里我们 使用 maven来 实践 一个 小 练习。"></a>接下里我们 使用 maven来 实践 一个 小 练习。</h2><ol>
+<li>检测自己本地的maven版本：<pre class="highlight"><span class="line"><span class="attribute">sh</span>-<span class="number">3</span>.<span class="number">2</span># mvn -version</span><br><span class="line"><span class="attribute">Apache</span> Maven <span class="number">3</span>.<span class="number">3</span>.<span class="number">3</span> (<span class="number">7994120775791599</span>e<span class="number">205</span>a<span class="number">5524</span>ec<span class="number">3</span>e<span class="number">0</span>dfe<span class="number">41</span>d<span class="number">4</span>a<span class="number">06</span>; <span class="number">2015</span>-<span class="number">04</span>-<span class="number">22</span>T<span class="number">19</span>:<span class="number">57</span>:<span class="number">37</span>+<span class="number">08</span>:<span class="number">00</span>)</span><br><span class="line"><span class="attribute">Maven</span> home: /Users/lichaoqiang/Maven/Maven<span class="number">3</span>.<span class="number">3</span>.<span class="number">3</span></span><br><span class="line"><span class="attribute">Java</span> version: <span class="number">1</span>.<span class="number">7</span>.<span class="number">0</span>_<span class="number">79</span>, vendor: Oracle Corporation</span><br><span class="line"><span class="attribute">Java</span> home: /Library/Java/JavaVirtualMachines/jdk<span class="number">1</span>.<span class="number">7</span>.<span class="number">0</span>_<span class="number">79</span>.jdk/Contents/Home/jre</span><br><span class="line"><span class="attribute">Default</span> locale: zh_CN, platform encoding: UTF-<span class="number">8</span></span><br><span class="line"><span class="attribute">OS</span> name: <span class="string">&quot;mac os x&quot;</span>, version: <span class="string">&quot;10.11.6&quot;</span>, arch: <span class="string">&quot;x86_64&quot;</span>, family: <span class="string">&quot;mac&quot;</span></span><br></pre></li>
+<li>创建第一个restful风格的maven工程。<br>在终端里面执行以下命令：<pre class="highlight"><span class="line">mvn archetype:generate <span class="attribute">-DarchetypeArtifactId</span>=jersey-quickstart-grizzly2 <span class="attribute">-DarchetypeGroupId</span>=org.glassfish.jersey.archetypes <span class="attribute">-DinteractiveMode</span>=<span class="literal">false</span> <span class="attribute">-DgroupId</span>=com.licq.restful <span class="attribute">-DartifactId</span>=licq-first-service <span class="attribute">-Dpackage</span>=com.licq <span class="attribute">-DarchetypeVersion</span>=2.22.1</span><br></pre>
+得到的结果如下，表示创建成功。<pre class="highlight"><span class="line">[<span class="keyword">INFO</span>] <span class="keyword">Using</span> <span class="keyword">following</span> parameters <span class="keyword">for</span> creating project <span class="keyword">from</span> <span class="built_in">Old</span> (<span class="number">1.</span>x) Archetype: jersey-quickstart-grizzly2:<span class="number">2.22</span><span class="number">.1</span></span><br><span class="line">[<span class="keyword">INFO</span>] <span class="comment">----------------------------------------------------------------------------</span></span><br><span class="line">[<span class="keyword">INFO</span>] Parameter: groupId, <span class="keyword">Value</span>: com.licq.restful</span><br><span class="line">[<span class="keyword">INFO</span>] Parameter: packageName, <span class="keyword">Value</span>: com.licq</span><br><span class="line">[<span class="keyword">INFO</span>] Parameter: package, <span class="keyword">Value</span>: com.licq</span><br><span class="line">[<span class="keyword">INFO</span>] Parameter: artifactId, <span class="keyword">Value</span>: licq-first-service</span><br><span class="line">[<span class="keyword">INFO</span>] Parameter: basedir, <span class="keyword">Value</span>: /Users/lichaoqiang/project/restfulService_demo</span><br><span class="line">[<span class="keyword">INFO</span>] Parameter: <span class="keyword">version</span>, <span class="keyword">Value</span>: <span class="number">1.0</span>-<span class="keyword">SNAPSHOT</span></span><br><span class="line">[<span class="keyword">INFO</span>] project created <span class="keyword">from</span> <span class="built_in">Old</span> (<span class="number">1.</span>x) Archetype <span class="keyword">in</span> dir: /Users/lichaoqiang/project/restfulService_demo/licq-first-service</span><br><span class="line">[<span class="keyword">INFO</span>] <span class="comment">------------------------------------------------------------------------</span></span><br><span class="line">[<span class="keyword">INFO</span>] BUILD SUCCESS</span><br><span class="line">[<span class="keyword">INFO</span>] <span class="comment">------------------------------------------------------------------------</span></span><br><span class="line">[<span class="keyword">INFO</span>] Total <span class="type">time</span>: <span class="number">59.191</span> s</span><br><span class="line">[<span class="keyword">INFO</span>] Finished at: <span class="number">2016</span><span class="number">-09</span><span class="number">-06</span>T10:<span class="number">11</span>:<span class="number">14</span>+<span class="number">08</span>:<span class="number">00</span></span><br><span class="line">[<span class="keyword">INFO</span>] Final Memory: <span class="number">16</span>M/<span class="number">245</span>M</span><br><span class="line">[<span class="keyword">INFO</span>] <span class="comment">------------------------------------------------------------------------</span></span><br></pre></li>
+<li>使用mvn命令来编译测试新建的工程。<br>执行命令如下：<br><img src="https://github.com/leechaoqiang/blog_resource/blob/master/leechaoqiang.github.io/restful/restful_0003.png?raw=true" alt="执行命令" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://github.com/leechaoqiang/blog_resource/blob/master/leechaoqiang.github.io/restful/restful_0003.png?raw=true" class="lozad post-image"><br>得到如下的结果,表示编译通过。<pre class="highlight"><span class="line">-------------------------------------------------------</span><br><span class="line"> T E S T S</span><br><span class="line">-------------------------------------------------------</span><br><span class="line">Running com.licq.MyResourceTest</span><br><span class="line">Sep <span class="number">06</span>, <span class="number">2016</span> <span class="number">10</span>:<span class="number">17</span>:<span class="number">02</span> AM org.glassfish.grizzly.http.server.NetworkListener start</span><br><span class="line">信息: Started listener bound to [localhost:<span class="number">8080</span>]</span><br><span class="line">Sep <span class="number">06</span>, <span class="number">2016</span> <span class="number">10</span>:<span class="number">17</span>:<span class="number">02</span> AM org.glassfish.grizzly.http.server.HttpServer start</span><br><span class="line">信息: [HttpServer] Started.</span><br><span class="line">Sep <span class="number">06</span>, <span class="number">2016</span> <span class="number">10</span>:<span class="number">17</span>:<span class="number">02</span> AM org.glassfish.grizzly.http.server.NetworkListener shutdownNow</span><br><span class="line">信息: Stopped listener bound to [localhost:<span class="number">8080</span>]</span><br><span class="line">Tests run: <span class="number">1</span>, Failures: <span class="number">0</span>, Errors: <span class="number">0</span>, Skipped: <span class="number">0</span>, Time elapsed: <span class="number">1.154</span> sec</span><br><span class="line"></span><br><span class="line">Results :</span><br><span class="line"></span><br><span class="line">Tests run: <span class="number">1</span>, Failures: <span class="number">0</span>, Errors: <span class="number">0</span>, Skipped: <span class="number">0</span></span><br><span class="line"></span><br><span class="line">[INFO] ------------------------------------------------------------------------</span><br><span class="line">[INFO] BUILD SUCCESS</span><br><span class="line">[INFO] ------------------------------------------------------------------------</span><br><span class="line">[INFO] Total time: <span class="number">36.341</span> s</span><br><span class="line">[INFO] Finished at: <span class="number">2016</span><span class="number">-09</span><span class="number">-06</span>T10:<span class="number">17</span>:<span class="number">02</span>+<span class="number">08</span>:<span class="number">00</span></span><br><span class="line">[INFO] Final Memory: <span class="number">16</span>M/<span class="number">245</span>M</span><br></pre></li>
+<li>执行mvn exec:java命令，启动我们的服务，并查看结果。</li>
+</ol>
+<pre class="highlight"><span class="line">sh-<span class="number">3.2</span><span class="comment"># mvn exec:java</span></span><br><span class="line">[INFO] Scanning <span class="keyword">for</span> projects...</span><br><span class="line">[INFO]</span><br><span class="line">[INFO] ------------------------------------------------------------------------</span><br><span class="line">[INFO] Building licq-first-service <span class="number">1.0</span>-SNAPSHOT</span><br><span class="line">[INFO] ------------------------------------------------------------------------</span><br><span class="line">[INFO]</span><br><span class="line">[INFO] &gt;&gt;&gt; exec-maven-plugin:<span class="number">1.2</span>.<span class="number">1</span>:java (default-cli) &gt; validate @ licq-first-service &gt;&gt;&gt;</span><br><span class="line">[INFO]</span><br><span class="line">[INFO] &lt;&lt;&lt; exec-maven-plugin:<span class="number">1.2</span>.<span class="number">1</span>:java (default-cli) &lt; validate @ licq-first-service &lt;&lt;&lt;</span><br><span class="line">[INFO]</span><br><span class="line">[INFO] --- exec-maven-plugin:<span class="number">1.2</span>.<span class="number">1</span>:java (default-cli) @ licq-first-service ---</span><br><span class="line">Downloading: http:<span class="regexp">//</span><span class="number">192.168</span>.<span class="number">29.1</span>:<span class="number">8081</span><span class="regexp">/nexus/</span>content<span class="regexp">/groups/</span>public<span class="regexp">/org/</span>apache<span class="regexp">/commons/</span>commons-exec<span class="regexp">/1.1/</span>commons-exec-<span class="number">1.1</span>.jar</span><br><span class="line">Downloading: http:<span class="regexp">//</span><span class="number">192.168</span>.<span class="number">29.1</span>:<span class="number">8081</span><span class="regexp">/nexus/</span>content<span class="regexp">/groups/</span>public<span class="regexp">/org/</span>codehaus<span class="regexp">/plexus/</span>plexus-container-default<span class="regexp">/1.0-alpha-9/</span>plexus-container-default-<span class="number">1.0</span>-alpha-<span class="number">9</span>.jar</span><br><span class="line">Downloaded: http:<span class="regexp">//</span><span class="number">192.168</span>.<span class="number">29.1</span>:<span class="number">8081</span><span class="regexp">/nexus/</span>content<span class="regexp">/groups/</span>public<span class="regexp">/org/</span>apache<span class="regexp">/commons/</span>commons-exec<span class="regexp">/1.1/</span>commons-exec-<span class="number">1.1</span>.jar (<span class="number">52</span> KB at <span class="number">30.3</span> KB/sec)</span><br><span class="line">Downloaded: http:<span class="regexp">//</span><span class="number">192.168</span>.<span class="number">29.1</span>:<span class="number">8081</span><span class="regexp">/nexus/</span>content<span class="regexp">/groups/</span>public<span class="regexp">/org/</span>codehaus<span class="regexp">/plexus/</span>plexus-container-default<span class="regexp">/1.0-alpha-9/</span>plexus-container-default-<span class="number">1.0</span>-alpha-<span class="number">9</span>.jar (<span class="number">191</span> KB at <span class="number">93.7</span> KB/sec)</span><br><span class="line">Sep <span class="number">06</span>, <span class="number">2016</span> <span class="number">10</span>:<span class="number">18</span>:<span class="number">08</span> AM org.glassfish.grizzly.http.server.NetworkListener start</span><br><span class="line">信息: Started listener bound to [localhost:<span class="number">8080</span>]</span><br><span class="line">Sep <span class="number">06</span>, <span class="number">2016</span> <span class="number">10</span>:<span class="number">18</span>:<span class="number">08</span> AM org.glassfish.grizzly.http.server.HttpServer start</span><br><span class="line">信息: [HttpServer] Started.</span><br><span class="line">Jersey app started with WADL available at http:<span class="regexp">//</span>localhost:<span class="number">8080</span><span class="regexp">/myapp/</span>application.wadl</span><br><span class="line">Hit enter to stop it...</span><br></pre>
+<ol>
+<li><p>在浏览器中输入地址：<a target="_blank" rel="noopener" href="http://localhost:8080/myapp/application.wadl">http://localhost:8080/myapp/application.wadl</a>查看wsdl的描述。<br><img src="https://github.com/leechaoqiang/blog_resource/blob/master/leechaoqiang.github.io/restful/restful_0001.png?raw=true" alt="wsdl描述" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://github.com/leechaoqiang/blog_resource/blob/master/leechaoqiang.github.io/restful/restful_0001.png?raw=true" class="lozad post-image"></p>
+</li>
+<li><p>在浏览器中输入地址：<a target="_blank" rel="noopener" href="http://localhost:8080/myapp/myresource">http://localhost:8080/myapp/myresource</a>查看我们的资源，也就是方法。<br><img src="https://github.com/leechaoqiang/blog_resource/blob/master/leechaoqiang.github.io/restful/restful_0004.png?raw=true" alt="资源" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://github.com/leechaoqiang/blog_resource/blob/master/leechaoqiang.github.io/restful/restful_0004.png?raw=true" class="lozad post-image"><br>这个小实践的源码在<a target="_blank" rel="noopener" href="https://github.com/leechaoqiang/licq-first-service">Github</a>上有备份，可以下载查看，很简单，后面会有更多的详解。</p>
+</li>
+</ol>
+
+  </div>
+  <div>
+  
+  <div class="post-note note-warning copyright" style="margin-top: 42px">
+    <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="http://leechaoqiang.github.io/about">李猿外</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="http://leechaoqiang.github.io/2016/09/06/restful-webservice-learning-greenhand-note-001/">http://leechaoqiang.github.io/2016/09/06/restful-webservice-learning-greenhand-note-001/</a></p>
+    <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+  </div>
+  
+  </div>
+</article>
+<div class="nav">
+  
+  <div class="nav-item-prev">
+    <a href="/2016/10/21/string-stringbuilder-stringbuffer-run-efficiency-compare/" class="nav-link">
+      <i class="iconfont icon-left nav-prev-icon"></i>
+      <div>
+        <div class="nav-label">上一篇</div>
+        
+        <div class="nav-title">String,StringBuffer,StringBuilder拼接操作的效率比拼 </div>
+        
+      </div>
+    </a>
+  </div>
+  
+  
+  <div class="nav-item-next">
+    <a href="/2016/06/22/mango-jfaster-dao-struct-intraductions/" class="nav-link">
+      <div>
+        <div class="nav-label">下一篇</div>
+        
+        <div class="nav-title">轻量级极速数据层访问框架mango </div>
+        
+      </div>
+      <i class="iconfont icon-right nav-next-icon"></i>
+    </a>
+  </div>
+  
+</div>
+
+<div class="card card-content comment-card" style="margin-top: 16px;">
+  <div class="comment-card-title">评论</div>
+  
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: 'SnVYhldRRlqYatvAs4y3N2qF-MdYXbMMI',
+        appKey: '2SwmjMzPEwYhnB7hqqNgknXM',
+        placeholder: '都来了，留句话呗...',
+        path: window.location.pathname,
+        avatar: 'wavatar',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'false',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+</div>
+
+<div class="card card-content toc-card" id="mobiletoc">
+  <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A5%E4%B8%8B%E9%87%8C%E6%88%91%E4%BB%AC-%E4%BD%BF%E7%94%A8-maven%E6%9D%A5-%E5%AE%9E%E8%B7%B5-%E4%B8%80%E4%B8%AA-%E5%B0%8F-%E7%BB%83%E4%B9%A0%E3%80%82"><span class="toc-text">接下里我们 使用 maven来 实践 一个 小 练习。</span></a></li></ol>
+</div></main>
+          <aside class="left-column">
+            
+            <div class="card card-author">
+              
+<img src="/images/logo.jpg" class="author-img">
+
+<p class="author-name">李猿外</p>
+<p class="author-description">爱智求真,共同进步。</p>
+<div class="author-message">
+  <a class="author-posts-count" href="/archives">
+    <span>27</span>
+    <span>文章</span>
+  </a>
+  <a class="author-categories-count" href="/categories">
+    <span>30</span>
+    <span>分类</span>
+  </a>
+  <a class="author-tags-count" href="/tags">
+    <span>58</span>
+    <span>标签</span>
+  </a>
+</div>
+
+<div class="author-card-society">
+  
+    <div class="author-card-society-icon">
+      <a target="_blank" rel="noopener" href="https://github.com/leechaoqiang">
+        <i class="iconfont icon-github society-icon"></i>
+      </a>
+    </div>
+  
+    <div class="author-card-society-icon">
+      <a href="mailto:vincentlee99@126.com">
+        <i class="iconfont icon-mail society-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+            </div>
+            
+            <div class="sticky-tablet">
+  
+  
+  <article class="display-when-two-columns spacer">
+    <div class="card card-content toc-card">
+      <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A5%E4%B8%8B%E9%87%8C%E6%88%91%E4%BB%AC-%E4%BD%BF%E7%94%A8-maven%E6%9D%A5-%E5%AE%9E%E8%B7%B5-%E4%B8%80%E4%B8%AA-%E5%B0%8F-%E7%BB%83%E4%B9%A0%E3%80%82"><span class="toc-text">接下里我们 使用 maven来 实践 一个 小 练习。</span></a></li></ol>
+    </div>
+  </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header"><i class="iconfont icon-fenlei" style="padding-right: 2px;"></i>分类</div>
+  <div class="categories-list">
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">16</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Docker">
+        <div class="categories-list-item">
+          Docker
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/缓存">
+        <div class="categories-list-item">
+          缓存
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/mybatis">
+        <div class="categories-list-item">
+          mybatis
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/摄影">
+        <div class="categories-list-item">
+          摄影
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/RabbitMQ">
+        <div class="categories-list-item">
+          RabbitMQ
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/tensorflow">
+        <div class="categories-list-item">
+          tensorflow
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+      <a href="/categories/问题">
+        <div class="categories-list-item">
+          问题
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+      <a href="/categories/并发">
+        <div class="categories-list-item">
+          并发
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringBoot">
+        <div class="categories-list-item">
+          SpringBoot
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Mysql">
+        <div class="categories-list-item">
+          Mysql
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Restful">
+        <div class="categories-list-item">
+          Restful
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/thread">
+        <div class="categories-list-item">
+          thread
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Tomcat">
+        <div class="categories-list-item">
+          Tomcat
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/消息队列">
+        <div class="categories-list-item">
+          消息队列
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/消息队列">
+        <div class="categories-list-item">
+          消息队列
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/分布式">
+        <div class="categories-list-item">
+          分布式
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/多线程">
+        <div class="categories-list-item">
+          多线程
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringBoot">
+        <div class="categories-list-item">
+          SpringBoot
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/kafka">
+        <div class="categories-list-item">
+          kafka
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringCloud">
+        <div class="categories-list-item">
+          SpringCloud
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/消息队列">
+        <div class="categories-list-item">
+          消息队列
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/kafka">
+        <div class="categories-list-item">
+          kafka
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringBoot">
+        <div class="categories-list-item">
+          SpringBoot
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header"><i class="iconfont icon-biaoqian" style="padding-right: 2px;"></i>热门标签</div>
+  <div class="tags-list">
+    
+    <a href="\tags\Java" title="Java"><div class="tags-list-item">Java</div></a>
+    
+    <a href="\tags\MQ" title="MQ"><div class="tags-list-item">MQ</div></a>
+    
+    <a href="\tags\消息队列" title="消息队列"><div class="tags-list-item">消息队列</div></a>
+    
+    <a href="\tags\多线程" title="多线程"><div class="tags-list-item">多线程</div></a>
+    
+    <a href="\tags\SpringBoot" title="SpringBoot"><div class="tags-list-item">SpringBoot</div></a>
+    
+    <a href="\tags\分布式" title="分布式"><div class="tags-list-item">分布式</div></a>
+    
+    <a href="\tags\Mysql" title="Mysql"><div class="tags-list-item">Mysql</div></a>
+    
+    <a href="\tags\Tomcat" title="Tomcat"><div class="tags-list-item">Tomcat</div></a>
+    
+    <a href="\tags\RabbitMQ" title="RabbitMQ"><div class="tags-list-item">RabbitMQ</div></a>
+    
+    <a href="\tags\kafka" title="kafka"><div class="tags-list-item">kafka</div></a>
+    
+    <a href="\tags\并发" title="并发"><div class="tags-list-item">并发</div></a>
+    
+    <a href="\tags\jackson" title="jackson"><div class="tags-list-item">jackson</div></a>
+    
+    <a href="\tags\Json" title="Json"><div class="tags-list-item">Json</div></a>
+    
+    <a href="\tags\zookeeper" title="zookeeper"><div class="tags-list-item">zookeeper</div></a>
+    
+    <a href="\tags\安全漏洞" title="安全漏洞"><div class="tags-list-item">安全漏洞</div></a>
+    
+    <a href="\tags\SpringCloud" title="SpringCloud"><div class="tags-list-item">SpringCloud</div></a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+          <aside class="right-column">
+            <div class="sticky-widescreen">
+  
+  
+  <article class="card card-content toc-card">
+    <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A5%E4%B8%8B%E9%87%8C%E6%88%91%E4%BB%AC-%E4%BD%BF%E7%94%A8-maven%E6%9D%A5-%E5%AE%9E%E8%B7%B5-%E4%B8%80%E4%B8%AA-%E5%B0%8F-%E7%BB%83%E4%B9%A0%E3%80%82"><span class="toc-text">接下里我们 使用 maven来 实践 一个 小 练习。</span></a></li></ol>
+  </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header"><i class="iconfont icon-wenzhang_huaban" style="padding-right: 2px;"></i>最近文章</div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-03-01</div>
+        <a href="/2021/03/01/lowcase-start-word-json-serialize-error/"><div class="recent-posts-item-content">uName类似首字符小写属性Json序列化接收不到数据问题及解决办法</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2020-09-16</div>
+        <a href="/2020/09/16/photo/"><div class="recent-posts-item-content">手机摄影之城市一角（一）</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2020-09-01</div>
+        <a href="/2020/09/01/jvm-local-cache-case-caffeine/"><div class="recent-posts-item-content">JVM高性能本地缓存Caffeine使用案例</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2020-08-25</div>
+        <a href="/2020/08/25/mysql-procedure-batch-create-table-pratise/"><div class="recent-posts-item-content">减少重复劳动,使用Mysql存储过程批量创建表</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>Copyright ©
+          
+          2016 -
+          
+          2021
+        </span>
+        &nbsp;
+        <a href="/" class="footer-link">攻城狮李猿外 </a>
+      </div>
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+        本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+        <span>&nbsp;|&nbsp;</span>
+        
+        
+        本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+    <script>
+    //百度链接提交
+      (function(){
+          var bp = document.createElement('script');
+          var curProtocol = window.location.protocol.split(':')[0];
+          if (curProtocol === 'https'){
+          bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else{
+          bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(bp, s);
+      })();
+    </script>
+    
+    <script>
+    //百度统计
+      var _hmt = _hmt || [];
+      (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?57e94335f06e1ca57d2246529a0150c7";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+</footer>
+  <a role="button" id="scrollbutton" class="basebutton"  aria-label="回到顶部">
+  <i class="iconfont icon-arrowleft button-icon"></i>
+</a>
+<a role="button" id="menubutton" class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a role="button" id="popbutton" class="basebutton" aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a role="button" id="darkbutton" class="basebutton darkwidget" aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a role="button" id="searchbutton" class="basebutton searchwidget" aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+
+  
+  
+  
+  <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img');
+    var i;
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a');
+      wrapper.setAttribute('data-fslightbox', 'gallery');
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'));
+      wrapper.setAttribute('aria-label', 'illustration');
+      wrapper.style.cssText = 'width: 100%; display: flex; justify-content: center;';
+      img[i].before(wrapper);
+      wrapper.append(img[i]);
+    }
+    refreshFsLightbox();
+  }
+</script>
+<script>loadScript("//cdn.jsdelivr.net/npm/fslightbox@3.1.0/index.min.js", addImgLayout)</script>
+  
+  
+  
+<script src="/js/main.js"></script>
+
+  
+  <script>loadScript("/js/lib/busuanzi.min.js")</script>
+  
+  
+  <script>
+    var addLazyload = function () {
+      var observer = lozad('.lozad', {
+        load: function (el) {
+          el.srcset = el.getAttribute('data-src');
+        },
+        loaded: function (el) {
+          el.classList.add('loaded');
+        }
+      });
+      observer.observe();
+    }
+  </script>
+  <script>loadScript("/js/lib/lozad.min.js", addLazyload)</script>
+  
+  
+</body>
+
+</html>
