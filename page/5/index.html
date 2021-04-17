@@ -180,6 +180,42 @@
 <div class="card">
   
   <article class="card card-content">
+    <a href="/2016/06/22/mango-jfaster-dao-struct-intraductions/">
+      <h1 class="post-title">
+        轻量级极速数据层访问框架mango
+      </h1>
+    </a>
+    <div class="card-excerpt">
+      
+      最近逛论坛发现了一个轻量级极速数据层访问框架－－mango。能够实现分表分库，功能还算比较强大。据官网介绍，mango的中文名是“芒果”，它是一个轻量级极速数据层访问框架。目前已有十多个大型线上项目在使用mango，在某一支付系统中，更是利用mango，承载了每秒12万的支付下单请求。
+下面是mango的一些特性:
+超高性能，响应速度接近直接使用JDBC
+采用接口与注解的形式定义DAO，完美结合db与cache操作
+支持动态sql，可以构造任意复杂的sql语句
+支持多数据源，分表，分库，事务
+      
+    </div>
+    <div class="card-post-footer">
+      <div class="post-meta">
+        <time datetime="2016-06-22T06:34:08.000Z">
+          <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+          <span>2016-06-22</span>
+        </time>
+        
+        <span class="dot"></span>
+        
+        <a href="categories/博客/" class="post-meta-link">博客</a>
+        
+        
+      </div>
+      <a href="/2016/06/22/mango-jfaster-dao-struct-intraductions/">继续阅读 </a>
+    </div>
+  </article>
+</div>
+
+<div class="card">
+  
+  <article class="card card-content">
     <a href="/2016/06/13/PacketTooBigException-Packet-for-query-is-too-large/">
       <h1 class="post-title">
         Packet for query is too large(1508792 &gt; 1048576)
@@ -315,40 +351,6 @@
   </article>
 </div>
 
-<div class="card">
-  
-  <article class="card card-content">
-    <a href="/2016/03/14/dispatch-pay-balance-keep-consistence/">
-      <h1 class="post-title">
-        多并发时支付如何保持账户余额的一致性？
-      </h1>
-    </a>
-    <div class="card-excerpt">
-      
-      
-&amp;nbsp;&amp;nbsp;不管是电商，还是O2O业务都会涉及到支付，而且多速情况下流量比较大，尤其是在做活动的时候。一般支付系统主要有充值，扣费，提现，转账等功能，那么在有些业务场景下，尤其是多并发的情况下，我们在做扣费业务操作时该怎样去保持账户余额的一致呢？Java开发人员可能第一个想法就是在调用扣减的DAO的方法上加上一个synchronized关键字，这个解决办法在单节点应用部署是也许能生效管用，但是在我们实际的应用场景中，一般都是集群，多节点部署的应用，这个时候该如何解决呢？
-      
-    </div>
-    <div class="card-post-footer">
-      <div class="post-meta">
-        <time datetime="2016-03-14T15:33:02.000Z">
-          <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
-          <span>2016-03-14</span>
-        </time>
-        
-        <span class="dot"></span>
-        
-        <a href="categories/博客/" class="post-meta-link">博客</a>
-        
-        <a href="categories/博客/并发/" class="post-meta-link">并发</a>
-        
-        
-      </div>
-      <a href="/2016/03/14/dispatch-pay-balance-keep-consistence/">继续阅读 </a>
-    </div>
-  </article>
-</div>
-
 
 <div class="nav">
   
@@ -385,15 +387,15 @@
 <p class="author-description">爱智求真,共同进步。</p>
 <div class="author-message">
   <a class="author-posts-count" href="/archives">
-    <span>27</span>
+    <span>28</span>
     <span>文章</span>
   </a>
   <a class="author-categories-count" href="/categories">
-    <span>30</span>
+    <span>31</span>
     <span>分类</span>
   </a>
   <a class="author-tags-count" href="/tags">
-    <span>58</span>
+    <span>60</span>
     <span>标签</span>
   </a>
 </div>
@@ -635,6 +637,13 @@
         </div>
       </a>
     
+      <a href="/categories/Zookeeper">
+        <div class="categories-list-item">
+          Zookeeper
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
   </div>
 </div>
   </article>
@@ -650,11 +659,11 @@
     
     <a href="\tags\消息队列" title="消息队列"><div class="tags-list-item">消息队列</div></a>
     
+    <a href="\tags\分布式" title="分布式"><div class="tags-list-item">分布式</div></a>
+    
     <a href="\tags\多线程" title="多线程"><div class="tags-list-item">多线程</div></a>
     
     <a href="\tags\SpringBoot" title="SpringBoot"><div class="tags-list-item">SpringBoot</div></a>
-    
-    <a href="\tags\分布式" title="分布式"><div class="tags-list-item">分布式</div></a>
     
     <a href="\tags\Mysql" title="Mysql"><div class="tags-list-item">Mysql</div></a>
     
@@ -666,15 +675,15 @@
     
     <a href="\tags\并发" title="并发"><div class="tags-list-item">并发</div></a>
     
+    <a href="\tags\微服务" title="微服务"><div class="tags-list-item">微服务</div></a>
+    
+    <a href="\tags\Zookeeper" title="Zookeeper"><div class="tags-list-item">Zookeeper</div></a>
+    
     <a href="\tags\jackson" title="jackson"><div class="tags-list-item">jackson</div></a>
     
     <a href="\tags\Json" title="Json"><div class="tags-list-item">Json</div></a>
     
     <a href="\tags\zookeeper" title="zookeeper"><div class="tags-list-item">zookeeper</div></a>
-    
-    <a href="\tags\安全漏洞" title="安全漏洞"><div class="tags-list-item">安全漏洞</div></a>
-    
-    <a href="\tags\SpringCloud" title="SpringCloud"><div class="tags-list-item">SpringCloud</div></a>
     
   </div>
 </div>
@@ -723,9 +732,13 @@
     
       
         
+      
+    
+      
+        
           <a href="/archives/2020" class="archive-card-list-item">
               2020
-              <span class="archive-card-list-item-badge">5</span>
+              <span class="archive-card-list-item-badge">6</span>
           </a>
         
         
@@ -922,9 +935,13 @@
     
       
         
+      
+    
+      
+        
           <a href="/archives/2020" class="archive-card-list-item">
               2020
-              <span class="archive-card-list-item-badge">5</span>
+              <span class="archive-card-list-item-badge">6</span>
           </a>
         
         

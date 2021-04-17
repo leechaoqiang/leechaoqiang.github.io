@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html  lang="zh-CN" >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="#fff" id="theme-color">
+  <meta name="description" content="不以物喜，不以己悲。">
+  <link rel="icon" href="/images/logo.jpg">
+  <title>Zookeeper从入门到精通（一）</title>
+  
+  
+  <meta property="og:title" content="Zookeeper从入门到精通（一）">
+  
+  
+  <meta property="og:url" content="http://leechaoqiang.github.io/2020/04/17/zookeeper-from-start-to-deep-known-one/index.html">
+  
+  
+  <meta property="og:img" content="/images/logo.jpg">
+  
+  
+  <meta property="og:img" content="不以物喜，不以己悲。">
+  
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:published_time" content="2020-04-17">
+  <meta property="og:article:modified_time" content="2021-04-17">
+  <meta property="og:article:author" content="李猿外">
+  
+  
+  <meta property="og:article:tag" content="分布式">
+  
+  <meta property="og:article:tag" content="Zookeeper">
+  
+  <meta property="og:article:tag" content="微服务">
+  
+  
+  
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+    var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+      }
+    };
+    setDarkmode();
+  </script>
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  </script>
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_f7g5jnuftcf.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  <link rel="preload" href="//cdn.jsdelivr.net/npm/fslightbox@3.1.0/index.min.js" as="script">
+  
+  
+  <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+  <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">
+  
+  
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_f7g5jnuftcf.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 5.0.2"></head>
+
+
+<body>
+  <div class="wrapper">
+    
+    <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+      <img class="navbar-logo-img" src="/images/logo.jpg" alt="logo">
+      
+      <span class="navbar-logo-dsc">攻城狮李猿外</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+    <a href="/" class="navbar-menu-item">
+    
+    首页
+    
+    </a>
+    
+    <a href="/archives" class="navbar-menu-item">
+    
+    归档
+    
+    </a>
+    
+    <a href="/tags" class="navbar-menu-item">
+    
+    标签
+    
+    </a>
+    
+    <a href="/categories" class="navbar-menu-item">
+    
+    分类
+    
+    </a>
+    
+    <a href="/about" class="navbar-menu-item">
+    
+    关于
+    
+    </a>
+    
+    <a href="/links" class="navbar-menu-item">
+    
+    友链
+    
+    </a>
+    
+    <a class="navbar-menu-item darknavbar" id="dark"><i class="iconfont icon-weather"></i></a>
+    <a class="navbar-menu-item searchnavbar" id="search"><i class="iconfont icon-search" style="font-size: 1.2rem; font-weight: 400;"></i></a>
+  </div>
+</nav>
+    
+    <div id="local-search" style="display: none;">
+      <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容...">
+      <div id="search-content"></div>
+    </div>
+    
+    <div class="section-wrap">
+      <div class="container">
+        <div class="columns">
+          <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      Zookeeper从入门到精通（一）
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2020-04-17T04:02:03.000Z">
+      <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+      <span>2020-04-17</span>
+    </time>
+    
+    <span class="dot"></span>
+    
+    <a href="/categories/Zookeeper/" class="post-meta-link">Zookeeper</a>
+    
+    
+    
+    <span class="dot"></span>
+    <span>2.1k 字</span>
+    
+  </div>
+  
+  <div class="post-meta post-show-meta" style="margin-top: -10px;">
+    <div style="display: flex; align-items: center;">
+      <i class="iconfont icon-biaoqian" style="margin-right: 2px; font-size: 1.15rem;"></i>
+      
+      
+        <a href="/tags/分布式/" class="post-meta-link">分布式</a>
+      
+      
+      <span class="dot"></span>
+      
+        <a href="/tags/Zookeeper/" class="post-meta-link">Zookeeper</a>
+      
+      
+      <span class="dot"></span>
+      
+        <a href="/tags/微服务/" class="post-meta-link">微服务</a>
+      
+    </div>
+  </div>
+  
+  </header>
+  <div id="section" class="post-content">
+    <h2 id="Zookeeper-概念"><a href="#Zookeeper-概念" class="headerlink" title="Zookeeper 概念"></a>Zookeeper 概念</h2><p>Zookeeper是一个分布式协调服务，可用于服务发现，分布式锁，分布式领导选举，配置管理等。<br>Zookeeper 提供了一个类似于 Linux 文件系统的树形结构（可认为是轻量级的内存文件系统，但<br>只适合存少量信息，完全不适合存储大量文件或者大文件），同时提供了对于每个节点的监控与<br>通知机制。</p>
+<h2 id="Zookeeper-角色"><a href="#Zookeeper-角色" class="headerlink" title="Zookeeper 角色"></a>Zookeeper 角色</h2><p>Zookeeper 集群是一个基于主从复制的高可用集群，每个服务器承担如下三种角色中的一种.</p>
+<h3 id="Leader"><a href="#Leader" class="headerlink" title="Leader"></a>Leader</h3><ol>
+<li>一个 Zookeeper 集群同一时间只会有一个实际工作的 Leader，它会发起并维护与各 Follwer<br>及 Observer 间的心跳。</li>
+<li>所有的写操作必须要通过 Leader 完成再由 Leader 将写操作广播给其它服务器。只要有超过<br>半数节点（不包括 observeer 节点）写入成功，该写请求就会被提交（类 2PC 协议）。 <h3 id="Follower"><a href="#Follower" class="headerlink" title="Follower"></a>Follower</h3></li>
+<li>一个 Zookeeper 集群可能同时存在多个 Follower，它会响应 Leader 的心跳，</li>
+<li>Follower 可直接处理并返回客户端的读请求，同时会将写请求转发给 Leader 处理，</li>
+<li>并且负责在 Leader 处理写请求时对请求进行投票。<h3 id="Observer"><a href="#Observer" class="headerlink" title="Observer"></a>Observer</h3><pre><code>角色与 Follower 类似，但是无投票权。Zookeeper 需保证高可用和强一致性，为了支持更多的客
+</code></pre>户端，需要增加更多 Server；Server 增多，投票阶段延迟增大，影响性能；引入 Observer，<br>Observer 不参与投票； Observers 接受客户端的连接，并将写请求转发给 leader 节点； 加入更<br>多 Observer 节点，提高伸缩性，同时不影响吞吐率。</li>
+</ol>
+<p><img src="/images/zookeeper/zk-001.png" alt="图片" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/images/zookeeper/zk-001.png" class="lozad post-image"></p>
+<h3 id="ZAB-协议"><a href="#ZAB-协议" class="headerlink" title="ZAB 协议"></a>ZAB 协议</h3><h4 id="事务编号-Zxid（事务请求计数器-epoch）"><a href="#事务编号-Zxid（事务请求计数器-epoch）" class="headerlink" title="事务编号 Zxid（事务请求计数器+ epoch）"></a>事务编号 Zxid（事务请求计数器+ epoch）</h4><p>在 ZAB ( ZooKeeper Atomic Broadcast , ZooKeeper 原子消息广播协议） 协议的事务编号 Zxid<br>设计中，Zxid 是一个 64 位的数字，其中低 32 位是一个简单的单调递增的计数器，针对客户端每<br>一个事务请求，计数器加 1；而高 32 位则代表 Leader 周期 epoch 的编号，每个当选产生一个新<br>的 Leader 服务器，就会从这个 Leader 服务器上取出其本地日志中最大事务的 ZXID，并从中读取<br>epoch 值，然后加 1，以此作为新的 epoch，并将低 32 位从 0 开始计数。<br>Zxid（Transaction id）类似于 RDBMS 中的事务 ID，用于标识一次更新操作的 Proposal（提议）<br>ID。为了保证顺序性，该 zkid 必须单调递增。</p>
+<h4 id="epoch"><a href="#epoch" class="headerlink" title="epoch"></a>epoch</h4><p>epoch：可以理解为当前集群所处的年代或者周期，每个 leader 就像皇帝，都有自己的年号，所<br>以每次改朝换代，leader 变更之后，都会在前一个年代的基础上加 1。这样就算旧的 leader 崩溃<br>恢复之后，也没有人听他的了，因为 follower 只听从当前年代的 leader 的命令。</p>
+<h4 id="Zab-协议有两种模式-恢复模式（选主）、广播模式（同步）"><a href="#Zab-协议有两种模式-恢复模式（选主）、广播模式（同步）" class="headerlink" title="Zab 协议有两种模式-恢复模式（选主）、广播模式（同步）"></a>Zab 协议有两种模式-恢复模式（选主）、广播模式（同步）</h4><p>Zab 协议有两种模式，它们分别是恢复模式（选主）和广播模式（同步）。当服务启动或者在领导<br>者崩溃后，Zab 就进入了恢复模式，当领导者被选举出来，且大多数 Server 完成了和 leader 的状<br>态同步以后，恢复模式就结束了。状态同步保证了 leader 和 Server 具有相同的系统状态。</p>
+<h4 id="ZAB-协议-4-阶段"><a href="#ZAB-协议-4-阶段" class="headerlink" title="ZAB 协议 4 阶段"></a>ZAB 协议 4 阶段</h4><ul>
+<li><p><strong>  Leader election（选举阶段-选出准 Leader）</strong></p>
+<p>Leader election（选举阶段）：节点在一开始都处于选举阶段，只要有一个节点得到超半数<br>节点的票数，它就可以当选准 leader。只有到达 广播阶段（broadcast） 准 leader 才会成<br>为真正的 leader。这一阶段的目的是就是为了选出一个准 leader，然后进入下一个阶段。</p>
+</li>
+<li><p><strong> Discovery（发现阶段-接受提议、生成 epoch、接受 epoch）</strong></p>
+</li>
+</ul>
+<p>Discovery（发现阶段）：在这个阶段，followers 跟准 leader 进行通信，同步 followers<br>最近接收的事务提议。这个一阶段的主要目的是发现当前大多数节点接收的最新提议，并且<br>准 leader 生成新的 epoch，让 followers 接受，更新它们的 accepted Epoch。<br>一个 follower 只会连接一个 leader，如果有一个节点 f 认为另一个 follower p 是 leader，f<br>在尝试连接 p 时会被拒绝，f 被拒绝之后，就会进入重新选举阶段。</p>
+<ul>
+<li><strong> Synchronization（同步阶段-同步 follower 副本）</strong></li>
+</ul>
+<p>Synchronization（同步阶段）：同步阶段主要是利用 leader 前一阶段获得的最新提议历史，<br>同步集群中所有的副本。只有当 大多数节点都同步完成，准 leader 才会成为真正的 leader。<br>follower 只会接收 zxid 比自己的 lastZxid 大的提议。</p>
+<ul>
+<li><strong> Broadcast（广播阶段-leader 消息广播）</strong></li>
+</ul>
+<p>Broadcast（广播阶段）：到了这个阶段，Zookeeper 集群才能正式对外提供事务服务，<br>并且 leader 可以进行消息广播。同时如果有新的节点加入，还需要对新节点进行同步。<br>ZAB 提交事务并不像 2PC 一样需要全部 follower 都 ACK，只需要得到超过半数的节点的 ACK 就<br>可以了。</p>
+<ul>
+<li><strong> ZAB 协议 JAVA 实现（FLE-发现阶段和同步合并为 Recovery Phase（恢复阶段）</strong></li>
+</ul>
+<p>协议的 Java 版本实现跟上面的定义有些不同，选举阶段使用的是 Fast Leader Election（FLE），<br>它包含了 选举的发现职责。因为 FLE 会选举拥有最新提议历史的节点作为 leader，这样就省去了<br>发现最新提议的步骤。实际的实现将 发现阶段 和 同步合并为 Recovery Phase（恢复阶段）。所<br>以，ZAB 的实现只有三个阶段：Fast Leader Election；Recovery Phase；Broadcast Phase。</p>
+<h3 id="投票机制"><a href="#投票机制" class="headerlink" title="投票机制"></a>投票机制</h3><p>每个 sever 首先给自己投票，然后用自己的选票和其他 sever 选票对比，权重大的胜出，使用权<br>重较大的更新自身选票箱。具体选举过程如下：</p>
+<ol>
+<li><p>每个 Server 启动以后都询问其它的 Server 它要投票给谁。对于其他 server 的询问，<br>server 每次根据自己的状态都回复自己推荐的 leader 的 id 和上一次处理事务的 zxid（系<br>统启动时每个 server 都会推荐自己）</p>
+</li>
+<li><p>收到所有 Server 回复以后，就计算出 zxid 最大的哪个 Server，并将这个 Server 相关信<br>息设置成下一次要投票的 Server。</p>
+</li>
+</ol>
+<ol>
+<li><p>计算这过程中获得票数最多的的 sever 为获胜者，如果获胜者的票数超过半数，则改<br>server 被选为 leader。否则，继续这个过程，直到 leader 被选举出来</p>
+</li>
+<li><p>leader 就会开始等待 server 连接</p>
+</li>
+<li><p>Follower 连接 leader，将最大的 zxid 发送给 leader</p>
+</li>
+<li><p>Leader 根据 follower 的 zxid 确定同步点，至此选举阶段完成。</p>
+</li>
+<li><p>选举阶段完成 Leader 同步后通知 follower 已经成为 uptodate 状态</p>
+</li>
+<li><p>Follower 收到 uptodate 消息后，又可以重新接受 client 的请求进行服务了</p>
+</li>
+</ol>
+<p>投票过程举例：目前有 5 台服务器，每台服务器均没有数据，它们的编号分别是 1,2,3,4,5,按编号依次启动，它们<br>的选择举过程如下。</p>
+<ol>
+<li><p>服务器 1 启动，给自己投票，然后发投票信息，由于其它机器还没有启动所以它收不到反<br>馈信息，服务器 1 的状态一直属于 Looking。</p>
+</li>
+<li><p>服务器 2 启动，给自己投票，同时与之前启动的服务器 1 交换结果，由于服务器 2 的编号<br>大所以服务器 2 胜出，但此时投票数没有大于半数，所以两个服务器的状态依然是<br>LOOKING。</p>
+</li>
+<li><p>服务器 3 启动，给自己投票，同时与之前启动的服务器 1,2 交换信息，由于服务器 3 的编<br>号最大所以服务器 3 胜出，此时投票数正好大于半数，所以服务器 3 成为领导者，服务器<br>1,2 成为小弟。</p>
+</li>
+<li><p>服务器 4 启动，给自己投票，同时与之前启动的服务器 1,2,3 交换信息，尽管服务器 4 的<br>编号大，但之前服务器 3 已经胜出，所以服务器 4 只能成为小弟。</p>
+</li>
+<li><p>服务器 5 启动，后面的逻辑同服务器 4 成为小弟。</p>
+</li>
+</ol>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>本篇幅，我们一起熟悉了zookeeper的基本概念，以及它的一些基本角色，以及ZAB协议和投票机制，后续我们再来讨论一下Zookeeper相关的工作原理和Znode。</p>
+
+  </div>
+  <div>
+  
+  <div class="post-note note-warning copyright" style="margin-top: 42px">
+    <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="http://leechaoqiang.github.io/about">李猿外</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="http://leechaoqiang.github.io/2020/04/17/zookeeper-from-start-to-deep-known-one/">http://leechaoqiang.github.io/2020/04/17/zookeeper-from-start-to-deep-known-one/</a></p>
+    <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+  </div>
+  
+  </div>
+</article>
+<div class="nav">
+  
+  <div class="nav-item-prev">
+    <a href="/2020/06/04/kafka-jmx-monitor-open/" class="nav-link">
+      <i class="iconfont icon-left nav-prev-icon"></i>
+      <div>
+        <div class="nav-label">上一篇</div>
+        
+        <div class="nav-title">Kafka开启JMX监控操作实践 </div>
+        
+      </div>
+    </a>
+  </div>
+  
+  
+  <div class="nav-item-next">
+    <a href="/2019/11/28/mysql-good-using-rule/" class="nav-link">
+      <div>
+        <div class="nav-label">下一篇</div>
+        
+        <div class="nav-title">Mysql好的使用规范 </div>
+        
+      </div>
+      <i class="iconfont icon-right nav-next-icon"></i>
+    </a>
+  </div>
+  
+</div>
+
+<div class="card card-content comment-card" style="margin-top: 16px;">
+  <div class="comment-card-title">评论</div>
+  
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: 'SnVYhldRRlqYatvAs4y3N2qF-MdYXbMMI',
+        appKey: '2SwmjMzPEwYhnB7hqqNgknXM',
+        placeholder: '都来了，留句话呗...',
+        path: window.location.pathname,
+        avatar: 'wavatar',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'false',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+</div>
+
+<div class="card card-content toc-card" id="mobiletoc">
+  <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Zookeeper-%E6%A6%82%E5%BF%B5"><span class="toc-text">Zookeeper 概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zookeeper-%E8%A7%92%E8%89%B2"><span class="toc-text">Zookeeper 角色</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Leader"><span class="toc-text">Leader</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Follower"><span class="toc-text">Follower</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Observer"><span class="toc-text">Observer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ZAB-%E5%8D%8F%E8%AE%AE"><span class="toc-text">ZAB 协议</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E7%BC%96%E5%8F%B7-Zxid%EF%BC%88%E4%BA%8B%E5%8A%A1%E8%AF%B7%E6%B1%82%E8%AE%A1%E6%95%B0%E5%99%A8-epoch%EF%BC%89"><span class="toc-text">事务编号 Zxid（事务请求计数器+ epoch）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#epoch"><span class="toc-text">epoch</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Zab-%E5%8D%8F%E8%AE%AE%E6%9C%89%E4%B8%A4%E7%A7%8D%E6%A8%A1%E5%BC%8F-%E6%81%A2%E5%A4%8D%E6%A8%A1%E5%BC%8F%EF%BC%88%E9%80%89%E4%B8%BB%EF%BC%89%E3%80%81%E5%B9%BF%E6%92%AD%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%90%8C%E6%AD%A5%EF%BC%89"><span class="toc-text">Zab 协议有两种模式-恢复模式（选主）、广播模式（同步）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ZAB-%E5%8D%8F%E8%AE%AE-4-%E9%98%B6%E6%AE%B5"><span class="toc-text">ZAB 协议 4 阶段</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%95%E7%A5%A8%E6%9C%BA%E5%88%B6"><span class="toc-text">投票机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-text">小结</span></a></li></ol></li></ol>
+</div></main>
+          <aside class="left-column">
+            
+            <div class="card card-author">
+              
+<img src="/images/logo.jpg" class="author-img">
+
+<p class="author-name">李猿外</p>
+<p class="author-description">爱智求真,共同进步。</p>
+<div class="author-message">
+  <a class="author-posts-count" href="/archives">
+    <span>28</span>
+    <span>文章</span>
+  </a>
+  <a class="author-categories-count" href="/categories">
+    <span>31</span>
+    <span>分类</span>
+  </a>
+  <a class="author-tags-count" href="/tags">
+    <span>60</span>
+    <span>标签</span>
+  </a>
+</div>
+
+<div class="author-card-society">
+  
+    <div class="author-card-society-icon">
+      <a target="_blank" rel="noopener" href="https://github.com/leechaoqiang">
+        <i class="iconfont icon-github society-icon"></i>
+      </a>
+    </div>
+  
+    <div class="author-card-society-icon">
+      <a href="mailto:vincentlee99@126.com">
+        <i class="iconfont icon-mail society-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+            </div>
+            
+            <div class="sticky-tablet">
+  
+  
+  <article class="display-when-two-columns spacer">
+    <div class="card card-content toc-card">
+      <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Zookeeper-%E6%A6%82%E5%BF%B5"><span class="toc-text">Zookeeper 概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zookeeper-%E8%A7%92%E8%89%B2"><span class="toc-text">Zookeeper 角色</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Leader"><span class="toc-text">Leader</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Follower"><span class="toc-text">Follower</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Observer"><span class="toc-text">Observer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ZAB-%E5%8D%8F%E8%AE%AE"><span class="toc-text">ZAB 协议</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E7%BC%96%E5%8F%B7-Zxid%EF%BC%88%E4%BA%8B%E5%8A%A1%E8%AF%B7%E6%B1%82%E8%AE%A1%E6%95%B0%E5%99%A8-epoch%EF%BC%89"><span class="toc-text">事务编号 Zxid（事务请求计数器+ epoch）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#epoch"><span class="toc-text">epoch</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Zab-%E5%8D%8F%E8%AE%AE%E6%9C%89%E4%B8%A4%E7%A7%8D%E6%A8%A1%E5%BC%8F-%E6%81%A2%E5%A4%8D%E6%A8%A1%E5%BC%8F%EF%BC%88%E9%80%89%E4%B8%BB%EF%BC%89%E3%80%81%E5%B9%BF%E6%92%AD%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%90%8C%E6%AD%A5%EF%BC%89"><span class="toc-text">Zab 协议有两种模式-恢复模式（选主）、广播模式（同步）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ZAB-%E5%8D%8F%E8%AE%AE-4-%E9%98%B6%E6%AE%B5"><span class="toc-text">ZAB 协议 4 阶段</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%95%E7%A5%A8%E6%9C%BA%E5%88%B6"><span class="toc-text">投票机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-text">小结</span></a></li></ol></li></ol>
+    </div>
+  </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header"><i class="iconfont icon-fenlei" style="padding-right: 2px;"></i>分类</div>
+  <div class="categories-list">
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">16</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Docker">
+        <div class="categories-list-item">
+          Docker
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/缓存">
+        <div class="categories-list-item">
+          缓存
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/mybatis">
+        <div class="categories-list-item">
+          mybatis
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/摄影">
+        <div class="categories-list-item">
+          摄影
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/RabbitMQ">
+        <div class="categories-list-item">
+          RabbitMQ
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/tensorflow">
+        <div class="categories-list-item">
+          tensorflow
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+      <a href="/categories/问题">
+        <div class="categories-list-item">
+          问题
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+      <a href="/categories/并发">
+        <div class="categories-list-item">
+          并发
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringBoot">
+        <div class="categories-list-item">
+          SpringBoot
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Mysql">
+        <div class="categories-list-item">
+          Mysql
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Restful">
+        <div class="categories-list-item">
+          Restful
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/thread">
+        <div class="categories-list-item">
+          thread
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Tomcat">
+        <div class="categories-list-item">
+          Tomcat
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/消息队列">
+        <div class="categories-list-item">
+          消息队列
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/消息队列">
+        <div class="categories-list-item">
+          消息队列
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/分布式">
+        <div class="categories-list-item">
+          分布式
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/多线程">
+        <div class="categories-list-item">
+          多线程
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringBoot">
+        <div class="categories-list-item">
+          SpringBoot
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/kafka">
+        <div class="categories-list-item">
+          kafka
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringCloud">
+        <div class="categories-list-item">
+          SpringCloud
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/消息队列">
+        <div class="categories-list-item">
+          消息队列
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/kafka">
+        <div class="categories-list-item">
+          kafka
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringBoot">
+        <div class="categories-list-item">
+          SpringBoot
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Zookeeper">
+        <div class="categories-list-item">
+          Zookeeper
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header"><i class="iconfont icon-biaoqian" style="padding-right: 2px;"></i>热门标签</div>
+  <div class="tags-list">
+    
+    <a href="\tags\Java" title="Java"><div class="tags-list-item">Java</div></a>
+    
+    <a href="\tags\MQ" title="MQ"><div class="tags-list-item">MQ</div></a>
+    
+    <a href="\tags\消息队列" title="消息队列"><div class="tags-list-item">消息队列</div></a>
+    
+    <a href="\tags\分布式" title="分布式"><div class="tags-list-item">分布式</div></a>
+    
+    <a href="\tags\多线程" title="多线程"><div class="tags-list-item">多线程</div></a>
+    
+    <a href="\tags\SpringBoot" title="SpringBoot"><div class="tags-list-item">SpringBoot</div></a>
+    
+    <a href="\tags\Mysql" title="Mysql"><div class="tags-list-item">Mysql</div></a>
+    
+    <a href="\tags\Tomcat" title="Tomcat"><div class="tags-list-item">Tomcat</div></a>
+    
+    <a href="\tags\RabbitMQ" title="RabbitMQ"><div class="tags-list-item">RabbitMQ</div></a>
+    
+    <a href="\tags\kafka" title="kafka"><div class="tags-list-item">kafka</div></a>
+    
+    <a href="\tags\并发" title="并发"><div class="tags-list-item">并发</div></a>
+    
+    <a href="\tags\微服务" title="微服务"><div class="tags-list-item">微服务</div></a>
+    
+    <a href="\tags\Zookeeper" title="Zookeeper"><div class="tags-list-item">Zookeeper</div></a>
+    
+    <a href="\tags\jackson" title="jackson"><div class="tags-list-item">jackson</div></a>
+    
+    <a href="\tags\Json" title="Json"><div class="tags-list-item">Json</div></a>
+    
+    <a href="\tags\zookeeper" title="zookeeper"><div class="tags-list-item">zookeeper</div></a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+          <aside class="right-column">
+            <div class="sticky-widescreen">
+  
+  
+  <article class="card card-content toc-card">
+    <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Zookeeper-%E6%A6%82%E5%BF%B5"><span class="toc-text">Zookeeper 概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zookeeper-%E8%A7%92%E8%89%B2"><span class="toc-text">Zookeeper 角色</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Leader"><span class="toc-text">Leader</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Follower"><span class="toc-text">Follower</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Observer"><span class="toc-text">Observer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ZAB-%E5%8D%8F%E8%AE%AE"><span class="toc-text">ZAB 协议</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E7%BC%96%E5%8F%B7-Zxid%EF%BC%88%E4%BA%8B%E5%8A%A1%E8%AF%B7%E6%B1%82%E8%AE%A1%E6%95%B0%E5%99%A8-epoch%EF%BC%89"><span class="toc-text">事务编号 Zxid（事务请求计数器+ epoch）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#epoch"><span class="toc-text">epoch</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Zab-%E5%8D%8F%E8%AE%AE%E6%9C%89%E4%B8%A4%E7%A7%8D%E6%A8%A1%E5%BC%8F-%E6%81%A2%E5%A4%8D%E6%A8%A1%E5%BC%8F%EF%BC%88%E9%80%89%E4%B8%BB%EF%BC%89%E3%80%81%E5%B9%BF%E6%92%AD%E6%A8%A1%E5%BC%8F%EF%BC%88%E5%90%8C%E6%AD%A5%EF%BC%89"><span class="toc-text">Zab 协议有两种模式-恢复模式（选主）、广播模式（同步）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ZAB-%E5%8D%8F%E8%AE%AE-4-%E9%98%B6%E6%AE%B5"><span class="toc-text">ZAB 协议 4 阶段</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%95%E7%A5%A8%E6%9C%BA%E5%88%B6"><span class="toc-text">投票机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-text">小结</span></a></li></ol></li></ol>
+  </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header"><i class="iconfont icon-wenzhang_huaban" style="padding-right: 2px;"></i>最近文章</div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-03-01</div>
+        <a href="/2021/03/01/lowcase-start-word-json-serialize-error/"><div class="recent-posts-item-content">uName类似首字符小写属性Json序列化接收不到数据问题及解决办法</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2020-09-16</div>
+        <a href="/2020/09/16/photo/"><div class="recent-posts-item-content">手机摄影之城市一角（一）</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2020-09-01</div>
+        <a href="/2020/09/01/jvm-local-cache-case-caffeine/"><div class="recent-posts-item-content">JVM高性能本地缓存Caffeine使用案例</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2020-08-25</div>
+        <a href="/2020/08/25/mysql-procedure-batch-create-table-pratise/"><div class="recent-posts-item-content">减少重复劳动,使用Mysql存储过程批量创建表</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>Copyright ©
+          
+          2016 -
+          
+          2021
+        </span>
+        &nbsp;
+        <a href="/" class="footer-link">攻城狮李猿外 </a>
+      </div>
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+        本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+        <span>&nbsp;|&nbsp;</span>
+        
+        
+        本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+    <script>
+    //百度链接提交
+      (function(){
+          var bp = document.createElement('script');
+          var curProtocol = window.location.protocol.split(':')[0];
+          if (curProtocol === 'https'){
+          bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else{
+          bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(bp, s);
+      })();
+    </script>
+    
+    <script>
+    //百度统计
+      var _hmt = _hmt || [];
+      (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?57e94335f06e1ca57d2246529a0150c7";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+</footer>
+  <a role="button" id="scrollbutton" class="basebutton"  aria-label="回到顶部">
+  <i class="iconfont icon-arrowleft button-icon"></i>
+</a>
+<a role="button" id="menubutton" class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a role="button" id="popbutton" class="basebutton" aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a role="button" id="darkbutton" class="basebutton darkwidget" aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a role="button" id="searchbutton" class="basebutton searchwidget" aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+
+  
+  
+  
+  <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img');
+    var i;
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a');
+      wrapper.setAttribute('data-fslightbox', 'gallery');
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'));
+      wrapper.setAttribute('aria-label', 'illustration');
+      wrapper.style.cssText = 'width: 100%; display: flex; justify-content: center;';
+      img[i].before(wrapper);
+      wrapper.append(img[i]);
+    }
+    refreshFsLightbox();
+  }
+</script>
+<script>loadScript("//cdn.jsdelivr.net/npm/fslightbox@3.1.0/index.min.js", addImgLayout)</script>
+  
+  
+  
+<script src="/js/main.js"></script>
+
+  
+  <script>loadScript("/js/lib/busuanzi.min.js")</script>
+  
+  
+  <script>
+    var addLazyload = function () {
+      var observer = lozad('.lozad', {
+        load: function (el) {
+          el.srcset = el.getAttribute('data-src');
+        },
+        loaded: function (el) {
+          el.classList.add('loaded');
+        }
+      });
+      observer.observe();
+    }
+  </script>
+  <script>loadScript("/js/lib/lozad.min.js", addLazyload)</script>
+  
+  
+</body>
+
+</html>
