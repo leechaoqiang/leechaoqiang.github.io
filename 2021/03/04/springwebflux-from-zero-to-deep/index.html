@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html  lang="zh-CN" >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="#fff" id="theme-color">
+  <meta name="description" content="不以物喜，不以己悲。">
+  <link rel="icon" href="/images/logo.jpg">
+  <title>SpringWebFlux响应式编程从入门到实践</title>
+  
+  
+  <meta property="og:title" content="SpringWebFlux响应式编程从入门到实践">
+  
+  
+  <meta property="og:url" content="http://leechaoqiang.github.io/2021/03/04/springwebflux-from-zero-to-deep/index.html">
+  
+  
+  <meta property="og:img" content="/images/logo.jpg">
+  
+  
+  <meta property="og:img" content="不以物喜，不以己悲。">
+  
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:published_time" content="2021-03-04">
+  <meta property="og:article:modified_time" content="2021-05-11">
+  <meta property="og:article:author" content="李猿外">
+  
+  
+  <meta property="og:article:tag" content="SpringBoot">
+  
+  <meta property="og:article:tag" content="Spring">
+  
+  <meta property="og:article:tag" content="SpringWebFlux">
+  
+  
+  
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+    var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+      }
+    };
+    setDarkmode();
+  </script>
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  </script>
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_f7g5jnuftcf.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  <link rel="preload" href="//cdn.jsdelivr.net/npm/fslightbox@3.1.0/index.min.js" as="script">
+  
+  
+  <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+  <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">
+  
+  
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_f7g5jnuftcf.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 5.0.2"></head>
+
+
+<body>
+  <div class="wrapper">
+    
+    <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+      <img class="navbar-logo-img" src="/images/logo.jpg" alt="logo">
+      
+      <span class="navbar-logo-dsc">攻城狮李猿外</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+    <a href="/" class="navbar-menu-item">
+    
+    首页
+    
+    </a>
+    
+    <a href="/archives" class="navbar-menu-item">
+    
+    归档
+    
+    </a>
+    
+    <a href="/tags" class="navbar-menu-item">
+    
+    标签
+    
+    </a>
+    
+    <a href="/categories" class="navbar-menu-item">
+    
+    分类
+    
+    </a>
+    
+    <a href="/about" class="navbar-menu-item">
+    
+    关于
+    
+    </a>
+    
+    <a href="/links" class="navbar-menu-item">
+    
+    友链
+    
+    </a>
+    
+    <a class="navbar-menu-item darknavbar" id="dark"><i class="iconfont icon-weather"></i></a>
+    <a class="navbar-menu-item searchnavbar" id="search"><i class="iconfont icon-search" style="font-size: 1.2rem; font-weight: 400;"></i></a>
+  </div>
+</nav>
+    
+    <div id="local-search" style="display: none;">
+      <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容...">
+      <div id="search-content"></div>
+    </div>
+    
+    <div class="section-wrap">
+      <div class="container">
+        <div class="columns">
+          <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      SpringWebFlux响应式编程从入门到实践
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2021-03-04T06:29:02.000Z">
+      <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+      <span>2021-03-04</span>
+    </time>
+    
+    <span class="dot"></span>
+    
+    <a href="/categories/Spring/" class="post-meta-link">Spring</a>
+    
+    <a href="/categories/Spring/SpringWebFlux/" class="post-meta-link">SpringWebFlux</a>
+    
+    <a href="/categories/Spring/SpringWebFlux/博客/" class="post-meta-link">博客</a>
+    
+    
+    
+    <span class="dot"></span>
+    <span>1.4k 字</span>
+    
+  </div>
+  
+  <div class="post-meta post-show-meta" style="margin-top: -10px;">
+    <div style="display: flex; align-items: center;">
+      <i class="iconfont icon-biaoqian" style="margin-right: 2px; font-size: 1.15rem;"></i>
+      
+      
+        <a href="/tags/SpringBoot/" class="post-meta-link">SpringBoot</a>
+      
+      
+      <span class="dot"></span>
+      
+        <a href="/tags/Spring/" class="post-meta-link">Spring</a>
+      
+      
+      <span class="dot"></span>
+      
+        <a href="/tags/SpringWebFlux/" class="post-meta-link">SpringWebFlux</a>
+      
+    </div>
+  </div>
+  
+  </header>
+  <div id="section" class="post-content">
+    <h3 id="Spring-Boot-2-0简介"><a href="#Spring-Boot-2-0简介" class="headerlink" title="Spring Boot 2.0简介"></a>Spring Boot 2.0简介</h3><ul>
+<li>Spring Boot （Boot 顾名思义，是引导的意思）框架是用于简化 Spring 应用从搭建到开发的过程。应用开箱即用，只要通过一个指令，包括命令行 java -jar 、SpringApplication 应用启动类 、 Spring Boot Maven 插件等，就可以启动应用了。</li>
+<li>另外，Spring Boot 强调只需要很少的配置文件，所以在开发生产级 Spring 应用中，让开发变得更加高效和简易。目前，Spring Boot 版本是 2.x 版本，而且Spring Boot 包括 了WebFlux。</li>
+</ul>
+<h3 id="Spring-Boot-2-0-WebFlux"><a href="#Spring-Boot-2-0-WebFlux" class="headerlink" title="Spring Boot 2.0 WebFlux"></a>Spring Boot 2.0 WebFlux</h3><p><img src="/images/springwebflux/springwebflux2.png" alt="Spring Boot 2.0 WebFlux" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/images/springwebflux/springwebflux2.png" class="lozad post-image"></p>
+<h4 id="什么是-Reactive-Streams？"><a href="#什么是-Reactive-Streams？" class="headerlink" title="什么是 Reactive Streams？"></a>什么是 Reactive Streams？</h4><ol>
+<li>Reactive Streams 是 JVM 中面向流的库标准和规范</li>
+<li>处理可能无限数量的元素</li>
+<li>按顺序处理</li>
+<li>组件之间异步传递</li>
+<li>强制性非阻塞背压（Backpressure）</li>
+</ol>
+<h4 id="Backpressure-背压"><a href="#Backpressure-背压" class="headerlink" title="Backpressure(背压)"></a>Backpressure(背压)</h4><p>​     背压是一种常用策略，使得发布者拥有无限制的缓冲区存储元素，用于确保发布者发布元素太快时，不会去压制订阅者。</p>
+<h4 id="Reactive-Streams（响应式流）"><a href="#Reactive-Streams（响应式流）" class="headerlink" title="Reactive Streams（响应式流）"></a>Reactive Streams（响应式流）</h4><ol>
+<li>发布者：发布元素到订阅者</li>
+<li>订阅者：消费元素</li>
+<li>订阅：在发布者中，订阅被创建时，将与订阅者共享</li>
+<li>处理器：发布者与订阅者之间处理数据</li>
+</ol>
+<h4 id="什么是Reactive-programming响应式编程？"><a href="#什么是Reactive-programming响应式编程？" class="headerlink" title="什么是Reactive programming响应式编程？"></a>什么是Reactive programming响应式编程？</h4><p>​     响应式编程是基于异步和事件驱动的非阻塞程序，只是垂直通过在 JVM 内启动少量线程扩展，而不是水平通过集群扩展，是一个编程范例。</p>
+<h3 id="Spring-Webflux是由什么实现的"><a href="#Spring-Webflux是由什么实现的" class="headerlink" title="Spring Webflux是由什么实现的"></a>Spring Webflux是由什么实现的</h3><p>Spring Boot Webflux 就是基于 Reactor 实现的。Spring Boot 2.0 包括一个新的 spring-webflux 模块。该模块包含对响应式 HTTP 和 WebSocket 客户端的支持，以及对 REST，HTML 和 WebSocket 交互等程序的支持。</p>
+<h4 id="Reactor-一般提供两种响应式-API"><a href="#Reactor-一般提供两种响应式-API" class="headerlink" title="Reactor 一般提供两种响应式 API"></a>Reactor 一般提供两种响应式 API</h4><ul>
+<li>Mono：实现发布者，并返回 0 或 1 个元素</li>
+<li>Flux：实现发布者，并返回 N 个元素</li>
+</ul>
+<p>Spring Boot Webflux 有两种编程模型实现，一种类似 Spring MVC 注解方式，另一种是使用其功能性端点方式。</p>
+<h3 id="Spring-Boot-2-0-WebFlux-特性"><a href="#Spring-Boot-2-0-WebFlux-特性" class="headerlink" title="Spring Boot 2.0 WebFlux 特性"></a>Spring Boot 2.0 WebFlux 特性</h3><h4 id="响应式-API"><a href="#响应式-API" class="headerlink" title="响应式 API"></a>响应式 API</h4><p>​       Reactor 框架是 Spring Boot Webflux 响应库依赖，通过 Reactive Streams 并与其他响应库交互。<br>提供了 两种响应式 API : Mono 和 Flux。一般是将 Publisher 作为输入，在框架内部转换成 Reactor 类型并处理逻辑，然后返回 Flux 或 Mono 作为输出。</p>
+<h3 id="编程模型"><a href="#编程模型" class="headerlink" title="编程模型"></a>编程模型</h3><p>​      Spring 5 web 模块包含了 Spring WebFlux 的 HTTP 抽象。类似 Servlet API , WebFlux 提供了 WebHandler API 去定义非阻塞 API 抽象接口。可以选择以下两种编程模型实现：<br>-注解控制层。和 MVC 保持一致，WebFlux 也支持响应性 @RequestBody 注解。<br>-功能性端点。基于 lambda 轻量级编程模型，用来路由和处理请求的小工具。和上面最大的区别就是，这种模型，全程控制了请求 – 响应的生命流程</p>
+<h4 id="内嵌容器"><a href="#内嵌容器" class="headerlink" title="内嵌容器"></a>内嵌容器</h4><p>​     跟 Spring Boot 大框架一样启动应用，但 WebFlux 默认是通过 Netty 启动，并且自动设置了默认端口为 8080。另外还提供了对 Jetty、Undertow 等容器的支持。开发者自行在添加对应的容器 Starter 组件依赖，即可配置并使用对应内嵌容器实例。但是要注意，必须是 Servlet 3.1+ 容器，如 Tomcat、Jetty；或者非 Servlet 容器，如 Netty 和 Undertow。</p>
+<h3 id="Spring-Boot-2-0-WebFlux-组件"><a href="#Spring-Boot-2-0-WebFlux-组件" class="headerlink" title="Spring Boot 2.0 WebFlux 组件"></a>Spring Boot 2.0 WebFlux 组件</h3><blockquote>
+<p> Spring Boot WebFlux 官方提供了很多 Starter 组件，每个模块会有多种技术实现选型支持，来实现各种复杂的业务需求：</p>
+<ul>
+<li>Web：Spring WebFlux</li>
+<li>模板引擎：Thymeleaf</li>
+<li>存储：Redis、MongoDB、Cassandra、Mysql(r2dbc)</li>
+<li>内嵌容器：Tomcat、Jetty ; Netty(非 Servlet 容器)、Undertow(非 Servlet 容器)</li>
+</ul>
+</blockquote>
+<h3 id="Spring-Webflux实践"><a href="#Spring-Webflux实践" class="headerlink" title="Spring Webflux实践"></a>Spring Webflux实践</h3><h4 id="开发运行环境要求："><a href="#开发运行环境要求：" class="headerlink" title="开发运行环境要求："></a>开发运行环境要求：</h4><blockquote>
+<ul>
+<li>JDK 1.8+ Spring Boot 2.x 要求 JDK 1.8 环境及以上版本。另外，Spring Boot 2.x 只兼容 Spring Framework 5.0 及以上版本。</li>
+<li>Maven 3.2+ 为 Spring Boot 2.x 提供了相关依赖构建工具是 Maven，版本需要 3.2 及以上版本。</li>
+<li>IntelliJ IDEA IntelliJ IDEA （简称 IDEA）是常用的开发工具，目前最新版本2020.3.2,推荐使用旗舰版，当然社区版也可以。</li>
+</ul>
+</blockquote>
+<h4 id="构建项目骨架"><a href="#构建项目骨架" class="headerlink" title="构建项目骨架"></a>构建项目骨架</h4><p>Spring Initializr 快速构建项目骨架<br>在浏览器中打开域名<a target="_blank" rel="noopener" href="https://start.spring.io/，然后按照如下步骤操作">https://start.spring.io/，然后按照如下步骤操作</a>:</p>
+<p><img src="/images/springwebflux/build-springwebflux-01.png" alt="build-springwebflux" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/images/springwebflux/build-springwebflux-01.png" class="lozad post-image"></p>
+<ul>
+<li>第一步，选择 Maven 或者 Gradle 构建工具，开发语言 Java 、Kotlin 或者 Groovy，最后确定 Spring Boot 版本号。</li>
+<li>第二步，输入 Maven 工程信息，即项目组 groupId 和名字 artifactId。这里对应 Maven 信息为：<br>groupId：com.vincent<br>artifactId：springboot-webflux-practise<br>这里默认版本号 version 为 0.0.1-SNAPSHOT 。三个属性在 Maven 依赖仓库是唯一标识的。</li>
+<li>第三步，选择工程需要的 Starter 组件和其他依赖。最后点击生成按钮，即可获得骨架工程压缩包。这里快速入门，只要选择 Reactive Web 即可。</li>
+</ul>
+<h4 id="生成项目配置-POM-依赖检查"><a href="#生成项目配置-POM-依赖检查" class="headerlink" title="生成项目配置 POM 依赖检查"></a>生成项目配置 POM 依赖检查</h4><ul>
+<li>spring-boot-starter-webflux 依赖，是我们核心需要学习 webflux 的包，里面默认包含了 spring-boot-starter-reactor-netty 、spring 5 webflux 包。也就是说默认是通过 netty 启动的。</li>
+<li>reactor-test、spring-boot-starter-test 两个依赖搭配是用于单元测试。</li>
+<li>spring-boot-maven-plugin 是 Spring Boot Maven 插件，可以运行、编译等调用。</li>
+</ul>
+<h4 id="springboot-webflux-practise"><a href="#springboot-webflux-practise" class="headerlink" title="springboot-webflux-practise"></a>springboot-webflux-practise</h4><blockquote>
+<p><img src="/images/springwebflux/build-springwebflux-02.png" alt="build-springwebflux-02.png" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/images/springwebflux/build-springwebflux-02.png" class="lozad post-image"></p>
+<p>springboot-webflux-practise是webflux的一个学习练习demo工程.</p>
+<ol>
+<li><p>其中Spring WebFlux有两种版本：基于功能和注释。</p>
+</li>
+<li><p>CURD的demo(mysql)</p>
+</li>
+<li><p>WebFlux集成Thymeleaf</p>
+</li>
+<li><p>WebFlux集成redis</p>
+</li>
+</ol>
+<ul>
+<li>基于注释非常接近Spring MVC模型(CRUD)：<br>UserFluxController</li>
+<li>基于功能版本：<br>HelloRouter,HelloHandler是路由处理</li>
+<li><p>WebFlux集成Thymeleaf：<br>UserThymleafController</p>
+</li>
+<li><p>webFlux集成redis：<br>UserFluxReactiveController</p>
+</li>
+<li><p>服务启动<br>运行SpringbootWebfluxPractiseApplication的main()方法</p>
+<p>示例源码下载地址：<a target="_blank" rel="noopener" href="https://github.com/leechaoqiang/springboot-webflux-practise">https://github.com/leechaoqiang/springboot-webflux-practise</a></p>
+</li>
+</ul>
+</blockquote>
+
+  </div>
+  <div>
+  
+  <div class="post-note note-warning copyright" style="margin-top: 42px">
+    <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="http://leechaoqiang.github.io/about">李猿外</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="http://leechaoqiang.github.io/2021/03/04/springwebflux-from-zero-to-deep/">http://leechaoqiang.github.io/2021/03/04/springwebflux-from-zero-to-deep/</a></p>
+    <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+  </div>
+  
+  </div>
+</article>
+<div class="nav">
+  
+  
+  <div class="nav-item-next">
+    <a href="/2021/03/01/lowcase-start-word-json-serialize-error/" class="nav-link">
+      <div>
+        <div class="nav-label">下一篇</div>
+        
+        <div class="nav-title">uName类似首字符小写属性Json序列化接收不到数据问题及解决办法 </div>
+        
+      </div>
+      <i class="iconfont icon-right nav-next-icon"></i>
+    </a>
+  </div>
+  
+</div>
+
+<div class="card card-content comment-card" style="margin-top: 16px;">
+  <div class="comment-card-title">评论</div>
+  
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: 'SnVYhldRRlqYatvAs4y3N2qF-MdYXbMMI',
+        appKey: '2SwmjMzPEwYhnB7hqqNgknXM',
+        placeholder: '都来了，留句话呗...',
+        path: window.location.pathname,
+        avatar: 'wavatar',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'false',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+</div>
+
+<div class="card card-content toc-card" id="mobiletoc">
+  <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Spring-Boot-2-0%E7%AE%80%E4%BB%8B"><span class="toc-text">Spring Boot 2.0简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Spring-Boot-2-0-WebFlux"><span class="toc-text">Spring Boot 2.0 WebFlux</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-Reactive-Streams%EF%BC%9F"><span class="toc-text">什么是 Reactive Streams？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Backpressure-%E8%83%8C%E5%8E%8B"><span class="toc-text">Backpressure(背压)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Reactive-Streams%EF%BC%88%E5%93%8D%E5%BA%94%E5%BC%8F%E6%B5%81%EF%BC%89"><span class="toc-text">Reactive Streams（响应式流）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFReactive-programming%E5%93%8D%E5%BA%94%E5%BC%8F%E7%BC%96%E7%A8%8B%EF%BC%9F"><span class="toc-text">什么是Reactive programming响应式编程？</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Spring-Webflux%E6%98%AF%E7%94%B1%E4%BB%80%E4%B9%88%E5%AE%9E%E7%8E%B0%E7%9A%84"><span class="toc-text">Spring Webflux是由什么实现的</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Reactor-%E4%B8%80%E8%88%AC%E6%8F%90%E4%BE%9B%E4%B8%A4%E7%A7%8D%E5%93%8D%E5%BA%94%E5%BC%8F-API"><span class="toc-text">Reactor 一般提供两种响应式 API</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Spring-Boot-2-0-WebFlux-%E7%89%B9%E6%80%A7"><span class="toc-text">Spring Boot 2.0 WebFlux 特性</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%93%8D%E5%BA%94%E5%BC%8F-API"><span class="toc-text">响应式 API</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B"><span class="toc-text">编程模型</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%86%85%E5%B5%8C%E5%AE%B9%E5%99%A8"><span class="toc-text">内嵌容器</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Spring-Boot-2-0-WebFlux-%E7%BB%84%E4%BB%B6"><span class="toc-text">Spring Boot 2.0 WebFlux 组件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Spring-Webflux%E5%AE%9E%E8%B7%B5"><span class="toc-text">Spring Webflux实践</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BC%80%E5%8F%91%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83%E8%A6%81%E6%B1%82%EF%BC%9A"><span class="toc-text">开发运行环境要求：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE%E9%AA%A8%E6%9E%B6"><span class="toc-text">构建项目骨架</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%94%9F%E6%88%90%E9%A1%B9%E7%9B%AE%E9%85%8D%E7%BD%AE-POM-%E4%BE%9D%E8%B5%96%E6%A3%80%E6%9F%A5"><span class="toc-text">生成项目配置 POM 依赖检查</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#springboot-webflux-practise"><span class="toc-text">springboot-webflux-practise</span></a></li></ol></li></ol>
+</div></main>
+          <aside class="left-column">
+            
+            <div class="card card-author">
+              
+<img src="/images/logo.jpg" class="author-img">
+
+<p class="author-name">李猿外</p>
+<p class="author-description">爱智求真,共同进步。</p>
+<div class="author-message">
+  <a class="author-posts-count" href="/archives">
+    <span>30</span>
+    <span>文章</span>
+  </a>
+  <a class="author-categories-count" href="/categories">
+    <span>34</span>
+    <span>分类</span>
+  </a>
+  <a class="author-tags-count" href="/tags">
+    <span>61</span>
+    <span>标签</span>
+  </a>
+</div>
+
+<div class="author-card-society">
+  
+    <div class="author-card-society-icon">
+      <a target="_blank" rel="noopener" href="https://github.com/leechaoqiang">
+        <i class="iconfont icon-github society-icon"></i>
+      </a>
+    </div>
+  
+    <div class="author-card-society-icon">
+      <a href="mailto:vincentlee99@126.com">
+        <i class="iconfont icon-mail society-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+            </div>
+            
+            <div class="sticky-tablet">
+  
+  
+  <article class="display-when-two-columns spacer">
+    <div class="card card-content toc-card">
+      <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Spring-Boot-2-0%E7%AE%80%E4%BB%8B"><span class="toc-text">Spring Boot 2.0简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Spring-Boot-2-0-WebFlux"><span class="toc-text">Spring Boot 2.0 WebFlux</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-Reactive-Streams%EF%BC%9F"><span class="toc-text">什么是 Reactive Streams？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Backpressure-%E8%83%8C%E5%8E%8B"><span class="toc-text">Backpressure(背压)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Reactive-Streams%EF%BC%88%E5%93%8D%E5%BA%94%E5%BC%8F%E6%B5%81%EF%BC%89"><span class="toc-text">Reactive Streams（响应式流）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFReactive-programming%E5%93%8D%E5%BA%94%E5%BC%8F%E7%BC%96%E7%A8%8B%EF%BC%9F"><span class="toc-text">什么是Reactive programming响应式编程？</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Spring-Webflux%E6%98%AF%E7%94%B1%E4%BB%80%E4%B9%88%E5%AE%9E%E7%8E%B0%E7%9A%84"><span class="toc-text">Spring Webflux是由什么实现的</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Reactor-%E4%B8%80%E8%88%AC%E6%8F%90%E4%BE%9B%E4%B8%A4%E7%A7%8D%E5%93%8D%E5%BA%94%E5%BC%8F-API"><span class="toc-text">Reactor 一般提供两种响应式 API</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Spring-Boot-2-0-WebFlux-%E7%89%B9%E6%80%A7"><span class="toc-text">Spring Boot 2.0 WebFlux 特性</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%93%8D%E5%BA%94%E5%BC%8F-API"><span class="toc-text">响应式 API</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B"><span class="toc-text">编程模型</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%86%85%E5%B5%8C%E5%AE%B9%E5%99%A8"><span class="toc-text">内嵌容器</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Spring-Boot-2-0-WebFlux-%E7%BB%84%E4%BB%B6"><span class="toc-text">Spring Boot 2.0 WebFlux 组件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Spring-Webflux%E5%AE%9E%E8%B7%B5"><span class="toc-text">Spring Webflux实践</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BC%80%E5%8F%91%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83%E8%A6%81%E6%B1%82%EF%BC%9A"><span class="toc-text">开发运行环境要求：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE%E9%AA%A8%E6%9E%B6"><span class="toc-text">构建项目骨架</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%94%9F%E6%88%90%E9%A1%B9%E7%9B%AE%E9%85%8D%E7%BD%AE-POM-%E4%BE%9D%E8%B5%96%E6%A3%80%E6%9F%A5"><span class="toc-text">生成项目配置 POM 依赖检查</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#springboot-webflux-practise"><span class="toc-text">springboot-webflux-practise</span></a></li></ol></li></ol>
+    </div>
+  </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header"><i class="iconfont icon-fenlei" style="padding-right: 2px;"></i>分类</div>
+  <div class="categories-list">
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">16</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Docker">
+        <div class="categories-list-item">
+          Docker
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/缓存">
+        <div class="categories-list-item">
+          缓存
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/mybatis">
+        <div class="categories-list-item">
+          mybatis
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/摄影">
+        <div class="categories-list-item">
+          摄影
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/RabbitMQ">
+        <div class="categories-list-item">
+          RabbitMQ
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/tensorflow">
+        <div class="categories-list-item">
+          tensorflow
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+      <a href="/categories/问题">
+        <div class="categories-list-item">
+          问题
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+      <a href="/categories/并发">
+        <div class="categories-list-item">
+          并发
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringBoot">
+        <div class="categories-list-item">
+          SpringBoot
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Mysql">
+        <div class="categories-list-item">
+          Mysql
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Restful">
+        <div class="categories-list-item">
+          Restful
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/thread">
+        <div class="categories-list-item">
+          thread
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Tomcat">
+        <div class="categories-list-item">
+          Tomcat
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/消息队列">
+        <div class="categories-list-item">
+          消息队列
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/消息队列">
+        <div class="categories-list-item">
+          消息队列
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/分布式">
+        <div class="categories-list-item">
+          分布式
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/多线程">
+        <div class="categories-list-item">
+          多线程
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringBoot">
+        <div class="categories-list-item">
+          SpringBoot
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/kafka">
+        <div class="categories-list-item">
+          kafka
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringCloud">
+        <div class="categories-list-item">
+          SpringCloud
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/消息队列">
+        <div class="categories-list-item">
+          消息队列
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/kafka">
+        <div class="categories-list-item">
+          kafka
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringBoot">
+        <div class="categories-list-item">
+          SpringBoot
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Zookeeper">
+        <div class="categories-list-item">
+          Zookeeper
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Spring">
+        <div class="categories-list-item">
+          Spring
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringWebFlux">
+        <div class="categories-list-item">
+          SpringWebFlux
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header"><i class="iconfont icon-biaoqian" style="padding-right: 2px;"></i>热门标签</div>
+  <div class="tags-list">
+    
+    <a href="\tags\Java" title="Java"><div class="tags-list-item">Java</div></a>
+    
+    <a href="\tags\分布式" title="分布式"><div class="tags-list-item">分布式</div></a>
+    
+    <a href="\tags\MQ" title="MQ"><div class="tags-list-item">MQ</div></a>
+    
+    <a href="\tags\消息队列" title="消息队列"><div class="tags-list-item">消息队列</div></a>
+    
+    <a href="\tags\SpringBoot" title="SpringBoot"><div class="tags-list-item">SpringBoot</div></a>
+    
+    <a href="\tags\多线程" title="多线程"><div class="tags-list-item">多线程</div></a>
+    
+    <a href="\tags\Mysql" title="Mysql"><div class="tags-list-item">Mysql</div></a>
+    
+    <a href="\tags\微服务" title="微服务"><div class="tags-list-item">微服务</div></a>
+    
+    <a href="\tags\Zookeeper" title="Zookeeper"><div class="tags-list-item">Zookeeper</div></a>
+    
+    <a href="\tags\Tomcat" title="Tomcat"><div class="tags-list-item">Tomcat</div></a>
+    
+    <a href="\tags\Spring" title="Spring"><div class="tags-list-item">Spring</div></a>
+    
+    <a href="\tags\RabbitMQ" title="RabbitMQ"><div class="tags-list-item">RabbitMQ</div></a>
+    
+    <a href="\tags\kafka" title="kafka"><div class="tags-list-item">kafka</div></a>
+    
+    <a href="\tags\并发" title="并发"><div class="tags-list-item">并发</div></a>
+    
+    <a href="\tags\SpringWebFlux" title="SpringWebFlux"><div class="tags-list-item">SpringWebFlux</div></a>
+    
+    <a href="\tags\jackson" title="jackson"><div class="tags-list-item">jackson</div></a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+          <aside class="right-column">
+            <div class="sticky-widescreen">
+  
+  
+  <article class="card card-content toc-card">
+    <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Spring-Boot-2-0%E7%AE%80%E4%BB%8B"><span class="toc-text">Spring Boot 2.0简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Spring-Boot-2-0-WebFlux"><span class="toc-text">Spring Boot 2.0 WebFlux</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-Reactive-Streams%EF%BC%9F"><span class="toc-text">什么是 Reactive Streams？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Backpressure-%E8%83%8C%E5%8E%8B"><span class="toc-text">Backpressure(背压)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Reactive-Streams%EF%BC%88%E5%93%8D%E5%BA%94%E5%BC%8F%E6%B5%81%EF%BC%89"><span class="toc-text">Reactive Streams（响应式流）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFReactive-programming%E5%93%8D%E5%BA%94%E5%BC%8F%E7%BC%96%E7%A8%8B%EF%BC%9F"><span class="toc-text">什么是Reactive programming响应式编程？</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Spring-Webflux%E6%98%AF%E7%94%B1%E4%BB%80%E4%B9%88%E5%AE%9E%E7%8E%B0%E7%9A%84"><span class="toc-text">Spring Webflux是由什么实现的</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Reactor-%E4%B8%80%E8%88%AC%E6%8F%90%E4%BE%9B%E4%B8%A4%E7%A7%8D%E5%93%8D%E5%BA%94%E5%BC%8F-API"><span class="toc-text">Reactor 一般提供两种响应式 API</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Spring-Boot-2-0-WebFlux-%E7%89%B9%E6%80%A7"><span class="toc-text">Spring Boot 2.0 WebFlux 特性</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%93%8D%E5%BA%94%E5%BC%8F-API"><span class="toc-text">响应式 API</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B"><span class="toc-text">编程模型</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%86%85%E5%B5%8C%E5%AE%B9%E5%99%A8"><span class="toc-text">内嵌容器</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Spring-Boot-2-0-WebFlux-%E7%BB%84%E4%BB%B6"><span class="toc-text">Spring Boot 2.0 WebFlux 组件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Spring-Webflux%E5%AE%9E%E8%B7%B5"><span class="toc-text">Spring Webflux实践</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BC%80%E5%8F%91%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83%E8%A6%81%E6%B1%82%EF%BC%9A"><span class="toc-text">开发运行环境要求：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE%E9%AA%A8%E6%9E%B6"><span class="toc-text">构建项目骨架</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%94%9F%E6%88%90%E9%A1%B9%E7%9B%AE%E9%85%8D%E7%BD%AE-POM-%E4%BE%9D%E8%B5%96%E6%A3%80%E6%9F%A5"><span class="toc-text">生成项目配置 POM 依赖检查</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#springboot-webflux-practise"><span class="toc-text">springboot-webflux-practise</span></a></li></ol></li></ol>
+  </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header"><i class="iconfont icon-wenzhang_huaban" style="padding-right: 2px;"></i>最近文章</div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-03-04</div>
+        <a href="/2021/03/04/springwebflux-from-zero-to-deep/"><div class="recent-posts-item-content">SpringWebFlux响应式编程从入门到实践</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-03-01</div>
+        <a href="/2021/03/01/lowcase-start-word-json-serialize-error/"><div class="recent-posts-item-content">uName类似首字符小写属性Json序列化接收不到数据问题及解决办法</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2020-09-16</div>
+        <a href="/2020/09/16/photo/"><div class="recent-posts-item-content">手机摄影之城市一角（一）</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2020-09-01</div>
+        <a href="/2020/09/01/jvm-local-cache-case-caffeine/"><div class="recent-posts-item-content">JVM高性能本地缓存Caffeine使用案例</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>Copyright ©
+          
+          2016 -
+          
+          2021
+        </span>
+        &nbsp;
+        <a href="/" class="footer-link">攻城狮李猿外 </a>
+      </div>
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+        本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+        <span>&nbsp;|&nbsp;</span>
+        
+        
+        本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+    <script>
+    //百度链接提交
+      (function(){
+          var bp = document.createElement('script');
+          var curProtocol = window.location.protocol.split(':')[0];
+          if (curProtocol === 'https'){
+          bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else{
+          bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(bp, s);
+      })();
+    </script>
+    
+    <script>
+    //百度统计
+      var _hmt = _hmt || [];
+      (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?57e94335f06e1ca57d2246529a0150c7";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+</footer>
+  <a role="button" id="scrollbutton" class="basebutton"  aria-label="回到顶部">
+  <i class="iconfont icon-arrowleft button-icon"></i>
+</a>
+<a role="button" id="menubutton" class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a role="button" id="popbutton" class="basebutton" aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a role="button" id="darkbutton" class="basebutton darkwidget" aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a role="button" id="searchbutton" class="basebutton searchwidget" aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+
+  
+  
+  
+  <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img');
+    var i;
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a');
+      wrapper.setAttribute('data-fslightbox', 'gallery');
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'));
+      wrapper.setAttribute('aria-label', 'illustration');
+      wrapper.style.cssText = 'width: 100%; display: flex; justify-content: center;';
+      img[i].before(wrapper);
+      wrapper.append(img[i]);
+    }
+    refreshFsLightbox();
+  }
+</script>
+<script>loadScript("//cdn.jsdelivr.net/npm/fslightbox@3.1.0/index.min.js", addImgLayout)</script>
+  
+  
+  
+<script src="/js/main.js"></script>
+
+  
+  <script>loadScript("/js/lib/busuanzi.min.js")</script>
+  
+  
+  <script>
+    var addLazyload = function () {
+      var observer = lozad('.lozad', {
+        load: function (el) {
+          el.srcset = el.getAttribute('data-src');
+        },
+        loaded: function (el) {
+          el.classList.add('loaded');
+        }
+      });
+      observer.observe();
+    }
+  </script>
+  <script>loadScript("/js/lib/lozad.min.js", addLazyload)</script>
+  
+  
+</body>
+
+</html>
