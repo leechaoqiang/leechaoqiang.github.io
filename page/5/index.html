@@ -180,6 +180,39 @@
 <div class="card">
   
   <article class="card card-content">
+    <a href="/2016/11/10/java-spi-practise-demo-introduction-md/">
+      <h1 class="post-title">
+        Java服务之spi机制简要说明和实践
+      </h1>
+    </a>
+    <div class="card-excerpt">
+      
+      一、SPI概念&amp;nbsp;&amp;nbsp;这里先说下SPI的一个概念，SPI英文为Service Provider Interface单从字面可以理解为Service提供者接口，正如从SPI的名字去理解SPI就是Service提供者接口；我对SPI的定义：提供给服务提供厂商与扩展框架功能的开发者使用的接口。
+
+&amp;nbsp;&amp;nbsp;当服务的提供者，提供了服务接口的一种实现之后，在jar包的META-INF/services/目录里同时创建一个以服务接口命名的文件。该文件里就是实现该服务接口的具体实现类。而当外部程序装配这个模块的时候，就能通过该jar包META-INF/services/里的配置文件找到具体的实现类名，并装载实例化，完成模块的注入。 很多框架都使用了java的SPI机制，如java.sql.Driver的SPI实现（mysql驱动、oracle驱动等）、common-logging的日志接口实现、dubbo的扩展实现等等框架；
+      
+    </div>
+    <div class="card-post-footer">
+      <div class="post-meta">
+        <time datetime="2016-11-10T08:42:34.000Z">
+          <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+          <span>2016-11-10</span>
+        </time>
+        
+        <span class="dot"></span>
+        
+        <a href="categories/博客/" class="post-meta-link">博客</a>
+        
+        
+      </div>
+      <a href="/2016/11/10/java-spi-practise-demo-introduction-md/">继续阅读 </a>
+    </div>
+  </article>
+</div>
+
+<div class="card">
+  
+  <article class="card card-content">
     <a href="/2016/10/21/string-stringbuilder-stringbuffer-run-efficiency-compare/">
       <h1 class="post-title">
         String,StringBuffer,StringBuilder拼接操作的效率比拼
@@ -310,40 +343,6 @@
   </article>
 </div>
 
-<div class="card">
-  
-  <article class="card card-content">
-    <a href="/2016/04/22/spring4-xfire1-2-6-integration-error-solution/">
-      <h1 class="post-title">
-        Spring 4.0.2.RELEASE和xfire1.2.6集成后出现一个奇葩问题
-      </h1>
-    </a>
-    <div class="card-excerpt">
-      
-      最近遇到一个奇葩的问题，我们的后台Dubbo服务已经和Spring 4.0.2.RELEASE版本集成，因为需要和一个第三方服务提供方对接，而对方提供的接口是web Service的，而且使用的框架是xfire。我们的技术对接童鞋，按照对方提供的技术文档进行代码编写，在pom.xml中添加了一段依赖导入相关需要的jar包,配置如下：
-12345 &amp;lt;dependency&amp;gt;    &amp;lt;groupId&amp;gt;org.codehaus.xfire&amp;lt;/groupId&amp;gt;    &amp;lt;artifactId&amp;gt;xfire-all&amp;lt;/artifactId&amp;gt;    &amp;lt;version&amp;gt;1.2.6&amp;lt;/version&amp;gt;&amp;lt;/dependency&amp;gt;然后当代码开发已经写得差不多了，在调试的时候就出现一个奇葩问题，老是报一个错org.xml.sax.SAXParseException; lineNumber: 5; columnNumber: 96; Document root element “beans”, must match DOCTYPE root “null”.
-      
-    </div>
-    <div class="card-post-footer">
-      <div class="post-meta">
-        <time datetime="2016-04-22T09:20:37.000Z">
-          <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
-          <span>2016-04-22</span>
-        </time>
-        
-        <span class="dot"></span>
-        
-        <a href="categories/博客/" class="post-meta-link">博客</a>
-        
-        <a href="categories/博客/问题/" class="post-meta-link">问题</a>
-        
-        
-      </div>
-      <a href="/2016/04/22/spring4-xfire1-2-6-integration-error-solution/">继续阅读 </a>
-    </div>
-  </article>
-</div>
-
 
 <div class="nav">
   
@@ -380,11 +379,11 @@
 <p class="author-description">爱智求真,共同进步。</p>
 <div class="author-message">
   <a class="author-posts-count" href="/archives">
-    <span>30</span>
+    <span>31</span>
     <span>文章</span>
   </a>
   <a class="author-categories-count" href="/categories">
-    <span>35</span>
+    <span>37</span>
     <span>分类</span>
   </a>
   <a class="author-tags-count" href="/tags">
@@ -665,6 +664,20 @@
         </div>
       </a>
     
+      <a href="/categories/微服务">
+        <div class="categories-list-item">
+          微服务
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringCloud">
+        <div class="categories-list-item">
+          SpringCloud
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
   </div>
 </div>
   </article>
@@ -676,23 +689,23 @@
     
     <a href="\tags\Java" title="Java"><div class="tags-list-item">Java</div></a>
     
+    <a href="\tags\SpringBoot" title="SpringBoot"><div class="tags-list-item">SpringBoot</div></a>
+    
     <a href="\tags\分布式" title="分布式"><div class="tags-list-item">分布式</div></a>
     
     <a href="\tags\MQ" title="MQ"><div class="tags-list-item">MQ</div></a>
     
     <a href="\tags\消息队列" title="消息队列"><div class="tags-list-item">消息队列</div></a>
     
-    <a href="\tags\SpringBoot" title="SpringBoot"><div class="tags-list-item">SpringBoot</div></a>
+    <a href="\tags\微服务" title="微服务"><div class="tags-list-item">微服务</div></a>
+    
+    <a href="\tags\SpringCloud" title="SpringCloud"><div class="tags-list-item">SpringCloud</div></a>
     
     <a href="\tags\多线程" title="多线程"><div class="tags-list-item">多线程</div></a>
     
     <a href="\tags\Mysql" title="Mysql"><div class="tags-list-item">Mysql</div></a>
     
-    <a href="\tags\微服务" title="微服务"><div class="tags-list-item">微服务</div></a>
-    
     <a href="\tags\Zookeeper" title="Zookeeper"><div class="tags-list-item">Zookeeper</div></a>
-    
-    <a href="\tags\SpringCloud" title="SpringCloud"><div class="tags-list-item">SpringCloud</div></a>
     
     <a href="\tags\Tomcat" title="Tomcat"><div class="tags-list-item">Tomcat</div></a>
     
@@ -800,9 +813,13 @@
     
       
         
+      
+    
+      
+        
           <a href="/archives/2019" class="archive-card-list-item">
               2019
-              <span class="archive-card-list-item-badge">7</span>
+              <span class="archive-card-list-item-badge">8</span>
           </a>
         
         
@@ -1011,9 +1028,13 @@
     
       
         
+      
+    
+      
+        
           <a href="/archives/2019" class="archive-card-list-item">
               2019
-              <span class="archive-card-list-item-badge">7</span>
+              <span class="archive-card-list-item-badge">8</span>
           </a>
         
         

@@ -180,6 +180,42 @@
 <div class="card">
   
   <article class="card card-content">
+    <a href="/2019/07/29/seconds-kill-when-reduce-sku-stock-design/">
+      <h1 class="post-title">
+        秒杀系统扣减库存的常见几种设计
+      </h1>
+    </a>
+    <div class="card-excerpt">
+      
+      背景我以前参与做过一个社交电商平台，其中就有秒杀场景，现在我从事的互联网酒店行业也有类似的秒杀场景，所以准备写一点关于秒杀相关的文字，就当总结记录一下吧。秒杀最主要的一个业务部门和我们技术部门需要注意一点，就是要防止超卖，而这个是电商行业经常会出现的现象。没有接触过秒杀的童鞋，可能会觉得，库存 200 件就卖 200 件，在数据库里减到 0 不就好了啊，这有什么好麻烦的？是的，理论上是这样，但是具体到业务场景中，“减库存”就不是这么简单了。例如，我们平常在淘宝或者京东上购物都是这样，看到喜欢的商品然后下单，但并不是每个下单请求你都最后付款了。你说系统是用户下单了就算这个商品卖出去了，还是等到用户真正付款了才算卖出了呢？这是个值得我们一起探讨问题！我们可以先根据减库存是发生在下单阶段还是付款阶段，把减库存做一下划分。
+扣减库存主要有哪几种方式呢在正常的电商平台购物场景中，用户的实际购买过程一般分为两步：下单 和 付款。你想买一台佳能单反相机，在商品页面点了“立即购买”按钮，核对信息之后点击“提交订单”，这一步称为下单操作。下单之后，你只有真正完成付款操作才能算真正购买，也就是俗话说的“落袋为安”。那如果你是架构师，你会在哪个环节完成减库存的操作呢？总结来说，减库存操作一般有如下几个方式：
+      
+    </div>
+    <div class="card-post-footer">
+      <div class="post-meta">
+        <time datetime="2019-07-28T17:02:01.000Z">
+          <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+          <span>2019-07-29</span>
+        </time>
+        
+        <span class="dot"></span>
+        
+        <a href="categories/博客/" class="post-meta-link">博客</a>
+        
+        <a href="categories/博客/Java/" class="post-meta-link">Java</a>
+        
+        <a href="categories/博客/Java/分布式/" class="post-meta-link">分布式</a>
+        
+        
+      </div>
+      <a href="/2019/07/29/seconds-kill-when-reduce-sku-stock-design/">继续阅读 </a>
+    </div>
+  </article>
+</div>
+
+<div class="card">
+  
+  <article class="card card-content">
     <a href="/2019/06/19/docker-java-app-practise/">
       <h1 class="post-title">
         Docker容器化部署SpringBoot应用实践
@@ -319,39 +355,6 @@
   </article>
 </div>
 
-<div class="card">
-  
-  <article class="card card-content">
-    <a href="/2016/11/10/java-spi-practise-demo-introduction-md/">
-      <h1 class="post-title">
-        Java服务之spi机制简要说明和实践
-      </h1>
-    </a>
-    <div class="card-excerpt">
-      
-      一、SPI概念&amp;nbsp;&amp;nbsp;这里先说下SPI的一个概念，SPI英文为Service Provider Interface单从字面可以理解为Service提供者接口，正如从SPI的名字去理解SPI就是Service提供者接口；我对SPI的定义：提供给服务提供厂商与扩展框架功能的开发者使用的接口。
-
-&amp;nbsp;&amp;nbsp;当服务的提供者，提供了服务接口的一种实现之后，在jar包的META-INF/services/目录里同时创建一个以服务接口命名的文件。该文件里就是实现该服务接口的具体实现类。而当外部程序装配这个模块的时候，就能通过该jar包META-INF/services/里的配置文件找到具体的实现类名，并装载实例化，完成模块的注入。 很多框架都使用了java的SPI机制，如java.sql.Driver的SPI实现（mysql驱动、oracle驱动等）、common-logging的日志接口实现、dubbo的扩展实现等等框架；
-      
-    </div>
-    <div class="card-post-footer">
-      <div class="post-meta">
-        <time datetime="2016-11-10T08:42:34.000Z">
-          <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
-          <span>2016-11-10</span>
-        </time>
-        
-        <span class="dot"></span>
-        
-        <a href="categories/博客/" class="post-meta-link">博客</a>
-        
-        
-      </div>
-      <a href="/2016/11/10/java-spi-practise-demo-introduction-md/">继续阅读 </a>
-    </div>
-  </article>
-</div>
-
 
 <div class="nav">
   
@@ -388,11 +391,11 @@
 <p class="author-description">爱智求真,共同进步。</p>
 <div class="author-message">
   <a class="author-posts-count" href="/archives">
-    <span>30</span>
+    <span>31</span>
     <span>文章</span>
   </a>
   <a class="author-categories-count" href="/categories">
-    <span>35</span>
+    <span>37</span>
     <span>分类</span>
   </a>
   <a class="author-tags-count" href="/tags">
@@ -673,6 +676,20 @@
         </div>
       </a>
     
+      <a href="/categories/微服务">
+        <div class="categories-list-item">
+          微服务
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringCloud">
+        <div class="categories-list-item">
+          SpringCloud
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
   </div>
 </div>
   </article>
@@ -684,23 +701,23 @@
     
     <a href="\tags\Java" title="Java"><div class="tags-list-item">Java</div></a>
     
+    <a href="\tags\SpringBoot" title="SpringBoot"><div class="tags-list-item">SpringBoot</div></a>
+    
     <a href="\tags\分布式" title="分布式"><div class="tags-list-item">分布式</div></a>
     
     <a href="\tags\MQ" title="MQ"><div class="tags-list-item">MQ</div></a>
     
     <a href="\tags\消息队列" title="消息队列"><div class="tags-list-item">消息队列</div></a>
     
-    <a href="\tags\SpringBoot" title="SpringBoot"><div class="tags-list-item">SpringBoot</div></a>
+    <a href="\tags\微服务" title="微服务"><div class="tags-list-item">微服务</div></a>
+    
+    <a href="\tags\SpringCloud" title="SpringCloud"><div class="tags-list-item">SpringCloud</div></a>
     
     <a href="\tags\多线程" title="多线程"><div class="tags-list-item">多线程</div></a>
     
     <a href="\tags\Mysql" title="Mysql"><div class="tags-list-item">Mysql</div></a>
     
-    <a href="\tags\微服务" title="微服务"><div class="tags-list-item">微服务</div></a>
-    
     <a href="\tags\Zookeeper" title="Zookeeper"><div class="tags-list-item">Zookeeper</div></a>
-    
-    <a href="\tags\SpringCloud" title="SpringCloud"><div class="tags-list-item">SpringCloud</div></a>
     
     <a href="\tags\Tomcat" title="Tomcat"><div class="tags-list-item">Tomcat</div></a>
     
@@ -808,9 +825,13 @@
     
       
         
+      
+    
+      
+        
           <a href="/archives/2019" class="archive-card-list-item">
               2019
-              <span class="archive-card-list-item-badge">7</span>
+              <span class="archive-card-list-item-badge">8</span>
           </a>
         
         
@@ -1019,9 +1040,13 @@
     
       
         
+      
+    
+      
+        
           <a href="/archives/2019" class="archive-card-list-item">
               2019
-              <span class="archive-card-list-item-badge">7</span>
+              <span class="archive-card-list-item-badge">8</span>
           </a>
         
         
