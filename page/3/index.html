@@ -6,7 +6,7 @@
     content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <meta name="theme-color" content="#fff" id="theme-color">
-  <meta name="description" content="不以物喜，不以己悲。">
+  <meta name="description" content="攻城狮李猿外的博客,专注Java,Spring,Spring Boot,Spring Cloud,RocketMQ,Kafka,RabbitMQ,Redis,Golang等技术学习记录。">
   <link rel="icon" href="/images/logo.jpg">
   <title>攻城狮李猿外</title>
   
@@ -20,7 +20,7 @@
   <meta property="og:img" content="/images/logo.jpg">
   
   
-  <meta property="og:img" content="不以物喜，不以己悲。">
+  <meta property="og:img" content="攻城狮李猿外的博客,专注Java,Spring,Spring Boot,Spring Cloud,RocketMQ,Kafka,RabbitMQ,Redis,Golang等技术学习记录。">
   
   
   
@@ -180,6 +180,68 @@
 <div class="card">
   
   <article class="card card-content">
+    <a href="/2020/04/17/zookeeper-from-start-to-deep-known-one/">
+      <h1 class="post-title">
+        Zookeeper从入门到精通（一）
+      </h1>
+    </a>
+    <div class="card-excerpt">
+      
+      Zookeeper 概念Zookeep...
+      
+    </div>
+    <div class="card-post-footer">
+      <div class="post-meta">
+        <time datetime="2020-04-17T04:02:03.000Z">
+          <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+          <span>2020-04-17</span>
+        </time>
+        
+        <span class="dot"></span>
+        
+        <a href="categories/Zookeeper/" class="post-meta-link">Zookeeper</a>
+        
+        
+      </div>
+      <a href="/2020/04/17/zookeeper-from-start-to-deep-known-one/">继续阅读 </a>
+    </div>
+  </article>
+</div>
+
+<div class="card">
+  
+  <article class="card card-content">
+    <a href="/2020/03/16/git-cmd-often-use-list/">
+      <h1 class="post-title">
+        git常用命令
+      </h1>
+    </a>
+    <div class="card-excerpt">
+      
+      gitlogo很多人都知道，Linus在1991年创建了开源的Linux，从此，Linux系统不断发展，已经成为最大的服务器系统软件了。Linus虽然...
+      
+    </div>
+    <div class="card-post-footer">
+      <div class="post-meta">
+        <time datetime="2020-03-16T15:47:31.000Z">
+          <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+          <span>2020-03-16</span>
+        </time>
+        
+        <span class="dot"></span>
+        
+        <a href="categories/工具学习/" class="post-meta-link">工具学习</a>
+        
+        
+      </div>
+      <a href="/2020/03/16/git-cmd-often-use-list/">继续阅读 </a>
+    </div>
+  </article>
+</div>
+
+<div class="card">
+  
+  <article class="card card-content">
     <a href="/2019/11/28/mysql-good-using-rule/">
       <h1 class="post-title">
         Mysql好的使用规范
@@ -199,9 +261,7 @@
         
         <span class="dot"></span>
         
-        <a href="categories/博客/" class="post-meta-link">博客</a>
-        
-        <a href="categories/博客/Mysql/" class="post-meta-link">Mysql</a>
+        <a href="categories/技术学习笔记-Mysql/" class="post-meta-link">技术学习笔记,Mysql</a>
         
         
       </div>
@@ -280,81 +340,6 @@ Kafka创建背景Kafka 是一个消息系统，原本开发自 LinkedIn，用作
   </article>
 </div>
 
-<div class="card">
-  
-  <article class="card card-content">
-    <a href="/2019/08/12/fork-join-pool-study-note/">
-      <h1 class="post-title">
-        使用Folk/Join框架实现多核并行计算学习笔记
-      </h1>
-    </a>
-    <div class="card-excerpt">
-      
-      背景最近温习《Java虚拟机精讲》的时候，里面有提到使用Folk/Join框架实现多核并行计算，似乎有点陌生又有点熟悉，原来真的好久没用了，根据书上的相关资料，自Java7开始新增在java.util.concurrent包下面新增了基于细粒度的多核并行计算Folk/Join框架。它的主要思想就是讲一个大任务分割成若干小任务，最终汇总每个小任务的结果得到这个大任务的结果。这种思想和开源基金会Apache提供的Hadoop里面MapReduce很像（input –&amp;gt; split –&amp;gt; map –&amp;gt; reduce –&amp;gt; output）
-主要有两步：
-第一、任务切分（Folk）
-第二、结果合并 (Join)
-
-使用说明自JDK1.7开始，java.util.concurrent包下提供了ForkJoinPool来支持将一个任务拆分成多个“小任务”并行计算，再把多个“小任务”的结果合并成总的计算结果。多线程ForkJoinPool运用了Fork/Join原理，使用“分而治之”的思想，将大任务分拆成小任务分配给多个线程执行，最后合并得到最终结果，加快运算。
-      
-    </div>
-    <div class="card-post-footer">
-      <div class="post-meta">
-        <time datetime="2019-08-11T17:12:28.000Z">
-          <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
-          <span>2019-08-12</span>
-        </time>
-        
-        <span class="dot"></span>
-        
-        <a href="categories/博客/" class="post-meta-link">博客</a>
-        
-        <a href="categories/博客/Java/" class="post-meta-link">Java</a>
-        
-        
-      </div>
-      <a href="/2019/08/12/fork-join-pool-study-note/">继续阅读 </a>
-    </div>
-  </article>
-</div>
-
-<div class="card">
-  
-  <article class="card card-content">
-    <a href="/2019/08/10/rabbitmq-quitstart-practise/">
-      <h1 class="post-title">
-        RabbitMQ分析全解之快速开始实现一个demo
-      </h1>
-    </a>
-    <div class="card-excerpt">
-      
-      RabbitMQ的安装、Web管理、命令行控制基础操作主要包括：安装服务器，查看Web管理页面，使用控制行操作相关内容。
-安装服务器安装ErlangRabbitMQ主要依赖Erlang，因此必须先安装erlang。
-erlang主要有三个方式来安装。具体内容参考： http://www.rabbitmq.com/install-rpm.html
-      
-    </div>
-    <div class="card-post-footer">
-      <div class="post-meta">
-        <time datetime="2019-08-10T03:39:44.000Z">
-          <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
-          <span>2019-08-10</span>
-        </time>
-        
-        <span class="dot"></span>
-        
-        <a href="categories/RabbitMQ/" class="post-meta-link">RabbitMQ</a>
-        
-        <a href="categories/RabbitMQ/博客/" class="post-meta-link">博客</a>
-        
-        <a href="categories/RabbitMQ/博客/消息队列/" class="post-meta-link">消息队列</a>
-        
-        
-      </div>
-      <a href="/2019/08/10/rabbitmq-quitstart-practise/">继续阅读 </a>
-    </div>
-  </article>
-</div>
-
 
 <div class="nav">
   
@@ -388,18 +373,18 @@ erlang主要有三个方式来安装。具体内容参考： http://www.rabbitmq
 <img src="/images/logo.jpg" class="author-img">
 
 <p class="author-name">李猿外</p>
-<p class="author-description">爱智求真,共同进步。</p>
+<p class="author-description">Javaer,Gopher爱好者</p>
 <div class="author-message">
   <a class="author-posts-count" href="/archives">
-    <span>32</span>
+    <span>34</span>
     <span>文章</span>
   </a>
   <a class="author-categories-count" href="/categories">
-    <span>39</span>
+    <span>42</span>
     <span>分类</span>
   </a>
   <a class="author-tags-count" href="/tags">
-    <span>62</span>
+    <span>67</span>
     <span>标签</span>
   </a>
 </div>
@@ -434,13 +419,20 @@ erlang主要有三个方式来安装。具体内容参考： http://www.rabbitmq
       <a href="/categories/博客">
         <div class="categories-list-item">
           博客
-          <span class="categories-list-item-badge">16</span>
+          <span class="categories-list-item-badge">15</span>
         </div>
       </a>
     
       <a href="/categories/Docker">
         <div class="categories-list-item">
           Docker
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/工具学习">
+        <div class="categories-list-item">
+          工具学习
           <span class="categories-list-item-badge">1</span>
         </div>
       </a>
@@ -452,37 +444,23 @@ erlang主要有三个方式来安装。具体内容参考： http://www.rabbitmq
         </div>
       </a>
     
-      <a href="/categories/mybatis">
+      <a href="/categories/微服务">
         <div class="categories-list-item">
-          mybatis
+          微服务
           <span class="categories-list-item-badge">1</span>
         </div>
       </a>
     
-      <a href="/categories/摄影">
+      <a href="/categories/Golang学习笔记">
         <div class="categories-list-item">
-          摄影
+          Golang学习笔记
           <span class="categories-list-item-badge">1</span>
         </div>
       </a>
     
-      <a href="/categories/RabbitMQ">
+      <a href="/categories/SpringBoot">
         <div class="categories-list-item">
-          RabbitMQ
-          <span class="categories-list-item-badge">2</span>
-        </div>
-      </a>
-    
-      <a href="/categories/Java">
-        <div class="categories-list-item">
-          Java
-          <span class="categories-list-item-badge">1</span>
-        </div>
-      </a>
-    
-      <a href="/categories/tensorflow">
-        <div class="categories-list-item">
-          tensorflow
+          SpringBoot
           <span class="categories-list-item-badge">1</span>
         </div>
       </a>
@@ -501,6 +479,13 @@ erlang主要有三个方式来安装。具体内容参考： http://www.rabbitmq
         </div>
       </a>
     
+      <a href="/categories/SpringBoot">
+        <div class="categories-list-item">
+          SpringBoot
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
       <a href="/categories/并发">
         <div class="categories-list-item">
           并发
@@ -508,100 +493,9 @@ erlang主要有三个方式来安装。具体内容参考： http://www.rabbitmq
         </div>
       </a>
     
-      <a href="/categories/SpringBoot">
-        <div class="categories-list-item">
-          SpringBoot
-          <span class="categories-list-item-badge">1</span>
-        </div>
-      </a>
-    
       <a href="/categories/博客">
         <div class="categories-list-item">
           博客
-          <span class="categories-list-item-badge">1</span>
-        </div>
-      </a>
-    
-      <a href="/categories/博客">
-        <div class="categories-list-item">
-          博客
-          <span class="categories-list-item-badge">1</span>
-        </div>
-      </a>
-    
-      <a href="/categories/Mysql">
-        <div class="categories-list-item">
-          Mysql
-          <span class="categories-list-item-badge">2</span>
-        </div>
-      </a>
-    
-      <a href="/categories/博客">
-        <div class="categories-list-item">
-          博客
-          <span class="categories-list-item-badge">2</span>
-        </div>
-      </a>
-    
-      <a href="/categories/Restful">
-        <div class="categories-list-item">
-          Restful
-          <span class="categories-list-item-badge">1</span>
-        </div>
-      </a>
-    
-      <a href="/categories/thread">
-        <div class="categories-list-item">
-          thread
-          <span class="categories-list-item-badge">1</span>
-        </div>
-      </a>
-    
-      <a href="/categories/Tomcat">
-        <div class="categories-list-item">
-          Tomcat
-          <span class="categories-list-item-badge">1</span>
-        </div>
-      </a>
-    
-      <a href="/categories/消息队列">
-        <div class="categories-list-item">
-          消息队列
-          <span class="categories-list-item-badge">1</span>
-        </div>
-      </a>
-    
-      <a href="/categories/消息队列">
-        <div class="categories-list-item">
-          消息队列
-          <span class="categories-list-item-badge">2</span>
-        </div>
-      </a>
-    
-      <a href="/categories/分布式">
-        <div class="categories-list-item">
-          分布式
-          <span class="categories-list-item-badge">1</span>
-        </div>
-      </a>
-    
-      <a href="/categories/多线程">
-        <div class="categories-list-item">
-          多线程
-          <span class="categories-list-item-badge">1</span>
-        </div>
-      </a>
-    
-      <a href="/categories/SpringBoot">
-        <div class="categories-list-item">
-          SpringBoot
-          <span class="categories-list-item-badge">1</span>
-        </div>
-      </a>
-    
-      <a href="/categories/kafka">
-        <div class="categories-list-item">
-          kafka
           <span class="categories-list-item-badge">1</span>
         </div>
       </a>
@@ -609,27 +503,6 @@ erlang主要有三个方式来安装。具体内容参考： http://www.rabbitmq
       <a href="/categories/SpringCloud">
         <div class="categories-list-item">
           SpringCloud
-          <span class="categories-list-item-badge">1</span>
-        </div>
-      </a>
-    
-      <a href="/categories/消息队列">
-        <div class="categories-list-item">
-          消息队列
-          <span class="categories-list-item-badge">1</span>
-        </div>
-      </a>
-    
-      <a href="/categories/kafka">
-        <div class="categories-list-item">
-          kafka
-          <span class="categories-list-item-badge">1</span>
-        </div>
-      </a>
-    
-      <a href="/categories/SpringBoot">
-        <div class="categories-list-item">
-          SpringBoot
           <span class="categories-list-item-badge">1</span>
         </div>
       </a>
@@ -641,51 +514,16 @@ erlang主要有三个方式来安装。具体内容参考： http://www.rabbitmq
         </div>
       </a>
     
-      <a href="/categories/Zookeeper">
+      <a href="/categories/技术学习笔记,Mysql">
         <div class="categories-list-item">
-          Zookeeper
-          <span class="categories-list-item-badge">2</span>
-        </div>
-      </a>
-    
-      <a href="/categories/Spring">
-        <div class="categories-list-item">
-          Spring
+          技术学习笔记,Mysql
           <span class="categories-list-item-badge">1</span>
         </div>
       </a>
     
-      <a href="/categories/SpringWebFlux">
+      <a href="/categories/摄影">
         <div class="categories-list-item">
-          SpringWebFlux
-          <span class="categories-list-item-badge">1</span>
-        </div>
-      </a>
-    
-      <a href="/categories/博客">
-        <div class="categories-list-item">
-          博客
-          <span class="categories-list-item-badge">1</span>
-        </div>
-      </a>
-    
-      <a href="/categories/SpringCloud">
-        <div class="categories-list-item">
-          SpringCloud
-          <span class="categories-list-item-badge">1</span>
-        </div>
-      </a>
-    
-      <a href="/categories/微服务">
-        <div class="categories-list-item">
-          微服务
-          <span class="categories-list-item-badge">1</span>
-        </div>
-      </a>
-    
-      <a href="/categories/SpringCloud">
-        <div class="categories-list-item">
-          SpringCloud
+          摄影
           <span class="categories-list-item-badge">1</span>
         </div>
       </a>
@@ -697,9 +535,177 @@ erlang主要有三个方式来安装。具体内容参考： http://www.rabbitmq
         </div>
       </a>
     
+      <a href="/categories/RabbitMQ">
+        <div class="categories-list-item">
+          RabbitMQ
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Spring">
+        <div class="categories-list-item">
+          Spring
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/tensorflow">
+        <div class="categories-list-item">
+          tensorflow
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Tomcat">
+        <div class="categories-list-item">
+          Tomcat
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Zookeeper">
+        <div class="categories-list-item">
+          Zookeeper
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/mybatis">
+        <div class="categories-list-item">
+          mybatis
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Mysql">
+        <div class="categories-list-item">
+          Mysql
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Restful">
+        <div class="categories-list-item">
+          Restful
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/消息队列">
+        <div class="categories-list-item">
+          消息队列
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
       <a href="/categories/Java">
         <div class="categories-list-item">
           Java
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringWebFlux">
+        <div class="categories-list-item">
+          SpringWebFlux
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringBoot">
+        <div class="categories-list-item">
+          SpringBoot
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/分布式">
+        <div class="categories-list-item">
+          分布式
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/thread">
+        <div class="categories-list-item">
+          thread
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/kafka">
+        <div class="categories-list-item">
+          kafka
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/消息队列">
+        <div class="categories-list-item">
+          消息队列
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringCloud">
+        <div class="categories-list-item">
+          SpringCloud
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/多线程">
+        <div class="categories-list-item">
+          多线程
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringCloud">
+        <div class="categories-list-item">
+          SpringCloud
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/消息队列">
+        <div class="categories-list-item">
+          消息队列
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/kafka">
+        <div class="categories-list-item">
+          kafka
           <span class="categories-list-item-badge">1</span>
         </div>
       </a>
@@ -715,9 +721,9 @@ erlang主要有三个方式来安装。具体内容参考： http://www.rabbitmq
     
     <a href="\tags\Java" title="Java"><div class="tags-list-item">Java</div></a>
     
-    <a href="\tags\SpringBoot" title="SpringBoot"><div class="tags-list-item">SpringBoot</div></a>
-    
     <a href="\tags\分布式" title="分布式"><div class="tags-list-item">分布式</div></a>
+    
+    <a href="\tags\SpringBoot" title="SpringBoot"><div class="tags-list-item">SpringBoot</div></a>
     
     <a href="\tags\微服务" title="微服务"><div class="tags-list-item">微服务</div></a>
     
@@ -725,11 +731,9 @@ erlang主要有三个方式来安装。具体内容参考： http://www.rabbitmq
     
     <a href="\tags\消息队列" title="消息队列"><div class="tags-list-item">消息队列</div></a>
     
-    <a href="\tags\SpringCloud" title="SpringCloud"><div class="tags-list-item">SpringCloud</div></a>
-    
     <a href="\tags\多线程" title="多线程"><div class="tags-list-item">多线程</div></a>
     
-    <a href="\tags\Mysql" title="Mysql"><div class="tags-list-item">Mysql</div></a>
+    <a href="\tags\SpringCloud" title="SpringCloud"><div class="tags-list-item">SpringCloud</div></a>
     
     <a href="\tags\Zookeeper" title="Zookeeper"><div class="tags-list-item">Zookeeper</div></a>
     
@@ -743,7 +747,9 @@ erlang主要有三个方式来安装。具体内容参考： http://www.rabbitmq
     
     <a href="\tags\并发" title="并发"><div class="tags-list-item">并发</div></a>
     
-    <a href="\tags\gRPC" title="gRPC"><div class="tags-list-item">gRPC</div></a>
+    <a href="\tags\zookeeper" title="zookeeper"><div class="tags-list-item">zookeeper</div></a>
+    
+    <a href="\tags\thread" title="thread"><div class="tags-list-item">thread</div></a>
     
   </div>
 </div>
@@ -773,9 +779,13 @@ erlang主要有三个方式来安装。具体内容参考： http://www.rabbitmq
     
       
         
+      
+    
+      
+        
           <a href="/archives/2021" class="archive-card-list-item">
               2021
-              <span class="archive-card-list-item-badge">3</span>
+              <span class="archive-card-list-item-badge">4</span>
           </a>
         
         
@@ -808,9 +818,13 @@ erlang主要有三个方式来安装。具体内容参考： http://www.rabbitmq
     
       
         
+      
+    
+      
+        
           <a href="/archives/2020" class="archive-card-list-item">
               2020
-              <span class="archive-card-list-item-badge">7</span>
+              <span class="archive-card-list-item-badge">8</span>
           </a>
         
         
@@ -945,6 +959,11 @@ erlang主要有三个方式来安装。具体内容参考： http://www.rabbitmq
   <div class="recent-posts-list">
     
       <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-04-16</div>
+        <a href="/2021/04/16/golang-install-description/"><div class="recent-posts-item-content">Golang安装说明</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
         <div class="recent-posts-item-title">2021-03-04</div>
         <a href="/2021/03/04/springwebflux-from-zero-to-deep/"><div class="recent-posts-item-content">SpringWebFlux响应式编程从入门到实践</div></a>
       </div>
@@ -957,11 +976,6 @@ erlang主要有三个方式来安装。具体内容参考： http://www.rabbitmq
       <div class="recent-posts-item">
         <div class="recent-posts-item-title">2021-01-22</div>
         <a href="/2021/01/22/quick-start-gRPC-in-Java-simple/"><div class="recent-posts-item-content">Java快起开启一个gRPC示例</div></a>
-      </div>
-    
-      <div class="recent-posts-item">
-        <div class="recent-posts-item-title">2020-09-16</div>
-        <a href="/2020/09/16/photo/"><div class="recent-posts-item-content">手机摄影之城市一角（一）</div></a>
       </div>
     
   </div>
@@ -992,9 +1006,13 @@ erlang主要有三个方式来安装。具体内容参考： http://www.rabbitmq
     
       
         
+      
+    
+      
+        
           <a href="/archives/2021" class="archive-card-list-item">
               2021
-              <span class="archive-card-list-item-badge">3</span>
+              <span class="archive-card-list-item-badge">4</span>
           </a>
         
         
@@ -1027,9 +1045,13 @@ erlang主要有三个方式来安装。具体内容参考： http://www.rabbitmq
     
       
         
+      
+    
+      
+        
           <a href="/archives/2020" class="archive-card-list-item">
               2020
-              <span class="archive-card-list-item-badge">7</span>
+              <span class="archive-card-list-item-badge">8</span>
           </a>
         
         
@@ -1166,7 +1188,7 @@ erlang主要有三个方式来安装。具体内容参考： http://www.rabbitmq
           
           2016 -
           
-          2021
+          2022
         </span>
         &nbsp;
         <a href="/" class="footer-link">攻城狮李猿外 </a>

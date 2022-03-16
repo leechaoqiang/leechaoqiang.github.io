@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html  lang="zh-CN" >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="#fff" id="theme-color">
+  <meta name="description" content="攻城狮李猿外的博客,专注Java,Spring,Spring Boot,Spring Cloud,RocketMQ,Kafka,RabbitMQ,Redis,Golang等技术学习记录。">
+  <link rel="icon" href="/images/logo.jpg">
+  <title>Golang安装说明</title>
+  
+  
+  <meta property="og:title" content="Golang安装说明">
+  
+  
+  <meta property="og:url" content="http://leechaoqiang.github.io/2021/04/16/golang-install-description/index.html">
+  
+  
+  <meta property="og:img" content="/images/logo.jpg">
+  
+  
+  <meta property="og:img" content="攻城狮李猿外的博客,专注Java,Spring,Spring Boot,Spring Cloud,RocketMQ,Kafka,RabbitMQ,Redis,Golang等技术学习记录。">
+  
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:published_time" content="2021-04-16">
+  <meta property="og:article:modified_time" content="2022-03-16">
+  <meta property="og:article:author" content="李猿外">
+  
+  
+  <meta property="og:article:tag" content="Golang">
+  
+  
+  
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+    var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+      }
+    };
+    setDarkmode();
+  </script>
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  </script>
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_f7g5jnuftcf.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  <link rel="preload" href="//cdn.jsdelivr.net/npm/fslightbox@3.1.0/index.min.js" as="script">
+  
+  
+  <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+  <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">
+  
+  
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_f7g5jnuftcf.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 5.0.2"></head>
+
+
+<body>
+  <div class="wrapper">
+    
+    <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+      <img class="navbar-logo-img" src="/images/logo.jpg" alt="logo">
+      
+      <span class="navbar-logo-dsc">攻城狮李猿外</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+    <a href="/" class="navbar-menu-item">
+    
+    首页
+    
+    </a>
+    
+    <a href="/archives" class="navbar-menu-item">
+    
+    归档
+    
+    </a>
+    
+    <a href="/tags" class="navbar-menu-item">
+    
+    标签
+    
+    </a>
+    
+    <a href="/categories" class="navbar-menu-item">
+    
+    分类
+    
+    </a>
+    
+    <a href="/about" class="navbar-menu-item">
+    
+    关于
+    
+    </a>
+    
+    <a href="/links" class="navbar-menu-item">
+    
+    友链
+    
+    </a>
+    
+    <a class="navbar-menu-item darknavbar" id="dark"><i class="iconfont icon-weather"></i></a>
+    <a class="navbar-menu-item searchnavbar" id="search"><i class="iconfont icon-search" style="font-size: 1.2rem; font-weight: 400;"></i></a>
+  </div>
+</nav>
+    
+    <div id="local-search" style="display: none;">
+      <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容...">
+      <div id="search-content"></div>
+    </div>
+    
+    <div class="section-wrap">
+      <div class="container">
+        <div class="columns">
+          <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      Golang安装说明
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2021-04-16T12:57:07.000Z">
+      <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+      <span>2021-04-16</span>
+    </time>
+    
+    <span class="dot"></span>
+    
+    <a href="/categories/Golang学习笔记/" class="post-meta-link">Golang学习笔记</a>
+    
+    
+    
+    <span class="dot"></span>
+    <span>2.2k 字</span>
+    
+  </div>
+  
+  <div class="post-meta post-show-meta" style="margin-top: -10px;">
+    <div style="display: flex; align-items: center;">
+      <i class="iconfont icon-biaoqian" style="margin-right: 2px; font-size: 1.15rem;"></i>
+      
+      
+        <a href="/tags/Golang/" class="post-meta-link">Golang</a>
+      
+    </div>
+  </div>
+  
+  </header>
+  <div id="section" class="post-content">
+    <h1 id="1-1安装-Go"><a href="#1-1安装-Go" class="headerlink" title="1.1安装 Go"></a>1.1安装 Go</h1><h2 id="Go的三种安装方式"><a href="#Go的三种安装方式" class="headerlink" title="Go的三种安装方式"></a>Go的三种安装方式</h2><p>Go有多种安装方式，你可以选择自己喜欢的。这里我们介绍三种最常见的安装方式：</p>
+<ul>
+<li>Go标准包安装：Go提供了方便的安装包，支持Windows、Linux、Mac等系统。这种方式适合快速安装，可根据自己的系统位数下载好相应的安装包，一路 next 就可以轻松安装了。<strong>推荐这种方式</strong></li>
+<li>第三方工具安装：目前有很多方便的第三方软件包工具，例如 Ubuntu 的 apt-ge t和 wget、Mac 的 homebrew 等。这种安装方式适合那些熟悉相应系统的用户。</li>
+<li>Go源码安装：这是一种标准的软件安装方式。对于经常使用Unix类系统的用户，尤其对于开发者来说，从源码安装可以自己定制。</li>
+</ul>
+<p>最后，如果你想在同一个系统中安装多个版本的Go，你可以参考第三方工具<a target="_blank" rel="noopener" href="https://github.com/moovweb/gvm">GVM</a>，这是目前在这方面做得最好的工具，除非你知道怎么处理。</p>
+<h2 id="Go标准包安装"><a href="#Go标准包安装" class="headerlink" title="Go标准包安装"></a>Go标准包安装</h2><p>Go 提供了每个平台打好包的一键安装，这些包默认会安装到如下目录：/usr/local/go (Windows系统：c:\Go)，当然你可以改变他们的安装位置，但是改变之后你必须在你的环境变量中设置如下信息：</p>
+<pre><code>export GOROOT=$HOME/go  
+export GOPATH=$HOME/gopath (可选配置)
+export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+</code></pre><p>上面这些命令对于Mac和Unix用户来说最好是写入<code>.bashrc</code>或者<code>.zshrc</code>或者<code>.bash_profile</code>文件，对于windows用户来说当然是写入环境变量。    </p>
+<h3 id="如何判断自己的操作系统是32位还是64位？-建议直接跳过-现在操作系统一般都是-64位"><a href="#如何判断自己的操作系统是32位还是64位？-建议直接跳过-现在操作系统一般都是-64位" class="headerlink" title="如何判断自己的操作系统是32位还是64位？(建议直接跳过, 现在操作系统一般都是 64位)"></a>如何判断自己的操作系统是32位还是64位？(建议直接跳过, 现在操作系统一般都是 64位)</h3><p>我们接下来的Go安装需要判断操作系统的位数，所以这小节我们先确定自己的系统类型。</p>
+<p>Windows系统用户请按Win+R运行cmd，输入<code>systeminfo</code>后回车，稍等片刻，会出现一些系统信息。在“系统类型”一行中，若显示“x64-based PC”，即为64位系统；若显示“X86-based PC”，则为32位系统。</p>
+<p>Mac系统用户建议直接使用64位的，因为Go所支持的Mac OS X版本已经不支持纯32位处理器了。</p>
+<p>Linux系统用户可通过在Terminal中执行命令<code>arch</code>(即<code>uname -m</code>)来查看系统信息：</p>
+<p>64位系统显示<br>    x86_64</p>
+<p>32位系统显示<br>    i386</p>
+<h3 id="Mac-安装"><a href="#Mac-安装" class="headerlink" title="Mac 安装"></a>Mac 安装</h3><p>访问<a target="_blank" rel="noopener" href="https://studygolang.com/dl" title="Go安装包下载">下载地址</a>，64位系统下载 go1.17.8.darwin-amd64.pkg，双击下载文件，一路默认安装点击下一步，这个时候go已经安装到你的系统中，默认已经在PATH中增加了相应的<code>~/go/bin</code>, 这个时候打开终端，输入<code>go version</code></p>
+<p>显示如下</p>
+<pre class="highlight"><span class="line">go version go1.17.8 darwin/amd64</span><br></pre>
+<p>看到类似上面提示说明已经安装成功</p>
+<p>如果出现go的Usage信息，那么说明go已经安装成功了；如果出现该命令不存在，那么可以检查一下自己的PATH环境变中是否包含了go的安装目录。</p>
+<h3 id="Linux-安装"><a href="#Linux-安装" class="headerlink" title="Linux 安装"></a>Linux 安装</h3><p>访问<a target="_blank" rel="noopener" href="https://studygolang.com/dl" title="Go安装包下载">下载地址</a>，64位系统下载go1.17.8.linux-arm64.tar.gz，32位系统下载go1.17.8.linux-386.tar.gz，</p>
+<p>直接使用 <code>tar -C /usr/local -xzf go1.17.8.linux-amd64.tar.gz</code> 解压到 local 目录<br>设置PATH，<code>export PATH=$PATH:/usr/local/go/bin</code></p>
+<p>假定你想要安装Go的目录为 <code>$GO_INSTALL_DIR</code>，后面替换为相应的目录路径。<br>解压缩<code>tar.gz</code>包到安装目录下：<code>tar zxvf go1.17.8.linux-amd64.tar.gz -C $GO_INSTALL_DIR</code>。</p>
+<p>设置PATH，<code>export PATH=$PATH:$GO_INSTALL_DIR/go/bin</code></p>
+<p>然后执行<code>go</code></p>
+<p><img src="images/golang/1.1.linux.png?raw=true" alt="go命令显示" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="images/golang/1.1.linux.png?raw=true" class="lozad post-image"></p>
+<p>图1.2 Linux系统下安装成功之后执行go显示的信息</p>
+<p>如果出现go的Usage信息，那么说明go已经安装成功了；如果出现该命令不存在，那么可以检查一下自己的PATH环境变中是否包含了go的安装目录。</p>
+<h3 id="Windows-安装"><a href="#Windows-安装" class="headerlink" title="Windows 安装"></a>Windows 安装</h3><p>访问<a target="_blank" rel="noopener" href="https://studygolang.com/dl" title="Go安装包下载">Golang 下载页</a>，64 位请选择名称中包含 windows-amd64 的, 32 位请选择名称中包含 windows-386 的 msi 安装包。下载好后运行，不要修改默认安装目录 C:\Go\，若安装到其他位置会导致不能执行自己所编写的 Go 代码。安装完成后默认会在环境变量 Path 后添加 Go 安装目录下的 bin 目录 <code>C:\Go\bin\</code>，并添加环境变量 GOROOT，值为 Go 安装根目录 <code>C:\Go\</code> 。</p>
+<p><strong>验证是否安装成功</strong></p>
+<p>在运行中输入 <code>cmd</code> 打开命令行工具，在提示符下输入 <code>go</code>，检查是否能看到 Usage 信息。输入 <code>cd %GOROOT%</code>，看是否能进入 Go 安装目录。若都成功，说明安装成功。</p>
+<p>不能的话请检查上述环境变量 Path 和 GOROOT 的值。若不存在请卸载后重新安装，存在请重启计算机后重试以上步骤。</p>
+<h2 id="第三方工具安装"><a href="#第三方工具安装" class="headerlink" title="第三方工具安装"></a>第三方工具安装</h2><h3 id="GVM"><a href="#GVM" class="headerlink" title="GVM"></a>GVM</h3><p>gvm是第三方开发的Go多版本管理工具，类似ruby里面的rvm工具。使用起来相当的方便，安装gvm使用如下命令：</p>
+<pre class="highlight"><span class="line">bash &lt; &lt;(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)</span><br></pre>
+<p>安装完成后我们就可以安装go了：</p>
+<pre class="highlight"><span class="line">gvm install go1.17.8</span><br><span class="line">gvm use go1.17.8</span><br></pre>
+<p>也可以使用下面的命令，省去每次调用gvm use的麻烦：<br>        gvm use go1.17.8 –default</p>
+<p>执行完上面的命令之后GOPATH、GOROOT等环境变量会自动设置好，这样就可以直接使用了。</p>
+<h3 id="apt-get"><a href="#apt-get" class="headerlink" title="apt-get"></a>apt-get</h3><p>Ubuntu是目前使用最多的Linux桌面系统，使用<code>apt-get</code>命令来管理软件包，我们可以通过下面的命令来安装Go，为了以后方便，应该把 <code>git</code> <code>mercurial</code> 也安装上：</p>
+<pre class="highlight"><span class="line">sudo apt-get install python-software-properties</span><br><span class="line">sudo add-apt-repository ppa:gophers/go</span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install golang-stable git-core mercurial</span><br></pre>
+<h3 id="wget"><a href="#wget" class="headerlink" title="wget"></a>wget</h3><pre class="highlight"><span class="line">wget https://studygolang.com/dl/golang/go1.17.8.linux-amd64.tar.gz</span><br><span class="line"></span><br><span class="line">sudo tar -xzf go1.17.8.linux-amd64.tar.gz -C /usr/<span class="built_in">local</span> </span><br></pre>
+<p>配置环境变量:</p>
+<pre class="highlight"><span class="line"><span class="built_in">export</span> GOROOT=/usr/<span class="built_in">local</span>/go</span><br><span class="line"><span class="built_in">export</span> GOBIN=<span class="variable">$GOROOT</span>/bin</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$GOBIN</span></span><br><span class="line"><span class="built_in">export</span> GOPATH=<span class="variable">$HOME</span>/gopath (可选设置)</span><br></pre>
+<p>或者使用: </p>
+<pre class="highlight"><span class="line">sudo vim /etc/profile </span><br></pre>
+<p>并添加下面的内容：</p>
+<pre class="highlight"><span class="line"><span class="built_in">export</span> GOROOT=/usr/<span class="built_in">local</span>/go</span><br><span class="line"><span class="built_in">export</span> GOBIN=<span class="variable">$GOROOT</span>/bin</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$GOBIN</span></span><br><span class="line"><span class="built_in">export</span> GOPATH=<span class="variable">$HOME</span>/gopath (可选设置)</span><br></pre>
+<p>重新加载 profile 文件</p>
+<pre class="highlight"><span class="line"><span class="built_in">source</span> /etc/profile </span><br></pre>
+<h3 id="homebrew"><a href="#homebrew" class="headerlink" title="homebrew"></a>homebrew</h3><p>homebrew是Mac系统下面目前使用最多的管理软件的工具，目前已支持Go，可以通过命令直接安装Go，为了以后方便，应该把 <code>git</code> <code>mercurial</code> 也安装上：</p>
+<p>1.安装homebrew</p>
+<pre class="highlight"><span class="line">/usr/bin/ruby -e <span class="string">&quot;<span class="subst">$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)</span>&quot;</span></span><br></pre>
+<p>2.安装go</p>
+<pre class="highlight"><span class="line">brew update &amp;&amp; brew upgrade</span><br><span class="line">brew install go</span><br><span class="line">brew install git</span><br><span class="line">brew install mercurial // 可选安装</span><br></pre>
+<h2 id="Go源码安装"><a href="#Go源码安装" class="headerlink" title="Go源码安装"></a>Go源码安装</h2><p>Go 1.5彻底移除 C 代码，Runtime、Compiler、Linker均由Go编写,实现自举。只需要安装了上一个版本,即可从源码安装。</p>
+<p>在Go 1.5前,Go的源代码中，有些部分是用Plan 9 C和AT&amp;T汇编写的，因此假如你要想从源码安装，就必须安装C的编译工具。</p>
+<p>在Mac系统中，只要你安装了Xcode，就已经包含了相应的编译工具。</p>
+<p>在类Unix系统中，需要安装gcc等工具。例如Ubuntu系统可通过在终端中执行<code>sudo apt-get install gcc libc6-dev</code>来安装编译工具。</p>
+<p>在 Windows 系统中，你需要安装 MinGW，然后通过 MinGW 安装 gcc，并设置相应的环境变量。</p>
+<p>你可以直接去官网<a target="_blank" rel="noopener" href="https://studygolang.com/dl">下载源码</a>，找相应的<code>goVERSION.src.tar.gz</code>的文件下载，下载之后解压缩到<code>$HOME</code>目录，执行如下代码：</p>
+<pre><code>cd go/src
+./all.bash
+</code></pre><p>运行all.bash后出现”ALL TESTS PASSED”字样时才算安装成功。</p>
+<p>上面是Unix风格的命令，Windows下的安装方式类似，只不过是运行<code>all.bat</code>，调用的编译器是MinGW的gcc。</p>
+<p>如果是Mac或者Unix用户需要设置几个环境变量，如果想重启之后也能生效的话把下面的命令写到<code>.bashrc</code>或者<code>.zshrc</code>里面，</p>
+<pre><code>export GOPATH=$HOME/gopath
+export PATH=$PATH:$HOME/go/bin:$GOPATH/bin
+</code></pre><p>如果你是写入文件的，记得执行<code>bash .bashrc</code>或者<code>bash .zshrc</code>使得设置立马生效。</p>
+<p>如果是window系统，就需要设置环境变量，在path里面增加相应的go所在的目录，设置gopath变量。</p>
+<p>当你设置完毕之后在命令行里面输入<code>go</code>，看到如下图片即说明你已经安装成功</p>
+<p><img src="images/1.1.mac.png?raw=true" alt srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="images/1.1.mac.png?raw=true" class="lozad post-image"></p>
+<p>图1.1 源码安装之后执行Go命令的图</p>
+<p>如果出现Go的Usage信息，那么说明Go已经安装成功了；如果出现该命令不存在，那么可以检查一下自己的PATH环境变中是否包含了Go的安装目录。</p>
+<p>从go 1.8开始，GOPATH 环境变量现在有一个默认值，如果它没有被设置。 它在Unix上默认为$HOME/go,在Windows上默认为%USERPROFILE%/go。<br>从 Go1.11 开始, Go 官方加入了 Go Module 支持.</p>
+<blockquote>
+<p>关于上面的 GO Module 和 GOPATH 将在下面小节详细讲解</p>
+</blockquote>
+<p>## </p>
+
+  </div>
+  <div>
+  
+  <div class="post-note note-warning copyright" style="margin-top: 42px">
+    <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="http://leechaoqiang.github.io/about">李猿外</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="http://leechaoqiang.github.io/2021/04/16/golang-install-description/">http://leechaoqiang.github.io/2021/04/16/golang-install-description/</a></p>
+    <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+  </div>
+  
+  </div>
+</article>
+<div class="nav">
+  
+  
+  <div class="nav-item-next">
+    <a href="/2021/03/04/springwebflux-from-zero-to-deep/" class="nav-link">
+      <div>
+        <div class="nav-label">下一篇</div>
+        
+        <div class="nav-title">SpringWebFlux响应式编程从入门到实践 </div>
+        
+      </div>
+      <i class="iconfont icon-right nav-next-icon"></i>
+    </a>
+  </div>
+  
+</div>
+
+<div class="card card-content comment-card" style="margin-top: 16px;">
+  <div class="comment-card-title">评论</div>
+  
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: 'SnVYhldRRlqYatvAs4y3N2qF-MdYXbMMI',
+        appKey: '2SwmjMzPEwYhnB7hqqNgknXM',
+        placeholder: '都来了，留句话呗...',
+        path: window.location.pathname,
+        avatar: 'wavatar',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'false',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+</div>
+
+<div class="card card-content toc-card" id="mobiletoc">
+  <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-1%E5%AE%89%E8%A3%85-Go"><span class="toc-text">1.1安装 Go</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Go%E7%9A%84%E4%B8%89%E7%A7%8D%E5%AE%89%E8%A3%85%E6%96%B9%E5%BC%8F"><span class="toc-text">Go的三种安装方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Go%E6%A0%87%E5%87%86%E5%8C%85%E5%AE%89%E8%A3%85"><span class="toc-text">Go标准包安装</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E8%87%AA%E5%B7%B1%E7%9A%84%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%98%AF32%E4%BD%8D%E8%BF%98%E6%98%AF64%E4%BD%8D%EF%BC%9F-%E5%BB%BA%E8%AE%AE%E7%9B%B4%E6%8E%A5%E8%B7%B3%E8%BF%87-%E7%8E%B0%E5%9C%A8%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%B8%80%E8%88%AC%E9%83%BD%E6%98%AF-64%E4%BD%8D"><span class="toc-text">如何判断自己的操作系统是32位还是64位？(建议直接跳过, 现在操作系统一般都是 64位)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Mac-%E5%AE%89%E8%A3%85"><span class="toc-text">Mac 安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Linux-%E5%AE%89%E8%A3%85"><span class="toc-text">Linux 安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Windows-%E5%AE%89%E8%A3%85"><span class="toc-text">Windows 安装</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%96%B9%E5%B7%A5%E5%85%B7%E5%AE%89%E8%A3%85"><span class="toc-text">第三方工具安装</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GVM"><span class="toc-text">GVM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#apt-get"><span class="toc-text">apt-get</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#wget"><span class="toc-text">wget</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#homebrew"><span class="toc-text">homebrew</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Go%E6%BA%90%E7%A0%81%E5%AE%89%E8%A3%85"><span class="toc-text">Go源码安装</span></a></li></ol></li></ol>
+</div></main>
+          <aside class="left-column">
+            
+            <div class="card card-author">
+              
+<img src="/images/logo.jpg" class="author-img">
+
+<p class="author-name">李猿外</p>
+<p class="author-description">Javaer,Gopher爱好者</p>
+<div class="author-message">
+  <a class="author-posts-count" href="/archives">
+    <span>34</span>
+    <span>文章</span>
+  </a>
+  <a class="author-categories-count" href="/categories">
+    <span>42</span>
+    <span>分类</span>
+  </a>
+  <a class="author-tags-count" href="/tags">
+    <span>67</span>
+    <span>标签</span>
+  </a>
+</div>
+
+<div class="author-card-society">
+  
+    <div class="author-card-society-icon">
+      <a target="_blank" rel="noopener" href="https://github.com/leechaoqiang">
+        <i class="iconfont icon-github society-icon"></i>
+      </a>
+    </div>
+  
+    <div class="author-card-society-icon">
+      <a href="mailto:vincentlee99@126.com">
+        <i class="iconfont icon-mail society-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+            </div>
+            
+            <div class="sticky-tablet">
+  
+  
+  <article class="display-when-two-columns spacer">
+    <div class="card card-content toc-card">
+      <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-1%E5%AE%89%E8%A3%85-Go"><span class="toc-text">1.1安装 Go</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Go%E7%9A%84%E4%B8%89%E7%A7%8D%E5%AE%89%E8%A3%85%E6%96%B9%E5%BC%8F"><span class="toc-text">Go的三种安装方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Go%E6%A0%87%E5%87%86%E5%8C%85%E5%AE%89%E8%A3%85"><span class="toc-text">Go标准包安装</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E8%87%AA%E5%B7%B1%E7%9A%84%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%98%AF32%E4%BD%8D%E8%BF%98%E6%98%AF64%E4%BD%8D%EF%BC%9F-%E5%BB%BA%E8%AE%AE%E7%9B%B4%E6%8E%A5%E8%B7%B3%E8%BF%87-%E7%8E%B0%E5%9C%A8%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%B8%80%E8%88%AC%E9%83%BD%E6%98%AF-64%E4%BD%8D"><span class="toc-text">如何判断自己的操作系统是32位还是64位？(建议直接跳过, 现在操作系统一般都是 64位)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Mac-%E5%AE%89%E8%A3%85"><span class="toc-text">Mac 安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Linux-%E5%AE%89%E8%A3%85"><span class="toc-text">Linux 安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Windows-%E5%AE%89%E8%A3%85"><span class="toc-text">Windows 安装</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%96%B9%E5%B7%A5%E5%85%B7%E5%AE%89%E8%A3%85"><span class="toc-text">第三方工具安装</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GVM"><span class="toc-text">GVM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#apt-get"><span class="toc-text">apt-get</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#wget"><span class="toc-text">wget</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#homebrew"><span class="toc-text">homebrew</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Go%E6%BA%90%E7%A0%81%E5%AE%89%E8%A3%85"><span class="toc-text">Go源码安装</span></a></li></ol></li></ol>
+    </div>
+  </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header"><i class="iconfont icon-fenlei" style="padding-right: 2px;"></i>分类</div>
+  <div class="categories-list">
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">15</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Docker">
+        <div class="categories-list-item">
+          Docker
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/工具学习">
+        <div class="categories-list-item">
+          工具学习
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/缓存">
+        <div class="categories-list-item">
+          缓存
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/微服务">
+        <div class="categories-list-item">
+          微服务
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Golang学习笔记">
+        <div class="categories-list-item">
+          Golang学习笔记
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringBoot">
+        <div class="categories-list-item">
+          SpringBoot
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+      <a href="/categories/问题">
+        <div class="categories-list-item">
+          问题
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringBoot">
+        <div class="categories-list-item">
+          SpringBoot
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/并发">
+        <div class="categories-list-item">
+          并发
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringCloud">
+        <div class="categories-list-item">
+          SpringCloud
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/技术学习笔记,Mysql">
+        <div class="categories-list-item">
+          技术学习笔记,Mysql
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/摄影">
+        <div class="categories-list-item">
+          摄影
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/gRPC">
+        <div class="categories-list-item">
+          gRPC
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/RabbitMQ">
+        <div class="categories-list-item">
+          RabbitMQ
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Spring">
+        <div class="categories-list-item">
+          Spring
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/tensorflow">
+        <div class="categories-list-item">
+          tensorflow
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Tomcat">
+        <div class="categories-list-item">
+          Tomcat
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Zookeeper">
+        <div class="categories-list-item">
+          Zookeeper
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/mybatis">
+        <div class="categories-list-item">
+          mybatis
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Mysql">
+        <div class="categories-list-item">
+          Mysql
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Restful">
+        <div class="categories-list-item">
+          Restful
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/消息队列">
+        <div class="categories-list-item">
+          消息队列
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringWebFlux">
+        <div class="categories-list-item">
+          SpringWebFlux
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringBoot">
+        <div class="categories-list-item">
+          SpringBoot
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/分布式">
+        <div class="categories-list-item">
+          分布式
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/thread">
+        <div class="categories-list-item">
+          thread
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/kafka">
+        <div class="categories-list-item">
+          kafka
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/消息队列">
+        <div class="categories-list-item">
+          消息队列
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringCloud">
+        <div class="categories-list-item">
+          SpringCloud
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/多线程">
+        <div class="categories-list-item">
+          多线程
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringCloud">
+        <div class="categories-list-item">
+          SpringCloud
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/消息队列">
+        <div class="categories-list-item">
+          消息队列
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/kafka">
+        <div class="categories-list-item">
+          kafka
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header"><i class="iconfont icon-biaoqian" style="padding-right: 2px;"></i>热门标签</div>
+  <div class="tags-list">
+    
+    <a href="\tags\Java" title="Java"><div class="tags-list-item">Java</div></a>
+    
+    <a href="\tags\分布式" title="分布式"><div class="tags-list-item">分布式</div></a>
+    
+    <a href="\tags\SpringBoot" title="SpringBoot"><div class="tags-list-item">SpringBoot</div></a>
+    
+    <a href="\tags\微服务" title="微服务"><div class="tags-list-item">微服务</div></a>
+    
+    <a href="\tags\MQ" title="MQ"><div class="tags-list-item">MQ</div></a>
+    
+    <a href="\tags\消息队列" title="消息队列"><div class="tags-list-item">消息队列</div></a>
+    
+    <a href="\tags\多线程" title="多线程"><div class="tags-list-item">多线程</div></a>
+    
+    <a href="\tags\SpringCloud" title="SpringCloud"><div class="tags-list-item">SpringCloud</div></a>
+    
+    <a href="\tags\Zookeeper" title="Zookeeper"><div class="tags-list-item">Zookeeper</div></a>
+    
+    <a href="\tags\Tomcat" title="Tomcat"><div class="tags-list-item">Tomcat</div></a>
+    
+    <a href="\tags\Spring" title="Spring"><div class="tags-list-item">Spring</div></a>
+    
+    <a href="\tags\RabbitMQ" title="RabbitMQ"><div class="tags-list-item">RabbitMQ</div></a>
+    
+    <a href="\tags\kafka" title="kafka"><div class="tags-list-item">kafka</div></a>
+    
+    <a href="\tags\并发" title="并发"><div class="tags-list-item">并发</div></a>
+    
+    <a href="\tags\zookeeper" title="zookeeper"><div class="tags-list-item">zookeeper</div></a>
+    
+    <a href="\tags\thread" title="thread"><div class="tags-list-item">thread</div></a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+          <aside class="right-column">
+            <div class="sticky-widescreen">
+  
+  
+  <article class="card card-content toc-card">
+    <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-1%E5%AE%89%E8%A3%85-Go"><span class="toc-text">1.1安装 Go</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Go%E7%9A%84%E4%B8%89%E7%A7%8D%E5%AE%89%E8%A3%85%E6%96%B9%E5%BC%8F"><span class="toc-text">Go的三种安装方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Go%E6%A0%87%E5%87%86%E5%8C%85%E5%AE%89%E8%A3%85"><span class="toc-text">Go标准包安装</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E8%87%AA%E5%B7%B1%E7%9A%84%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%98%AF32%E4%BD%8D%E8%BF%98%E6%98%AF64%E4%BD%8D%EF%BC%9F-%E5%BB%BA%E8%AE%AE%E7%9B%B4%E6%8E%A5%E8%B7%B3%E8%BF%87-%E7%8E%B0%E5%9C%A8%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%B8%80%E8%88%AC%E9%83%BD%E6%98%AF-64%E4%BD%8D"><span class="toc-text">如何判断自己的操作系统是32位还是64位？(建议直接跳过, 现在操作系统一般都是 64位)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Mac-%E5%AE%89%E8%A3%85"><span class="toc-text">Mac 安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Linux-%E5%AE%89%E8%A3%85"><span class="toc-text">Linux 安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Windows-%E5%AE%89%E8%A3%85"><span class="toc-text">Windows 安装</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%96%B9%E5%B7%A5%E5%85%B7%E5%AE%89%E8%A3%85"><span class="toc-text">第三方工具安装</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GVM"><span class="toc-text">GVM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#apt-get"><span class="toc-text">apt-get</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#wget"><span class="toc-text">wget</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#homebrew"><span class="toc-text">homebrew</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Go%E6%BA%90%E7%A0%81%E5%AE%89%E8%A3%85"><span class="toc-text">Go源码安装</span></a></li></ol></li></ol>
+  </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header"><i class="iconfont icon-wenzhang_huaban" style="padding-right: 2px;"></i>最近文章</div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-04-16</div>
+        <a href="/2021/04/16/golang-install-description/"><div class="recent-posts-item-content">Golang安装说明</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-03-04</div>
+        <a href="/2021/03/04/springwebflux-from-zero-to-deep/"><div class="recent-posts-item-content">SpringWebFlux响应式编程从入门到实践</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-03-01</div>
+        <a href="/2021/03/01/lowcase-start-word-json-serialize-error/"><div class="recent-posts-item-content">uName类似首字符小写属性Json序列化接收不到数据问题及解决办法</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-01-22</div>
+        <a href="/2021/01/22/quick-start-gRPC-in-Java-simple/"><div class="recent-posts-item-content">Java快起开启一个gRPC示例</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>Copyright ©
+          
+          2016 -
+          
+          2022
+        </span>
+        &nbsp;
+        <a href="/" class="footer-link">攻城狮李猿外 </a>
+      </div>
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+        本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+        <span>&nbsp;|&nbsp;</span>
+        
+        
+        本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+    <script>
+    //百度链接提交
+      (function(){
+          var bp = document.createElement('script');
+          var curProtocol = window.location.protocol.split(':')[0];
+          if (curProtocol === 'https'){
+          bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else{
+          bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(bp, s);
+      })();
+    </script>
+    
+    <script>
+    //百度统计
+      var _hmt = _hmt || [];
+      (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?57e94335f06e1ca57d2246529a0150c7";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+</footer>
+  <a role="button" id="scrollbutton" class="basebutton"  aria-label="回到顶部">
+  <i class="iconfont icon-arrowleft button-icon"></i>
+</a>
+<a role="button" id="menubutton" class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a role="button" id="popbutton" class="basebutton" aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a role="button" id="darkbutton" class="basebutton darkwidget" aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a role="button" id="searchbutton" class="basebutton searchwidget" aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+
+  
+  
+  
+  <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img');
+    var i;
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a');
+      wrapper.setAttribute('data-fslightbox', 'gallery');
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'));
+      wrapper.setAttribute('aria-label', 'illustration');
+      wrapper.style.cssText = 'width: 100%; display: flex; justify-content: center;';
+      img[i].before(wrapper);
+      wrapper.append(img[i]);
+    }
+    refreshFsLightbox();
+  }
+</script>
+<script>loadScript("//cdn.jsdelivr.net/npm/fslightbox@3.1.0/index.min.js", addImgLayout)</script>
+  
+  
+  
+<script src="/js/main.js"></script>
+
+  
+  <script>loadScript("/js/lib/busuanzi.min.js")</script>
+  
+  
+  <script>
+    var addLazyload = function () {
+      var observer = lozad('.lozad', {
+        load: function (el) {
+          el.srcset = el.getAttribute('data-src');
+        },
+        loaded: function (el) {
+          el.classList.add('loaded');
+        }
+      });
+      observer.observe();
+    }
+  </script>
+  <script>loadScript("/js/lib/lozad.min.js", addLazyload)</script>
+  
+  
+</body>
+
+</html>
