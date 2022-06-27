@@ -8,10 +8,10 @@
   <meta name="theme-color" content="#fff" id="theme-color">
   <meta name="description" content="攻城狮李猿外的博客,专注Java,Spring,Spring Boot,Spring Cloud,RocketMQ,Kafka,RabbitMQ,Redis,Golang等技术学习记录。">
   <link rel="icon" href="/images/logo.jpg">
-  <title>分布式配置中心技术选型以及我们推荐选择哪个呢</title>
+  <title>分布式配置中心技术选型以及我们推荐选择哪个？</title>
   
   
-  <meta property="og:title" content="分布式配置中心技术选型以及我们推荐选择哪个呢">
+  <meta property="og:title" content="分布式配置中心技术选型以及我们推荐选择哪个？">
   
   
   <meta property="og:url" content="http://leechaoqiang.github.io/2020/10/27/distribute-config-center-cmp-and-choose/index.html">
@@ -202,7 +202,7 @@
 <article class="card card-content">
   <header>
     <h1 class="post-title">
-      分布式配置中心技术选型以及我们推荐选择哪个呢
+      分布式配置中心技术选型以及我们推荐选择哪个？
     </h1>
   </header>
   <div class="post-meta post-show-meta">
@@ -544,7 +544,7 @@
 </tr>
 </tbody>
 </table>
-<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>综合来说，Nacos配置文件支持比较多的格式，支持yaml、text、json、xml、html、Properties，apollo只支持xml、text、Properties的格式，没有兼容spring boot中比较通用的yaml配置。虽然 Nacos支持多格式的配置文件，但是解析上没有Apollo做的好，Apollo虽然支持的配置格式较少，不过会进行解析，使每个配置看起来比较直观，修改的时候比较直观，可以对单个进行修改。</p>
+<h2 id="三、结论"><a href="#三、结论" class="headerlink" title="三、结论"></a>三、结论</h2><p>综合来说，Nacos配置文件支持比较多的格式，支持yaml、text、json、xml、html、Properties，apollo只支持xml、text、Properties的格式，没有兼容spring boot中比较通用的yaml配置。虽然 Nacos支持多格式的配置文件，但是解析上没有Apollo做的好，Apollo虽然支持的配置格式较少，不过会进行解析，使每个配置看起来比较直观，修改的时候比较直观，可以对单个进行修改。</p>
 <p>另外，Apollo用户管理以及权限管理做的比较好和全面，适合做部门或者公司级的配置中心。Nacos比较简洁，权限这块目前还比较偏弱。Apollo的社区生态活跃，github最近一直都有活跃提交，而且文档也比较清晰和完善。另外使用的公司特别多，常见的坑基本都被踩完了，也经过了更多社区用户的验证，使用踩坑的几率会比较低。</p>
 <p><img src="/images/configcenter/apollo-user-001.png" alt="apollo社区用户图" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/images/configcenter/apollo-user-001.png" class="lozad post-image"><br><img src="/images/configcenter/apollo-user-002.png" alt="apollo社区用户图" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/images/configcenter/apollo-user-002.png" class="lozad post-image"><br><img src="/images/configcenter/apollo-user-003.png" alt="apollo社区用户图" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/images/configcenter/apollo-user-003.png" class="lozad post-image"><br><img src="/images/configcenter/apollo-user-004.png" alt="apollo社区用户图" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/images/configcenter/apollo-user-004.png" class="lozad post-image"></p>
 <p>当然Nacos作为后起之秀，又有互联网大厂阿里巴巴做背书，目前市场活跃度也非常高，大家可以结合自家情况选择，如果想稳妥点建议选择Apollo。</p>
@@ -702,7 +702,7 @@
 
 <div class="card card-content toc-card" id="mobiletoc">
   <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%BC%80%E6%BA%90%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83"><span class="toc-text">一、开源配置中心</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83%E5%AF%B9%E6%AF%94"><span class="toc-text">二、配置中心对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AE%BA"><span class="toc-text">结论</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Apollo-%E4%BB%8B%E7%BB%8D"><span class="toc-text">Apollo 介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%89%B9%E6%80%A7"><span class="toc-text">特性</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%B4%E6%98%8E"><span class="toc-text">说明</span></a></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%BC%80%E6%BA%90%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83"><span class="toc-text">一、开源配置中心</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83%E5%AF%B9%E6%AF%94"><span class="toc-text">二、配置中心对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E7%BB%93%E8%AE%BA"><span class="toc-text">三、结论</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Apollo-%E4%BB%8B%E7%BB%8D"><span class="toc-text">Apollo 介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%89%B9%E6%80%A7"><span class="toc-text">特性</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%B4%E6%98%8E"><span class="toc-text">说明</span></a></li></ol></li></ol>
 </div></main>
           <aside class="left-column">
             
@@ -751,7 +751,7 @@
   <article class="display-when-two-columns spacer">
     <div class="card card-content toc-card">
       <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%BC%80%E6%BA%90%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83"><span class="toc-text">一、开源配置中心</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83%E5%AF%B9%E6%AF%94"><span class="toc-text">二、配置中心对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AE%BA"><span class="toc-text">结论</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Apollo-%E4%BB%8B%E7%BB%8D"><span class="toc-text">Apollo 介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%89%B9%E6%80%A7"><span class="toc-text">特性</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%B4%E6%98%8E"><span class="toc-text">说明</span></a></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%BC%80%E6%BA%90%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83"><span class="toc-text">一、开源配置中心</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83%E5%AF%B9%E6%AF%94"><span class="toc-text">二、配置中心对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E7%BB%93%E8%AE%BA"><span class="toc-text">三、结论</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Apollo-%E4%BB%8B%E7%BB%8D"><span class="toc-text">Apollo 介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%89%B9%E6%80%A7"><span class="toc-text">特性</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%B4%E6%98%8E"><span class="toc-text">说明</span></a></li></ol></li></ol>
     </div>
   </article>
   
@@ -1123,7 +1123,7 @@
   
   <article class="card card-content toc-card">
     <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%BC%80%E6%BA%90%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83"><span class="toc-text">一、开源配置中心</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83%E5%AF%B9%E6%AF%94"><span class="toc-text">二、配置中心对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AE%BA"><span class="toc-text">结论</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Apollo-%E4%BB%8B%E7%BB%8D"><span class="toc-text">Apollo 介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%89%B9%E6%80%A7"><span class="toc-text">特性</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%B4%E6%98%8E"><span class="toc-text">说明</span></a></li></ol></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%BC%80%E6%BA%90%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83"><span class="toc-text">一、开源配置中心</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83%E5%AF%B9%E6%AF%94"><span class="toc-text">二、配置中心对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E7%BB%93%E8%AE%BA"><span class="toc-text">三、结论</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Apollo-%E4%BB%8B%E7%BB%8D"><span class="toc-text">Apollo 介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%89%B9%E6%80%A7"><span class="toc-text">特性</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%B4%E6%98%8E"><span class="toc-text">说明</span></a></li></ol></li></ol>
   </article>
   
   
