@@ -6,7 +6,7 @@
     content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <meta name="theme-color" content="#fff" id="theme-color">
-  <meta name="description" content="攻城狮李猿外的博客,专注Java,Spring,Spring Boot,Spring Cloud,RocketMQ,Kafka,RabbitMQ,Redis,Golang等技术学习记录。">
+  <meta name="description" content="攻城狮李猿外的博客,专注Java,Spring,Spring Boot,Spring Cloud,RocketMQ,Kafka,Spring AI,Redis,Golang,人工智能等技术学习记录。">
   <link rel="icon" href="/images/logo.jpg">
   <title>攻城狮李猿外</title>
   
@@ -14,13 +14,13 @@
   <meta property="og:title" content="攻城狮李猿外">
   
   
-  <meta property="og:url" content="http://leechaoqiang.github.io/page/4/index.html">
+  <meta property="og:url" content="http://www.vincentli.top/page/4/index.html">
   
   
   <meta property="og:img" content="/images/logo.jpg">
   
   
-  <meta property="og:img" content="攻城狮李猿外的博客,专注Java,Spring,Spring Boot,Spring Cloud,RocketMQ,Kafka,RabbitMQ,Redis,Golang等技术学习记录。">
+  <meta property="og:img" content="攻城狮李猿外的博客,专注Java,Spring,Spring Boot,Spring Cloud,RocketMQ,Kafka,Spring AI,Redis,Golang,人工智能等技术学习记录。">
   
   
   
@@ -180,6 +180,39 @@
 <div class="card">
   
   <article class="card card-content">
+    <a href="/2019/10/28/from-micro-service-to-springcloud/">
+      <h1 class="post-title">
+        从微服务到SpringCloud
+      </h1>
+    </a>
+    <div class="card-excerpt">
+      
+      什么是微服务架构？微服务架构就是将单体的应用程序分成多个...
+      
+    </div>
+    <div class="card-post-footer">
+      <div class="post-meta">
+        <time datetime="2019-10-28T09:18:40.000Z">
+          <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+          <span>2019-10-28</span>
+        </time>
+        
+        <span class="dot"></span>
+        
+        <a href="categories/微服务/" class="post-meta-link">微服务</a>
+        
+        <a href="categories/微服务/SpringCloud/" class="post-meta-link">SpringCloud</a>
+        
+        
+      </div>
+      <a href="/2019/10/28/from-micro-service-to-springcloud/">继续阅读 </a>
+    </div>
+  </article>
+</div>
+
+<div class="card">
+  
+  <article class="card card-content">
     <a href="/2019/09/04/springcloud-app-kafka/">
       <h1 class="post-title">
         Kafka简析以及SpringBoot整合Kafka应用实践
@@ -325,42 +358,6 @@ RabbitMQ主要是为了实现系统之间的双向解耦而实现的。当生产
   </article>
 </div>
 
-<div class="card">
-  
-  <article class="card card-content">
-    <a href="/2019/07/29/seconds-kill-when-reduce-sku-stock-design/">
-      <h1 class="post-title">
-        秒杀系统扣减库存的常见几种设计
-      </h1>
-    </a>
-    <div class="card-excerpt">
-      
-      背景我以前参与做过一个社交电商平台，其中就有秒杀场景，现在我从事的互联网酒店行业也有类似的秒杀场景，所以准备写一点关于秒杀相关的文字，就当总结记录一下吧。秒杀最主要的一个业务部门和我们技术部门需要注意一点，就是要防止超卖，而这个是电商行业经常会出现的现象。没有接触过秒杀的童鞋，可能会觉得，库存 200 件就卖 200 件，在数据库里减到 0 不就好了啊，这有什么好麻烦的？是的，理论上是这样，但是具体到业务场景中，“减库存”就不是这么简单了。例如，我们平常在淘宝或者京东上购物都是这样，看到喜欢的商品然后下单，但并不是每个下单请求你都最后付款了。你说系统是用户下单了就算这个商品卖出去了，还是等到用户真正付款了才算卖出了呢？这是个值得我们一起探讨问题！我们可以先根据减库存是发生在下单阶段还是付款阶段，把减库存做一下划分。
-扣减库存主要有哪几种方式呢在正常的电商平台购物场景中，用户的实际购买过程一般分为两步：下单 和 付款。你想买一台佳能单反相机，在商品页面点了“立即购买”按钮，核对信息之后点击“提交订单”，这一步称为下单操作。下单之后，你只有真正完成付款操作才能算真正购买，也就是俗话说的“落袋为安”。那如果你是架构师，你会在哪个环节完成减库存的操作呢？总结来说，减库存操作一般有如下几个方式：
-      
-    </div>
-    <div class="card-post-footer">
-      <div class="post-meta">
-        <time datetime="2019-07-28T17:02:01.000Z">
-          <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
-          <span>2019-07-29</span>
-        </time>
-        
-        <span class="dot"></span>
-        
-        <a href="categories/博客/" class="post-meta-link">博客</a>
-        
-        <a href="categories/博客/Java/" class="post-meta-link">Java</a>
-        
-        <a href="categories/博客/Java/分布式/" class="post-meta-link">分布式</a>
-        
-        
-      </div>
-      <a href="/2019/07/29/seconds-kill-when-reduce-sku-stock-design/">继续阅读 </a>
-    </div>
-  </article>
-</div>
-
 
 <div class="nav">
   
@@ -394,18 +391,18 @@ RabbitMQ主要是为了实现系统之间的双向解耦而实现的。当生产
 <img src="/images/logo.jpg" class="author-img">
 
 <p class="author-name">李猿外</p>
-<p class="author-description">毛主席说:学习使人进步!</p>
+<p class="author-description">千里之行，始于足下。</p>
 <div class="author-message">
   <a class="author-posts-count" href="/archives">
-    <span>37</span>
+    <span>38</span>
     <span>文章</span>
   </a>
   <a class="author-categories-count" href="/categories">
-    <span>44</span>
+    <span>45</span>
     <span>分类</span>
   </a>
   <a class="author-tags-count" href="/tags">
-    <span>73</span>
+    <span>77</span>
     <span>标签</span>
   </a>
 </div>
@@ -440,27 +437,27 @@ RabbitMQ主要是为了实现系统之间的双向解耦而实现的。当生产
       <a href="/categories/博客">
         <div class="categories-list-item">
           博客
-          <span class="categories-list-item-badge">15</span>
+          <span class="categories-list-item-badge">16</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+      <a href="/categories/AI">
+        <div class="categories-list-item">
+          AI
+          <span class="categories-list-item-badge">1</span>
         </div>
       </a>
     
       <a href="/categories/Docker">
         <div class="categories-list-item">
           Docker
-          <span class="categories-list-item-badge">2</span>
-        </div>
-      </a>
-    
-      <a href="/categories/工具学习">
-        <div class="categories-list-item">
-          工具学习
-          <span class="categories-list-item-badge">2</span>
-        </div>
-      </a>
-    
-      <a href="/categories/缓存">
-        <div class="categories-list-item">
-          缓存
           <span class="categories-list-item-badge">2</span>
         </div>
       </a>
@@ -472,6 +469,13 @@ RabbitMQ主要是为了实现系统之间的双向解耦而实现的。当生产
         </div>
       </a>
     
+      <a href="/categories/工具学习">
+        <div class="categories-list-item">
+          工具学习
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
       <a href="/categories/Golang学习笔记">
         <div class="categories-list-item">
           Golang学习笔记
@@ -479,58 +483,30 @@ RabbitMQ主要是为了实现系统之间的双向解耦而实现的。当生产
         </div>
       </a>
     
-      <a href="/categories/SpringBoot">
+      <a href="/categories/缓存">
         <div class="categories-list-item">
-          SpringBoot
-          <span class="categories-list-item-badge">1</span>
-        </div>
-      </a>
-    
-      <a href="/categories/Java">
-        <div class="categories-list-item">
-          Java
-          <span class="categories-list-item-badge">3</span>
-        </div>
-      </a>
-    
-      <a href="/categories/问题">
-        <div class="categories-list-item">
-          问题
-          <span class="categories-list-item-badge">3</span>
-        </div>
-      </a>
-    
-      <a href="/categories/SpringBoot">
-        <div class="categories-list-item">
-          SpringBoot
-          <span class="categories-list-item-badge">1</span>
-        </div>
-      </a>
-    
-      <a href="/categories/并发">
-        <div class="categories-list-item">
-          并发
+          缓存
           <span class="categories-list-item-badge">2</span>
         </div>
       </a>
     
-      <a href="/categories/博客">
+      <a href="/categories/SpringBoot">
         <div class="categories-list-item">
-          博客
+          SpringBoot
           <span class="categories-list-item-badge">1</span>
         </div>
       </a>
     
-      <a href="/categories/SpringCloud">
+      <a href="/categories/mybatis">
         <div class="categories-list-item">
-          SpringCloud
+          mybatis
           <span class="categories-list-item-badge">1</span>
         </div>
       </a>
     
-      <a href="/categories/Java">
+      <a href="/categories/技术学习笔记">
         <div class="categories-list-item">
-          Java
+          技术学习笔记
           <span class="categories-list-item-badge">1</span>
         </div>
       </a>
@@ -563,16 +539,16 @@ RabbitMQ主要是为了实现系统之间的双向解耦而实现的。当生产
         </div>
       </a>
     
-      <a href="/categories/tensorflow">
+      <a href="/categories/Java">
         <div class="categories-list-item">
-          tensorflow
+          Java
           <span class="categories-list-item-badge">1</span>
         </div>
       </a>
     
-      <a href="/categories/Tomcat">
+      <a href="/categories/tensorflow">
         <div class="categories-list-item">
-          Tomcat
+          tensorflow
           <span class="categories-list-item-badge">1</span>
         </div>
       </a>
@@ -584,10 +560,31 @@ RabbitMQ主要是为了实现系统之间的双向解耦而实现的。当生产
         </div>
       </a>
     
-      <a href="/categories/mybatis">
+      <a href="/categories/Tomcat">
         <div class="categories-list-item">
-          mybatis
+          Tomcat
           <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/配置中心">
+        <div class="categories-list-item">
+          配置中心
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/问题">
+        <div class="categories-list-item">
+          问题
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+      <a href="/categories/并发">
+        <div class="categories-list-item">
+          并发
+          <span class="categories-list-item-badge">2</span>
         </div>
       </a>
     
@@ -605,9 +602,51 @@ RabbitMQ主要是为了实现系统之间的双向解耦而实现的。当生产
         </div>
       </a>
     
-      <a href="/categories/消息队列">
+      <a href="/categories/thread">
         <div class="categories-list-item">
-          消息队列
+          thread
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringBoot">
+        <div class="categories-list-item">
+          SpringBoot
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringCloud">
+        <div class="categories-list-item">
+          SpringCloud
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/技术笔记">
+        <div class="categories-list-item">
+          技术笔记
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Mysql">
+        <div class="categories-list-item">
+          Mysql
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
           <span class="categories-list-item-badge">1</span>
         </div>
       </a>
@@ -647,23 +686,16 @@ RabbitMQ主要是为了实现系统之间的双向解耦而实现的。当生产
         </div>
       </a>
     
-      <a href="/categories/Java">
+      <a href="/categories/多线程">
         <div class="categories-list-item">
-          Java
+          多线程
           <span class="categories-list-item-badge">1</span>
         </div>
       </a>
     
-      <a href="/categories/thread">
+      <a href="/categories/消息队列">
         <div class="categories-list-item">
-          thread
-          <span class="categories-list-item-badge">1</span>
-        </div>
-      </a>
-    
-      <a href="/categories/kafka">
-        <div class="categories-list-item">
-          kafka
+          消息队列
           <span class="categories-list-item-badge">1</span>
         </div>
       </a>
@@ -689,9 +721,9 @@ RabbitMQ主要是为了实现系统之间的双向解耦而实现的。当生产
         </div>
       </a>
     
-      <a href="/categories/多线程">
+      <a href="/categories/kafka">
         <div class="categories-list-item">
-          多线程
+          kafka
           <span class="categories-list-item-badge">1</span>
         </div>
       </a>
@@ -717,34 +749,6 @@ RabbitMQ主要是为了实现系统之间的双向解耦而实现的。当生产
         </div>
       </a>
     
-      <a href="/categories/技术学习笔记">
-        <div class="categories-list-item">
-          技术学习笔记
-          <span class="categories-list-item-badge">1</span>
-        </div>
-      </a>
-    
-      <a href="/categories/技术笔记">
-        <div class="categories-list-item">
-          技术笔记
-          <span class="categories-list-item-badge">1</span>
-        </div>
-      </a>
-    
-      <a href="/categories/Mysql">
-        <div class="categories-list-item">
-          Mysql
-          <span class="categories-list-item-badge">1</span>
-        </div>
-      </a>
-    
-      <a href="/categories/配置中心">
-        <div class="categories-list-item">
-          配置中心
-          <span class="categories-list-item-badge">1</span>
-        </div>
-      </a>
-    
   </div>
 </div>
   </article>
@@ -754,37 +758,37 @@ RabbitMQ主要是为了实现系统之间的双向解耦而实现的。当生产
   <div class="tags-header"><i class="iconfont icon-biaoqian" style="padding-right: 2px;"></i>热门标签</div>
   <div class="tags-list">
     
+    <a href="\tags\HashMap" title="HashMap"><div class="tags-list-item">HashMap</div></a>
+    
     <a href="\tags\Java" title="Java"><div class="tags-list-item">Java</div></a>
+    
+    <a href="\tags\Map" title="Map"><div class="tags-list-item">Map</div></a>
+    
+    <a href="\tags\AI" title="AI"><div class="tags-list-item">AI</div></a>
+    
+    <a href="\tags\AI编码" title="AI编码"><div class="tags-list-item">AI编码</div></a>
+    
+    <a href="\tags\人工智能" title="人工智能"><div class="tags-list-item">人工智能</div></a>
+    
+    <a href="\tags\辅助编程" title="辅助编程"><div class="tags-list-item">辅助编程</div></a>
+    
+    <a href="\tags\Mysql" title="Mysql"><div class="tags-list-item">Mysql</div></a>
+    
+    <a href="\tags\Docker" title="Docker"><div class="tags-list-item">Docker</div></a>
+    
+    <a href="\tags\容器化" title="容器化"><div class="tags-list-item">容器化</div></a>
     
     <a href="\tags\SpringBoot" title="SpringBoot"><div class="tags-list-item">SpringBoot</div></a>
     
-    <a href="\tags\分布式" title="分布式"><div class="tags-list-item">分布式</div></a>
-    
-    <a href="\tags\SpringCloud" title="SpringCloud"><div class="tags-list-item">SpringCloud</div></a>
+    <a href="\tags\虚拟化技术" title="虚拟化技术"><div class="tags-list-item">虚拟化技术</div></a>
     
     <a href="\tags\微服务" title="微服务"><div class="tags-list-item">微服务</div></a>
     
-    <a href="\tags\MQ" title="MQ"><div class="tags-list-item">MQ</div></a>
-    
-    <a href="\tags\消息队列" title="消息队列"><div class="tags-list-item">消息队列</div></a>
+    <a href="\tags\SpringCloud" title="SpringCloud"><div class="tags-list-item">SpringCloud</div></a>
     
     <a href="\tags\多线程" title="多线程"><div class="tags-list-item">多线程</div></a>
     
-    <a href="\tags\Zookeeper" title="Zookeeper"><div class="tags-list-item">Zookeeper</div></a>
-    
-    <a href="\tags\Tomcat" title="Tomcat"><div class="tags-list-item">Tomcat</div></a>
-    
-    <a href="\tags\Spring" title="Spring"><div class="tags-list-item">Spring</div></a>
-    
-    <a href="\tags\RabbitMQ" title="RabbitMQ"><div class="tags-list-item">RabbitMQ</div></a>
-    
-    <a href="\tags\kafka" title="kafka"><div class="tags-list-item">kafka</div></a>
-    
-    <a href="\tags\git" title="git"><div class="tags-list-item">git</div></a>
-    
-    <a href="\tags\并发" title="并发"><div class="tags-list-item">并发</div></a>
-    
-    <a href="\tags\容器化" title="容器化"><div class="tags-list-item">容器化</div></a>
+    <a href="\tags\ForkJoinPool" title="ForkJoinPool"><div class="tags-list-item">ForkJoinPool</div></a>
     
   </div>
 </div>
@@ -799,6 +803,17 @@ RabbitMQ主要是为了实现系统之间的双向解耦而实现的。当生产
     
     
       
+        
+        
+        
+      
+    
+      
+        
+          <a href="/archives/2025" class="archive-card-list-item">
+              2025
+              <span class="archive-card-list-item-badge">1</span>
+          </a>
         
         
         
@@ -1006,6 +1021,11 @@ RabbitMQ主要是为了实现系统之间的双向解耦而实现的。当生产
   <div class="recent-posts-list">
     
       <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2025-03-14</div>
+        <a href="/2025/03/14/ai-code-tool-recommond/"><div class="recent-posts-item-content">智能生产之AI辅助编程工具对比分析及使用场景推荐</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
         <div class="recent-posts-item-title">2021-04-16</div>
         <a href="/2021/04/16/golang-install-description/"><div class="recent-posts-item-content">Golang安装说明</div></a>
       </div>
@@ -1018,11 +1038,6 @@ RabbitMQ主要是为了实现系统之间的双向解耦而实现的。当生产
       <div class="recent-posts-item">
         <div class="recent-posts-item-title">2021-03-01</div>
         <a href="/2021/03/01/lowcase-start-word-json-serialize-error/"><div class="recent-posts-item-content">uName类似首字符小写属性Json序列化接收不到数据问题及解决办法</div></a>
-      </div>
-    
-      <div class="recent-posts-item">
-        <div class="recent-posts-item-title">2021-01-22</div>
-        <a href="/2021/01/22/quick-start-gRPC-in-Java-simple/"><div class="recent-posts-item-content">Java快起开启一个gRPC示例</div></a>
       </div>
     
   </div>
@@ -1038,6 +1053,17 @@ RabbitMQ主要是为了实现系统之间的双向解耦而实现的。当生产
     
     
       
+        
+        
+        
+      
+    
+      
+        
+          <a href="/archives/2025" class="archive-card-list-item">
+              2025
+              <span class="archive-card-list-item-badge">1</span>
+          </a>
         
         
         
@@ -1247,7 +1273,7 @@ RabbitMQ主要是为了实现系统之间的双向解耦而实现的。当生产
           
           2016 -
           
-          2022
+          2025
         </span>
         &nbsp;
         <a href="/" class="footer-link">攻城狮李猿外 </a>
