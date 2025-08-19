@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html  lang="zh-CN" >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="#fff" id="theme-color">
+  <meta name="description" content="攻城狮李猿外的博客,专注Java,Spring,Spring Boot,Spring Cloud,RocketMQ,Kafka,Spring AI,Redis,Golang,人工智能等技术学习记录。">
+  <link rel="icon" href="/images/logo.jpg">
+  <title>多Agent协同技术该怎么选？</title>
+  
+  
+  <meta property="og:title" content="多Agent协同技术该怎么选？">
+  
+  
+  <meta property="og:url" content="http://www.vincentli.top/2025/05/10/multi-agent-system-research-report/index.html">
+  
+  
+  <meta property="og:img" content="/images/logo.jpg">
+  
+  
+  <meta property="og:img" content="攻城狮李猿外的博客,专注Java,Spring,Spring Boot,Spring Cloud,RocketMQ,Kafka,Spring AI,Redis,Golang,人工智能等技术学习记录。">
+  
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:published_time" content="2025-05-10">
+  <meta property="og:article:modified_time" content="2025-08-19">
+  <meta property="og:article:author" content="李猿外">
+  
+  
+  <meta property="og:article:tag" content="人工智能">
+  
+  <meta property="og:article:tag" content="Agent">
+  
+  <meta property="og:article:tag" content="多Agent">
+  
+  <meta property="og:article:tag" content="多智能体">
+  
+  <meta property="og:article:tag" content="多智能体系统">
+  
+  <meta property="og:article:tag" content="多智能体协同">
+  
+  
+  
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+    var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+      }
+    };
+    setDarkmode();
+  </script>
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  </script>
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_f7g5jnuftcf.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  <link rel="preload" href="//cdn.jsdelivr.net/npm/fslightbox@3.1.0/index.min.js" as="script">
+  
+  
+  <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+  <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">
+  
+  
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_f7g5jnuftcf.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 5.0.2"></head>
+
+
+<body>
+  <div class="wrapper">
+    
+    <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+      <img class="navbar-logo-img" src="/images/logo.jpg" alt="logo">
+      
+      <span class="navbar-logo-dsc">攻城狮李猿外</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+    <a href="/" class="navbar-menu-item">
+    
+    首页
+    
+    </a>
+    
+    <a href="/archives" class="navbar-menu-item">
+    
+    归档
+    
+    </a>
+    
+    <a href="/tags" class="navbar-menu-item">
+    
+    标签
+    
+    </a>
+    
+    <a href="/categories" class="navbar-menu-item">
+    
+    分类
+    
+    </a>
+    
+    <a href="/about" class="navbar-menu-item">
+    
+    关于
+    
+    </a>
+    
+    <a href="/links" class="navbar-menu-item">
+    
+    友链
+    
+    </a>
+    
+    <a class="navbar-menu-item darknavbar" id="dark"><i class="iconfont icon-weather"></i></a>
+    <a class="navbar-menu-item searchnavbar" id="search"><i class="iconfont icon-search" style="font-size: 1.2rem; font-weight: 400;"></i></a>
+  </div>
+</nav>
+    
+    <div id="local-search" style="display: none;">
+      <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容...">
+      <div id="search-content"></div>
+    </div>
+    
+    <div class="section-wrap">
+      <div class="container">
+        <div class="columns">
+          <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      多Agent协同技术该怎么选？
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2025-05-10T06:56:24.000Z">
+      <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+      <span>2025-05-10</span>
+    </time>
+    
+    <span class="dot"></span>
+    
+    <a href="/categories/博客/" class="post-meta-link">博客</a>
+    
+    <a href="/categories/博客/AI/" class="post-meta-link">AI</a>
+    
+    <a href="/categories/博客/AI/人工智能/" class="post-meta-link">人工智能</a>
+    
+    
+    
+    <span class="dot"></span>
+    <span>3.3k 字</span>
+    
+  </div>
+  
+  <div class="post-meta post-show-meta" style="margin-top: -10px;">
+    <div style="display: flex; align-items: center;">
+      <i class="iconfont icon-biaoqian" style="margin-right: 2px; font-size: 1.15rem;"></i>
+      
+      
+        <a href="/tags/人工智能/" class="post-meta-link">人工智能</a>
+      
+      
+      <span class="dot"></span>
+      
+        <a href="/tags/Agent/" class="post-meta-link">Agent</a>
+      
+      
+      <span class="dot"></span>
+      
+        <a href="/tags/多Agent/" class="post-meta-link">多Agent</a>
+      
+      
+      <span class="dot"></span>
+      
+        <a href="/tags/多智能体/" class="post-meta-link">多智能体</a>
+      
+      
+      <span class="dot"></span>
+      
+        <a href="/tags/多智能体系统/" class="post-meta-link">多智能体系统</a>
+      
+      
+      <span class="dot"></span>
+      
+        <a href="/tags/多智能体协同/" class="post-meta-link">多智能体协同</a>
+      
+    </div>
+  </div>
+  
+  </header>
+  <div id="section" class="post-content">
+    <p>当下智能体（Agent）技术蓬勃发展，涌现出大量框架和工具。为什么会出现多Agent协同技术？有哪些框架可以用于构建智能系统？本文将探讨这些问题。理解多Agent协同技术的价值并选择合适的框架是构建智能系统的关键决策。</p>
+<h2 id="一、-为什么要使用多Agent协同技术？"><a href="#一、-为什么要使用多Agent协同技术？" class="headerlink" title="一、 为什么要使用多Agent协同技术？"></a>一、 为什么要使用多Agent协同技术？</h2><p>多Agent系统（Multi-Agent System, MAS）的核心思想是将复杂问题分解，由多个具备特定能力、知识和目标的智能体（Agent）通过协作、协调、协商甚至竞争来解决。其必要性体现在：</p>
+<ol>
+<li><p><strong>应对复杂性与规模性：</strong></p>
+<ul>
+<li><strong>问题分解：</strong> 庞大复杂的问题（如城市规划、供应链优化、大型软件开发）天然可分解为子任务，由专注的Agent并行处理。</li>
+<li><strong>超越单Agent极限：</strong> 单一Agent在计算能力、知识广度、实时响应上存在瓶颈，多Agent系统通过分布式处理突破限制。</li>
+</ul>
+</li>
+<li><p><strong>实现模块化与专业化：</strong></p>
+<ul>
+<li><strong>“术业有专攻”：</strong> 可设计不同Agent专注于特定领域（如数据分析、决策制定、用户交互、工具调用），发挥各自优势。</li>
+<li><strong>系统易维护与扩展：</strong> 新增功能只需添加或修改特定Agent，不影响整体架构，提升灵活性。</li>
+</ul>
+</li>
+<li><p><strong>增强鲁棒性与容错性：</strong></p>
+<ul>
+<li><strong>冗余与备份：</strong> 关键功能可由多个Agent实现或监控，避免单点故障导致系统崩溃。</li>
+<li><strong>动态适应：</strong> 某些Agent失效时，其他Agent可调整策略或接管任务，系统整体仍能运行。</li>
+</ul>
+</li>
+<li><p><strong>促进知识与视角融合：</strong></p>
+<ul>
+<li><strong>信息聚合：</strong> 分散在不同Agent的数据、知识和推理结果可被汇总，产生更全面的见解。</li>
+<li><strong>多样性决策：</strong> 不同Agent基于不同视角或算法提出方案，通过协作或辩论得出更优解，减少偏见。</li>
+</ul>
+</li>
+<li><p><strong>模拟现实世界与社会性：</strong></p>
+<ul>
+<li><strong>分布式环境建模：</strong> 很多现实场景（如交通、市场、社交网络）本质是多个自主实体互动，MAS是自然的建模工具。</li>
+<li><strong>社会智能研究：</strong> 是研究合作、竞争、信任、协商等社会性行为的理想平台。</li>
+</ul>
+</li>
+<li><p><strong>提高效率与并行性：</strong></p>
+<ul>
+<li><strong>任务并行：</strong> 独立或弱相关的子任务可由不同Agent并行执行，显著缩短整体处理时间。</li>
+<li><strong>资源优化：</strong> Agent可竞争或协商共享资源（如计算、数据、API），实现更高效利用。</li>
+</ul>
+</li>
+</ol>
+<p><strong>总结核心价值：</strong> MAS是解决<strong>远超单一智能体能力范围</strong>的、<strong>高度复杂</strong>、<strong>动态变化</strong>、<strong>天然分布式</strong>问题的强大范式，通过<strong>分工合作、知识共享、并行处理</strong>达到<strong>1+1&gt;2</strong>的效果。</p>
+<h2 id="二、-好用的多Agent框架技术及其优缺点"><a href="#二、-好用的多Agent框架技术及其优缺点" class="headerlink" title="二、 好用的多Agent框架技术及其优缺点"></a>二、 好用的多Agent框架技术及其优缺点</h2><p>以下是目前活跃且实用的多Agent框架/Chat框架（内置多Agent能力）：</p>
+<ol>
+<li><p><strong>Microsoft AutoGen：</strong></p>
+<ul>
+<li><strong>简介:</strong> 微软推出的强大开源框架，核心概念是<code>Conversable Agent</code>。Agent通过对话（交换消息）进行协作，消息内容可以是纯文本、代码、执行结果、文件等。支持<strong>群聊</strong>模式（多个Agent同时参与一个对话）和高度灵活的<strong>对话流程定制</strong>（通过<code>GroupChat</code>和<code>GroupChatManager</code>）。</li>
+<li><strong>优点：</strong><ul>
+<li><strong>高度灵活与可定制化：</strong> 可轻松定义Agent角色、能力（LLM调用、函数调用、代码执行、工具使用）、交互规则和对话流程。</li>
+<li><strong>强大的编程模型：</strong> 清晰的消息传递机制，易于调试和扩展。支持注册自定义函数供Agent调用。</li>
+<li><strong>内置LLM集成：</strong> 无缝对接OpenAI、Azure OpenAI、Hugging Face等主流模型（也支持本地模型）。</li>
+<li><strong>人机协作：</strong> 方便地将人类用户纳入对话循环，进行指导、审批或提供输入。</li>
+<li><strong>代码执行与工具调用：</strong> 内置支持代码解释器（如Python）和各种工具调用（如Web搜索、API调用）。</li>
+<li><strong>活跃社区与文档：</strong> 微软背书，社区活跃度高，文档详细且持续更新。</li>
+</ul>
+</li>
+<li><strong>缺点：</strong><ul>
+<li><strong>学习曲线：</strong> 功能强大带来的复杂性，初学者需要时间理解其概念（Agent、GroupChat、Manager、Function Calling）和API。</li>
+<li><strong>通信开销管理：</strong> 在复杂对话流程中，消息传递可能产生冗余或循环，需要精心设计流程和终止条件。</li>
+<li><strong>底层控制：</strong> 对于需要极细粒度控制Agent内部状态或低级通信协议的应用略显不足。</li>
+<li><strong>可视化仍在演进：</strong> 目前内置的实时可视化能力相对基础。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>LangChain / LangGraph：</strong></p>
+<ul>
+<li><strong>简介:</strong> LangChain是一个流行的用于构建LLM应用的框架库（非单一多Agent框架）。其模块化设计（Chains, Agents, Tools, Memory）使其可以用来构建多Agent系统。<strong>LangGraph</strong>是LangChain生态中专门用于构建<strong>有状态、多参与者（Actor）应用</strong>的库，特别适合复杂编排和多Agent协作。</li>
+<li><strong>优点：</strong><ul>
+<li><strong>构建基础强大：</strong> 基于LangChain丰富的生态系统（工具集成、文档加载、向量存储、记忆管理等），基础能力扎实。</li>
+<li><strong>灵活构建MAS：</strong> 可利用<code>Agent</code>、<code>Tools</code>组件组合出不同的Agent，再利用<code>LangGraph</code>定义Agent间的<strong>状态机</strong>和<strong>控制流</strong>（图形化表示），实现复杂协作逻辑。</li>
+<li><strong>状态管理：</strong> LangGraph天然支持管理共享状态和Agent的私有状态，对复杂任务至关重要。</li>
+<li><strong>庞大社区与资源：</strong> LangChain拥有极其庞大的用户群和海量教程、示例、集成。</li>
+<li><strong>模块复用：</strong> 可以复用LangChain中大量的预构建组件。</li>
+</ul>
+</li>
+<li><strong>缺点：</strong><ul>
+<li><strong>非开箱即用的MAS框架：</strong> LangChain本身是工具箱，构建成熟的多Agent系统需要更多设计工作和代码（相比AutoGen）。LangGraph专注于流程编排，Agent定义还需依赖LangChain。</li>
+<li><strong>概念复杂度叠加：</strong> 需要同时理解LangChain Agents和LangGraph的状态图/节点/边等概念，学习门槛较高。</li>
+<li><strong>编排复杂性：</strong> 设计高效、正确的状态转换图本身是一项挑战。</li>
+<li><strong>性能考量：</strong> 在大型或高频交互的MAS中，状态管理和图遍历可能带来开销。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>CrewAI：</strong></p>
+<ul>
+<li><strong>简介:</strong> 一个新兴的、专注于<strong>任务驱动型协作</strong>的开源框架。核心概念是<code>Agent</code>(成员)、<code>Task</code>(任务)、<code>Tool</code>(工具)、<code>Process</code>(协作流程)。</li>
+<li><strong>优点：</strong><ul>
+<li><strong>任务驱动设计：</strong> 建模清晰（谁做什么任务），概念直观，易于上手和理解。</li>
+<li><strong>内置协作流程：</strong> 提供预设的协作模式（如<code>sequential</code>顺序执行、<code>hierarchical</code>分层汇报、<code>consensus</code>达成共识），简化了常见协作模式的实现。</li>
+<li><strong>自动化任务分配与接力：</strong> 框架能自动根据Agent能力分配任务，并处理任务结果的传递。</li>
+<li><strong>工具集成简化：</strong> 集成外部工具（如搜索、文档读取）相对便捷。</li>
+<li><strong>人设（Role）与目标（Goal）：</strong> 强调定义Agent的角色和具体目标，有助于提高协作意图的清晰度。</li>
+<li><strong>开发体验：</strong> 设计上注重简洁性和开发者体验。</li>
+</ul>
+</li>
+<li><strong>缺点：</strong><ul>
+<li><strong>相对年轻：</strong> 相比AutoGen/LangChain，项目历史较短，社区生态和成熟度还在发展中。</li>
+<li><strong>灵活性受限：</strong> 预设的<code>Process</code>虽方便，但可能不如AutoGen或LangGraph那样支持极度定制化、非线性的复杂交互逻辑。</li>
+<li><strong>底层控制：</strong> 对Agent内部决策过程或细粒度通信的控制可能不如前两者深入。</li>
+<li><strong>文档与示例：</strong> 文档在广度和深度上还在完善中。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>MetaGPT：</strong></p>
+<ul>
+<li><strong>简介:</strong> 一个雄心勃勃的开源项目，旨在模拟<strong>软件公司</strong>的组织结构和工作流程来<strong>协同完成复杂任务（尤其是软件开发）</strong>。核心概念包括标准化动作（<code>Action</code>）、共享知识库（<code>Environment</code>）、分层角色（<code>Role</code>如产品经理、架构师、工程师）、SOP（标准作业程序）。</li>
+<li><strong>优点：</strong><ul>
+<li><strong>面向复杂任务（尤其软件工程）：</strong> 对于需求分析、设计、编码、测试等软件生命周期任务有天然亲和力。</li>
+<li><strong>强大结构化协作：</strong> 强制性的SOP和角色分工，使得协作过程高度规范化、可预测。</li>
+<li><strong>知识共享与沉淀：</strong> <code>Environment</code>作为共享记忆和知识库，促进信息在Agent间有效流通和复用。</li>
+<li><strong>标准化输出：</strong> 强制要求输出结构化文档（如PRD、设计文档、接口文档、代码），确保成果质量。</li>
+<li><strong>多语言与工具链：</strong> 支持多种编程语言和开发工具集成。</li>
+</ul>
+</li>
+<li><strong>缺点：</strong><ul>
+<li><strong>领域特定性：</strong> 虽然理论上可扩展，但其核心设计优化方向是软件工程任务，在其他领域应用可能需要较大改造。</li>
+<li><strong>高复杂度与重量级：</strong> 架构相对复杂，学习曲线陡峭。运行资源消耗（尤其是多个角色Agent时）可能较高。</li>
+<li><strong>灵活性成本：</strong> 严格的SOP和角色分工可能限制了处理高度不确定性或需灵活变通任务的能力。</li>
+<li><strong>定制门槛：</strong> 自定义新的SOP或角色需要深入理解框架机制。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>ChatDev：</strong></p>
+<ul>
+<li><strong>简介:</strong> 清华大学推出的框架，专为<strong>模拟软件开发团队</strong>（如CEO、CPO、CTO、程序员、测试员等）协作<strong>生成软件</strong>而设计。流程高度结构化，模拟瀑布模型或敏捷迭代。</li>
+<li><strong>优点：</strong><ul>
+<li><strong>高度工程化流程：</strong> 对软件开发生命周期的每个阶段（头脑风暴、设计、编码、测试、文档等）有严格划分和控制。</li>
+<li><strong>角色扮演清晰：</strong> 不同角色Agent职责分明，模拟真实团队分工。</li>
+<li><strong>自动化程度高：</strong> 能自动生成需求文档、设计、代码、测试用例甚至修复Bug。</li>
+<li><strong>协作机制固定：</strong> 内置了角色间提问、审查、执行的标准化交互模式。</li>
+<li><strong>专注于软件生成：</strong> 在该特定领域表现成熟。</li>
+</ul>
+</li>
+<li><strong>缺点：</strong><ul>
+<li><strong>领域高度特定：</strong> 几乎是专为自动化软件开发打造，通用性较差。</li>
+<li><strong>流程刚性：</strong> 预设的瀑布/迭代流程可能不适合所有类型的任务或需要动态调整的场景。</li>
+<li><strong>定制困难：</strong> 偏离其预设的软件开发角色和流程进行定制比较困难。</li>
+<li><strong>理解与应用成本：</strong> 用于非软件开发任务性价比低。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="总结对比表"><a href="#总结对比表" class="headerlink" title="总结对比表"></a>总结对比表</h3><table>
+<thead>
+<tr>
+<th style="text-align:left">特性</th>
+<th style="text-align:left">AutoGen</th>
+<th style="text-align:left">LangChain/LangGraph</th>
+<th style="text-align:left">CrewAI</th>
+<th style="text-align:left">MetaGPT</th>
+<th style="text-align:left">ChatDev</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>核心范式</strong></td>
+<td style="text-align:left">对话驱动 (消息传递)</td>
+<td style="text-align:left">状态机/流程图驱动</td>
+<td style="text-align:left">任务驱动</td>
+<td style="text-align:left">公司角色/SOP驱动</td>
+<td style="text-align:left">软件开发角色/阶段驱动</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>最大优势</strong></td>
+<td style="text-align:left">灵活性、对话定制、人机协作</td>
+<td style="text-align:left">生态系统、状态管理、复杂流程编排</td>
+<td style="text-align:left">易用性、任务分配、预设协作流程</td>
+<td style="text-align:left">结构化协作、软件工程支持、知识沉淀</td>
+<td style="text-align:left">自动化软件生成、严格阶段控制</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>最大劣势</strong></td>
+<td style="text-align:left">学习曲线、通信开销管理</td>
+<td style="text-align:left">概念复杂度、非开箱即用MAS</td>
+<td style="text-align:left">相对年轻、灵活性受限</td>
+<td style="text-align:left">高复杂度、领域特定、重量级</td>
+<td style="text-align:left">领域高度特定、流程刚性</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>适用场景</strong></td>
+<td style="text-align:left">通用协作、研究、复杂对话系统</td>
+<td style="text-align:left">复杂状态依赖任务、定制编排</td>
+<td style="text-align:left">清晰任务分解的协作、快速原型</td>
+<td style="text-align:left">复杂项目协作（尤其软件）</td>
+<td style="text-align:left">自动化软件生成</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>上手难度</strong></td>
+<td style="text-align:left">中偏高</td>
+<td style="text-align:left">高</td>
+<td style="text-align:left">低到中</td>
+<td style="text-align:left">高</td>
+<td style="text-align:left">中（在软件领域）</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>生态成熟度</strong></td>
+<td style="text-align:left">高 (微软支持)</td>
+<td style="text-align:left">极高</td>
+<td style="text-align:left">发展中</td>
+<td style="text-align:left">中</td>
+<td style="text-align:left">中 (特定领域)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="三、-选型建议"><a href="#三、-选型建议" class="headerlink" title="三、 选型建议"></a>三、 选型建议</h2><ol>
+<li><strong>追求极致灵活性与强大编程模型：</strong> 选择 <strong>AutoGen</strong>。适合研究、构建复杂定制化协作逻辑、需要深度人机交互的场景。</li>
+<li><strong>深度集成LangChain生态 &amp; 管理复杂状态流：</strong> 选择 <strong>LangChain + LangGraph</strong>。适合已有LangChain基础，或需要构建高度定制化、状态驱动型协作流程的开发者。</li>
+<li><strong>任务清晰、追求简洁快速实现协作：</strong> 选择 <strong>CrewAI</strong>。适合任务分解明确、希望利用预设协作模式快速搭建原型或生产系统的场景。</li>
+<li><strong>目标是复杂项目（特别是软件开发）的结构化协作与自动化：</strong> 选择 <strong>MetaGPT</strong>。适合探索自动化软件工程、需要严格流程和标准化输出的项目。</li>
+<li><strong>专注于自动化生成软件：</strong> 选择 <strong>ChatDev</strong>。这是该特定任务的成熟解决方案。</li>
+</ol>
+<h3 id="关键决策因素"><a href="#关键决策因素" class="headerlink" title="关键决策因素"></a>关键决策因素</h3><ul>
+<li><strong>问题复杂度和性质：</strong> 是通用问题还是特定领域（如软件开发）？协作模式是松耦合对话还是严格流程？</li>
+<li><strong>团队熟悉度：</strong> 是否已熟悉LangChain生态？</li>
+<li><strong>对灵活性的要求：</strong> 是否需要极度定制化交互？</li>
+<li><strong>对开发速度和易用性的要求：</strong> 是否需要快速搭建？</li>
+<li><strong>性能与资源限制：</strong> Agent数量和交互频率？</li>
+<li><strong>生态与社区支持需求：</strong> 是否需要丰富的文档、示例和社区帮助？</li>
+</ul>
+<p><strong>建议：</strong> 对于大多数<strong>通用性</strong>的多Agent协同需求，<strong>AutoGen</strong>和<strong>CrewAI</strong>是目前平衡功能、灵活性和易用性的首选。<strong>LangGraph</strong>为基于LangChain构建复杂编排提供了强大武器。<strong>MetaGPT</strong>和<strong>ChatDev</strong>则在<strong>特定领域</strong>（软件工程）展现了强大的价值。动手尝试框架的QuickStart是选型的最佳途径。</p>
+
+  </div>
+  <div>
+  
+  <div class="post-note note-warning copyright" style="margin-top: 42px">
+    <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="http://www.vincentli.top/about">李猿外</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="http://www.vincentli.top/2025/05/10/multi-agent-system-research-report/">http://www.vincentli.top/2025/05/10/multi-agent-system-research-report/</a></p>
+    <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+  </div>
+  
+  </div>
+</article>
+<div class="nav">
+  
+  
+  <div class="nav-item-next">
+    <a href="/2025/04/15/comparator-analysis-with-dify-coze-n8n/" class="nav-link">
+      <div>
+        <div class="nav-label">下一篇</div>
+        
+        <div class="nav-title">Dify vs Coze vs n8n三大AI自动化工具，到底哪个最好用？ </div>
+        
+      </div>
+      <i class="iconfont icon-right nav-next-icon"></i>
+    </a>
+  </div>
+  
+</div>
+
+<div class="card card-content comment-card" style="margin-top: 16px;">
+  <div class="comment-card-title">评论</div>
+  
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: 'SnVYhldRRlqYatvAs4y3N2qF-MdYXbMMI',
+        appKey: '2SwmjMzPEwYhnB7hqqNgknXM',
+        placeholder: '都来了，留句话呗...',
+        path: window.location.pathname,
+        avatar: 'wavatar',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'false',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+</div>
+
+<div class="card card-content toc-card" id="mobiletoc">
+  <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E4%BD%BF%E7%94%A8%E5%A4%9AAgent%E5%8D%8F%E5%90%8C%E6%8A%80%E6%9C%AF%EF%BC%9F"><span class="toc-text">一、 为什么要使用多Agent协同技术？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81-%E5%A5%BD%E7%94%A8%E7%9A%84%E5%A4%9AAgent%E6%A1%86%E6%9E%B6%E6%8A%80%E6%9C%AF%E5%8F%8A%E5%85%B6%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="toc-text">二、 好用的多Agent框架技术及其优缺点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%E5%AF%B9%E6%AF%94%E8%A1%A8"><span class="toc-text">总结对比表</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81-%E9%80%89%E5%9E%8B%E5%BB%BA%E8%AE%AE"><span class="toc-text">三、 选型建议</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E5%86%B3%E7%AD%96%E5%9B%A0%E7%B4%A0"><span class="toc-text">关键决策因素</span></a></li></ol></li></ol>
+</div></main>
+          <aside class="left-column">
+            
+            <div class="card card-author">
+              
+<img src="/images/logo.jpg" class="author-img">
+
+<p class="author-name">李猿外</p>
+<p class="author-description">千里之行，始于足下。</p>
+<div class="author-message">
+  <a class="author-posts-count" href="/archives">
+    <span>40</span>
+    <span>文章</span>
+  </a>
+  <a class="author-categories-count" href="/categories">
+    <span>46</span>
+    <span>分类</span>
+  </a>
+  <a class="author-tags-count" href="/tags">
+    <span>87</span>
+    <span>标签</span>
+  </a>
+</div>
+
+<div class="author-card-society">
+  
+    <div class="author-card-society-icon">
+      <a target="_blank" rel="noopener" href="https://github.com/leechaoqiang">
+        <i class="iconfont icon-github society-icon"></i>
+      </a>
+    </div>
+  
+    <div class="author-card-society-icon">
+      <a href="mailto:vincentlee99@126.com">
+        <i class="iconfont icon-mail society-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+            </div>
+            
+            <div class="sticky-tablet">
+  
+  
+  <article class="display-when-two-columns spacer">
+    <div class="card card-content toc-card">
+      <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E4%BD%BF%E7%94%A8%E5%A4%9AAgent%E5%8D%8F%E5%90%8C%E6%8A%80%E6%9C%AF%EF%BC%9F"><span class="toc-text">一、 为什么要使用多Agent协同技术？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81-%E5%A5%BD%E7%94%A8%E7%9A%84%E5%A4%9AAgent%E6%A1%86%E6%9E%B6%E6%8A%80%E6%9C%AF%E5%8F%8A%E5%85%B6%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="toc-text">二、 好用的多Agent框架技术及其优缺点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%E5%AF%B9%E6%AF%94%E8%A1%A8"><span class="toc-text">总结对比表</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81-%E9%80%89%E5%9E%8B%E5%BB%BA%E8%AE%AE"><span class="toc-text">三、 选型建议</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E5%86%B3%E7%AD%96%E5%9B%A0%E7%B4%A0"><span class="toc-text">关键决策因素</span></a></li></ol></li></ol>
+    </div>
+  </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header"><i class="iconfont icon-fenlei" style="padding-right: 2px;"></i>分类</div>
+  <div class="categories-list">
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">18</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Docker">
+        <div class="categories-list-item">
+          Docker
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Golang学习笔记">
+        <div class="categories-list-item">
+          Golang学习笔记
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/工具学习">
+        <div class="categories-list-item">
+          工具学习
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/缓存">
+        <div class="categories-list-item">
+          缓存
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringBoot">
+        <div class="categories-list-item">
+          SpringBoot
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/mybatis">
+        <div class="categories-list-item">
+          mybatis
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/技术学习笔记">
+        <div class="categories-list-item">
+          技术学习笔记
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/RabbitMQ">
+        <div class="categories-list-item">
+          RabbitMQ
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/gRPC">
+        <div class="categories-list-item">
+          gRPC
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/摄影">
+        <div class="categories-list-item">
+          摄影
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/配置中心">
+        <div class="categories-list-item">
+          配置中心
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/问题">
+        <div class="categories-list-item">
+          问题
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+      <a href="/categories/并发">
+        <div class="categories-list-item">
+          并发
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/AI">
+        <div class="categories-list-item">
+          AI
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringBoot">
+        <div class="categories-list-item">
+          SpringBoot
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/技术笔记">
+        <div class="categories-list-item">
+          技术笔记
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Mysql">
+        <div class="categories-list-item">
+          Mysql
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Mysql">
+        <div class="categories-list-item">
+          Mysql
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Restful">
+        <div class="categories-list-item">
+          Restful
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/tensorflow">
+        <div class="categories-list-item">
+          tensorflow
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Spring">
+        <div class="categories-list-item">
+          Spring
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Tomcat">
+        <div class="categories-list-item">
+          Tomcat
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Zookeeper">
+        <div class="categories-list-item">
+          Zookeeper
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/微服务">
+        <div class="categories-list-item">
+          微服务
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/thread">
+        <div class="categories-list-item">
+          thread
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/人工智能">
+        <div class="categories-list-item">
+          人工智能
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+      <a href="/categories/消息队列">
+        <div class="categories-list-item">
+          消息队列
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/消息队列">
+        <div class="categories-list-item">
+          消息队列
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/分布式">
+        <div class="categories-list-item">
+          分布式
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringWebFlux">
+        <div class="categories-list-item">
+          SpringWebFlux
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringBoot">
+        <div class="categories-list-item">
+          SpringBoot
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringCloud">
+        <div class="categories-list-item">
+          SpringCloud
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/多线程">
+        <div class="categories-list-item">
+          多线程
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/kafka">
+        <div class="categories-list-item">
+          kafka
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringCloud">
+        <div class="categories-list-item">
+          SpringCloud
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringCloud">
+        <div class="categories-list-item">
+          SpringCloud
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/消息队列">
+        <div class="categories-list-item">
+          消息队列
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/kafka">
+        <div class="categories-list-item">
+          kafka
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header"><i class="iconfont icon-biaoqian" style="padding-right: 2px;"></i>热门标签</div>
+  <div class="tags-list">
+    
+    <a href="\tags\Java" title="Java"><div class="tags-list-item">Java</div></a>
+    
+    <a href="\tags\SpringBoot" title="SpringBoot"><div class="tags-list-item">SpringBoot</div></a>
+    
+    <a href="\tags\分布式" title="分布式"><div class="tags-list-item">分布式</div></a>
+    
+    <a href="\tags\SpringCloud" title="SpringCloud"><div class="tags-list-item">SpringCloud</div></a>
+    
+    <a href="\tags\微服务" title="微服务"><div class="tags-list-item">微服务</div></a>
+    
+    <a href="\tags\MQ" title="MQ"><div class="tags-list-item">MQ</div></a>
+    
+    <a href="\tags\消息队列" title="消息队列"><div class="tags-list-item">消息队列</div></a>
+    
+    <a href="\tags\多线程" title="多线程"><div class="tags-list-item">多线程</div></a>
+    
+    <a href="\tags\人工智能" title="人工智能"><div class="tags-list-item">人工智能</div></a>
+    
+    <a href="\tags\Zookeeper" title="Zookeeper"><div class="tags-list-item">Zookeeper</div></a>
+    
+    <a href="\tags\Tomcat" title="Tomcat"><div class="tags-list-item">Tomcat</div></a>
+    
+    <a href="\tags\Spring" title="Spring"><div class="tags-list-item">Spring</div></a>
+    
+    <a href="\tags\RabbitMQ" title="RabbitMQ"><div class="tags-list-item">RabbitMQ</div></a>
+    
+    <a href="\tags\kafka" title="kafka"><div class="tags-list-item">kafka</div></a>
+    
+    <a href="\tags\git" title="git"><div class="tags-list-item">git</div></a>
+    
+    <a href="\tags\容器化" title="容器化"><div class="tags-list-item">容器化</div></a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+          <aside class="right-column">
+            <div class="sticky-widescreen">
+  
+  
+  <article class="card card-content toc-card">
+    <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E4%BD%BF%E7%94%A8%E5%A4%9AAgent%E5%8D%8F%E5%90%8C%E6%8A%80%E6%9C%AF%EF%BC%9F"><span class="toc-text">一、 为什么要使用多Agent协同技术？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81-%E5%A5%BD%E7%94%A8%E7%9A%84%E5%A4%9AAgent%E6%A1%86%E6%9E%B6%E6%8A%80%E6%9C%AF%E5%8F%8A%E5%85%B6%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="toc-text">二、 好用的多Agent框架技术及其优缺点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%E5%AF%B9%E6%AF%94%E8%A1%A8"><span class="toc-text">总结对比表</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81-%E9%80%89%E5%9E%8B%E5%BB%BA%E8%AE%AE"><span class="toc-text">三、 选型建议</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E5%86%B3%E7%AD%96%E5%9B%A0%E7%B4%A0"><span class="toc-text">关键决策因素</span></a></li></ol></li></ol>
+  </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header"><i class="iconfont icon-wenzhang_huaban" style="padding-right: 2px;"></i>最近文章</div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2025-05-10</div>
+        <a href="/2025/05/10/multi-agent-system-research-report/"><div class="recent-posts-item-content">多Agent协同技术该怎么选？</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2025-04-15</div>
+        <a href="/2025/04/15/comparator-analysis-with-dify-coze-n8n/"><div class="recent-posts-item-content">Dify vs Coze vs n8n三大AI自动化工具，到底哪个最好用？</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2025-03-14</div>
+        <a href="/2025/03/14/ai-code-tool-recommond/"><div class="recent-posts-item-content">智能生产之AI辅助编程工具对比分析及使用场景推荐</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-04-16</div>
+        <a href="/2021/04/16/golang-install-description/"><div class="recent-posts-item-content">Golang安装说明</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>Copyright ©
+          
+          2016 -
+          
+          2025
+        </span>
+        &nbsp;
+        <a href="/" class="footer-link">攻城狮李猿外 </a>
+      </div>
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+        本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+        <span>&nbsp;|&nbsp;</span>
+        
+        
+        本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+    <script>
+    //百度链接提交
+      (function(){
+          var bp = document.createElement('script');
+          var curProtocol = window.location.protocol.split(':')[0];
+          if (curProtocol === 'https'){
+          bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else{
+          bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(bp, s);
+      })();
+    </script>
+    
+    <script>
+    //百度统计
+      var _hmt = _hmt || [];
+      (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?57e94335f06e1ca57d2246529a0150c7";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+</footer>
+  <a role="button" id="scrollbutton" class="basebutton"  aria-label="回到顶部">
+  <i class="iconfont icon-arrowleft button-icon"></i>
+</a>
+<a role="button" id="menubutton" class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a role="button" id="popbutton" class="basebutton" aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a role="button" id="darkbutton" class="basebutton darkwidget" aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a role="button" id="searchbutton" class="basebutton searchwidget" aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+
+  
+  
+  
+  <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img');
+    var i;
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a');
+      wrapper.setAttribute('data-fslightbox', 'gallery');
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'));
+      wrapper.setAttribute('aria-label', 'illustration');
+      wrapper.style.cssText = 'width: 100%; display: flex; justify-content: center;';
+      img[i].before(wrapper);
+      wrapper.append(img[i]);
+    }
+    refreshFsLightbox();
+  }
+</script>
+<script>loadScript("//cdn.jsdelivr.net/npm/fslightbox@3.1.0/index.min.js", addImgLayout)</script>
+  
+  
+  
+<script src="/js/main.js"></script>
+
+  
+  <script>loadScript("/js/lib/busuanzi.min.js")</script>
+  
+  
+  <script>
+    var addLazyload = function () {
+      var observer = lozad('.lozad', {
+        load: function (el) {
+          el.srcset = el.getAttribute('data-src');
+        },
+        loaded: function (el) {
+          el.classList.add('loaded');
+        }
+      });
+      observer.observe();
+    }
+  </script>
+  <script>loadScript("/js/lib/lozad.min.js", addLazyload)</script>
+  
+  
+</body>
+
+</html>
