@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://www.vincentli.top/about/index.html</loc>
+    
+    <lastmod>2025-08-22</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://www.vincentli.top/2024/08/22/how-to-choose-vector-database/</loc>
     
     <lastmod>2025-08-22</lastmod>
@@ -38,13 +45,6 @@
   
   <url>
     <loc>http://www.vincentli.top/2020/10/27/distribute-config-center-cmp-and-choose/</loc>
-    
-    <lastmod>2022-06-27</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://www.vincentli.top/about/index.html</loc>
     
     <lastmod>2022-06-27</lastmod>
     
@@ -149,14 +149,14 @@
   </url>
   
   <url>
-    <loc>http://www.vincentli.top/2018/11/25/tensorflow-open-practise/</loc>
+    <loc>http://www.vincentli.top/2016/10/21/string-stringbuilder-stringbuffer-run-efficiency-compare/</loc>
     
     <lastmod>2021-04-15</lastmod>
     
   </url>
   
   <url>
-    <loc>http://www.vincentli.top/2016/10/21/string-stringbuilder-stringbuffer-run-efficiency-compare/</loc>
+    <loc>http://www.vincentli.top/2018/11/25/tensorflow-open-practise/</loc>
     
     <lastmod>2021-04-15</lastmod>
     
@@ -170,14 +170,14 @@
   </url>
   
   <url>
-    <loc>http://www.vincentli.top/2016/04/08/tomcat-run-exit-error/</loc>
+    <loc>http://www.vincentli.top/2020/07/06/tomcat-unsafe-hole-solution/</loc>
     
     <lastmod>2021-04-15</lastmod>
     
   </url>
   
   <url>
-    <loc>http://www.vincentli.top/2020/07/06/tomcat-unsafe-hole-solution/</loc>
+    <loc>http://www.vincentli.top/2016/04/08/tomcat-run-exit-error/</loc>
     
     <lastmod>2021-04-15</lastmod>
     
@@ -191,13 +191,6 @@
   </url>
   
   <url>
-    <loc>http://www.vincentli.top/2016/09/06/restful-webservice-learning-greenhand-note-001/</loc>
-    
-    <lastmod>2021-04-15</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://www.vincentli.top/2016/03/14/redis-distribute-lock-java/</loc>
     
     <lastmod>2021-04-15</lastmod>
@@ -205,7 +198,7 @@
   </url>
   
   <url>
-    <loc>http://www.vincentli.top/2016/04/22/spring4-xfire1-2-6-integration-error-solution/</loc>
+    <loc>http://www.vincentli.top/2016/09/06/restful-webservice-learning-greenhand-note-001/</loc>
     
     <lastmod>2021-04-15</lastmod>
     
@@ -213,6 +206,13 @@
   
   <url>
     <loc>http://www.vincentli.top/2019/07/29/seconds-kill-when-reduce-sku-stock-design/</loc>
+    
+    <lastmod>2021-04-15</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.vincentli.top/2016/04/22/spring4-xfire1-2-6-integration-error-solution/</loc>
     
     <lastmod>2021-04-15</lastmod>
     
@@ -261,14 +261,14 @@
   </url>
   
   <url>
-    <loc>http://www.vincentli.top/2019/08/12/fork-join-pool-study-note/</loc>
+    <loc>http://www.vincentli.top/2019/06/19/docker-java-app-practise/</loc>
     
     <lastmod>2021-04-15</lastmod>
     
   </url>
   
   <url>
-    <loc>http://www.vincentli.top/2019/06/19/docker-java-app-practise/</loc>
+    <loc>http://www.vincentli.top/2019/08/12/fork-join-pool-study-note/</loc>
     
     <lastmod>2021-04-15</lastmod>
     
@@ -326,6 +326,34 @@
   </url>
   
   <url>
+    <loc>http://www.vincentli.top/tags/AI/</loc>
+    <lastmod>2025-08-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.vincentli.top/tags/AI%E7%BC%96%E7%A0%81/</loc>
+    <lastmod>2025-08-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.vincentli.top/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/</loc>
+    <lastmod>2025-08-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.vincentli.top/tags/%E8%BE%85%E5%8A%A9%E7%BC%96%E7%A8%8B/</loc>
+    <lastmod>2025-08-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://www.vincentli.top/tags/Mysql/</loc>
     <lastmod>2025-08-22</lastmod>
     <changefreq>daily</changefreq>
@@ -348,48 +376,6 @@
   
   <url>
     <loc>http://www.vincentli.top/tags/%E6%94%AF%E4%BB%98/</loc>
-    <lastmod>2025-08-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.vincentli.top/tags/dify/</loc>
-    <lastmod>2025-08-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.vincentli.top/tags/coze/</loc>
-    <lastmod>2025-08-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.vincentli.top/tags/n8n/</loc>
-    <lastmod>2025-08-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.vincentli.top/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/</loc>
-    <lastmod>2025-08-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.vincentli.top/tags/%E7%BC%96%E7%A8%8B%E8%BE%85%E5%8A%A9/</loc>
-    <lastmod>2025-08-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.vincentli.top/tags/ai/</loc>
     <lastmod>2025-08-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -445,6 +431,41 @@
   </url>
   
   <url>
+    <loc>http://www.vincentli.top/tags/dify/</loc>
+    <lastmod>2025-08-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.vincentli.top/tags/coze/</loc>
+    <lastmod>2025-08-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.vincentli.top/tags/n8n/</loc>
+    <lastmod>2025-08-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.vincentli.top/tags/%E7%BC%96%E7%A8%8B%E8%BE%85%E5%8A%A9/</loc>
+    <lastmod>2025-08-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.vincentli.top/tags/ai/</loc>
+    <lastmod>2025-08-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://www.vincentli.top/tags/%E8%99%9A%E6%8B%9F%E5%8C%96%E6%8A%80%E6%9C%AF/</loc>
     <lastmod>2025-08-22</lastmod>
     <changefreq>daily</changefreq>
@@ -460,27 +481,6 @@
   
   <url>
     <loc>http://www.vincentli.top/tags/%E5%AE%B9%E5%99%A8%E5%8C%96/</loc>
-    <lastmod>2025-08-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.vincentli.top/tags/AI/</loc>
-    <lastmod>2025-08-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.vincentli.top/tags/AI%E7%BC%96%E7%A0%81/</loc>
-    <lastmod>2025-08-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.vincentli.top/tags/%E8%BE%85%E5%8A%A9%E7%BC%96%E7%A8%8B/</loc>
     <lastmod>2025-08-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -509,34 +509,6 @@
   
   <url>
     <loc>http://www.vincentli.top/tags/git/</loc>
-    <lastmod>2025-08-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.vincentli.top/tags/Golang/</loc>
-    <lastmod>2025-08-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.vincentli.top/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%8D%E5%8A%A1/</loc>
-    <lastmod>2025-08-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.vincentli.top/tags/RPC/</loc>
-    <lastmod>2025-08-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.vincentli.top/tags/%E9%83%A8%E7%BD%B2/</loc>
     <lastmod>2025-08-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -606,6 +578,34 @@
   </url>
   
   <url>
+    <loc>http://www.vincentli.top/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%8D%E5%8A%A1/</loc>
+    <lastmod>2025-08-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.vincentli.top/tags/RPC/</loc>
+    <lastmod>2025-08-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.vincentli.top/tags/Golang/</loc>
+    <lastmod>2025-08-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.vincentli.top/tags/%E9%83%A8%E7%BD%B2/</loc>
+    <lastmod>2025-08-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://www.vincentli.top/tags/%E7%BC%93%E5%AD%98/</loc>
     <lastmod>2025-08-22</lastmod>
     <changefreq>daily</changefreq>
@@ -628,20 +628,6 @@
   
   <url>
     <loc>http://www.vincentli.top/tags/redis/</loc>
-    <lastmod>2025-08-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.vincentli.top/tags/Json/</loc>
-    <lastmod>2025-08-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.vincentli.top/tags/jackson/</loc>
     <lastmod>2025-08-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -677,6 +663,20 @@
   
   <url>
     <loc>http://www.vincentli.top/tags/%E7%9B%91%E6%8E%A7/</loc>
+    <lastmod>2025-08-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.vincentli.top/tags/Json/</loc>
+    <lastmod>2025-08-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.vincentli.top/tags/jackson/</loc>
     <lastmod>2025-08-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -732,6 +732,41 @@
   </url>
   
   <url>
+    <loc>http://www.vincentli.top/tags/Mysql-%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B/</loc>
+    <lastmod>2025-08-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.vincentli.top/tags/%E7%BE%8E%E5%9B%BE%E6%AC%A3%E8%B5%8F/</loc>
+    <lastmod>2025-08-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.vincentli.top/tags/gRPC/</loc>
+    <lastmod>2025-08-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.vincentli.top/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/</loc>
+    <lastmod>2025-08-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.vincentli.top/tags/RabbitMQ/</loc>
+    <lastmod>2025-08-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://www.vincentli.top/tags/Mybatis/</loc>
     <lastmod>2025-08-22</lastmod>
     <changefreq>daily</changefreq>
@@ -753,35 +788,7 @@
   </url>
   
   <url>
-    <loc>http://www.vincentli.top/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/</loc>
-    <lastmod>2025-08-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.vincentli.top/tags/%E7%BE%8E%E5%9B%BE%E6%AC%A3%E8%B5%8F/</loc>
-    <lastmod>2025-08-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.vincentli.top/tags/Mysql-%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B/</loc>
-    <lastmod>2025-08-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.vincentli.top/tags/gRPC/</loc>
-    <lastmod>2025-08-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.vincentli.top/tags/RabbitMQ/</loc>
+    <loc>http://www.vincentli.top/tags/Redis/</loc>
     <lastmod>2025-08-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -796,27 +803,6 @@
   
   <url>
     <loc>http://www.vincentli.top/tags/webservice/</loc>
-    <lastmod>2025-08-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.vincentli.top/tags/Redis/</loc>
-    <lastmod>2025-08-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.vincentli.top/tags/Spring/</loc>
-    <lastmod>2025-08-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.vincentli.top/tags/Xfire/</loc>
     <lastmod>2025-08-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -872,35 +858,21 @@
   </url>
   
   <url>
+    <loc>http://www.vincentli.top/tags/Spring/</loc>
+    <lastmod>2025-08-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.vincentli.top/tags/Xfire/</loc>
+    <lastmod>2025-08-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://www.vincentli.top/tags/SpringWebFlux/</loc>
-    <lastmod>2025-08-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.vincentli.top/tags/tensorflow/</loc>
-    <lastmod>2025-08-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.vincentli.top/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/</loc>
-    <lastmod>2025-08-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.vincentli.top/tags/python/</loc>
-    <lastmod>2025-08-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.vincentli.top/tags/%E6%B7%B1%E5%BA%A6%E5%A2%9E%E5%BC%BA%E5%AD%A6%E4%B9%A0/</loc>
     <lastmod>2025-08-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -935,14 +907,35 @@
   </url>
   
   <url>
-    <loc>http://www.vincentli.top/tags/thread/</loc>
+    <loc>http://www.vincentli.top/tags/tensorflow/</loc>
     <lastmod>2025-08-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>http://www.vincentli.top/tags/%E8%BF%90%E7%BB%B4/</loc>
+    <loc>http://www.vincentli.top/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/</loc>
+    <lastmod>2025-08-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.vincentli.top/tags/python/</loc>
+    <lastmod>2025-08-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.vincentli.top/tags/%E6%B7%B1%E5%BA%A6%E5%A2%9E%E5%BC%BA%E5%AD%A6%E4%B9%A0/</loc>
+    <lastmod>2025-08-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.vincentli.top/tags/thread/</loc>
     <lastmod>2025-08-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -964,6 +957,13 @@
   
   <url>
     <loc>http://www.vincentli.top/tags/Zookeeper/</loc>
+    <lastmod>2025-08-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.vincentli.top/tags/%E8%BF%90%E7%BB%B4/</loc>
     <lastmod>2025-08-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1035,20 +1035,6 @@
   </url>
   
   <url>
-    <loc>http://www.vincentli.top/categories/mybatis/</loc>
-    <lastmod>2025-08-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.vincentli.top/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</loc>
-    <lastmod>2025-08-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>http://www.vincentli.top/categories/%E6%91%84%E5%BD%B1/</loc>
     <lastmod>2025-08-22</lastmod>
     <changefreq>daily</changefreq>
@@ -1063,7 +1049,21 @@
   </url>
   
   <url>
+    <loc>http://www.vincentli.top/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</loc>
+    <lastmod>2025-08-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://www.vincentli.top/categories/RabbitMQ/</loc>
+    <lastmod>2025-08-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.vincentli.top/categories/mybatis/</loc>
     <lastmod>2025-08-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1077,14 +1077,14 @@
   </url>
   
   <url>
-    <loc>http://www.vincentli.top/categories/tensorflow/</loc>
+    <loc>http://www.vincentli.top/categories/Java/</loc>
     <lastmod>2025-08-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>http://www.vincentli.top/categories/Java/</loc>
+    <loc>http://www.vincentli.top/categories/tensorflow/</loc>
     <lastmod>2025-08-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1098,14 +1098,14 @@
   </url>
   
   <url>
-    <loc>http://www.vincentli.top/categories/Zookeeper/</loc>
+    <loc>http://www.vincentli.top/categories/%E5%8D%9A%E5%AE%A2/Java/</loc>
     <lastmod>2025-08-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>http://www.vincentli.top/categories/%E5%8D%9A%E5%AE%A2/Java/</loc>
+    <loc>http://www.vincentli.top/categories/%E5%8D%9A%E5%AE%A2/AI/</loc>
     <lastmod>2025-08-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1126,13 +1126,6 @@
   </url>
   
   <url>
-    <loc>http://www.vincentli.top/categories/%E5%8D%9A%E5%AE%A2/AI/</loc>
-    <lastmod>2025-08-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>http://www.vincentli.top/categories/Docker/SpringBoot/</loc>
     <lastmod>2025-08-22</lastmod>
     <changefreq>daily</changefreq>
@@ -1147,13 +1140,6 @@
   </url>
   
   <url>
-    <loc>http://www.vincentli.top/categories/SpringBoot/Java/</loc>
-    <lastmod>2025-08-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>http://www.vincentli.top/categories/%E7%BC%93%E5%AD%98/%E5%8D%9A%E5%AE%A2/</loc>
     <lastmod>2025-08-22</lastmod>
     <changefreq>daily</changefreq>
@@ -1161,14 +1147,7 @@
   </url>
   
   <url>
-    <loc>http://www.vincentli.top/categories/mybatis/%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B0/</loc>
-    <lastmod>2025-08-22</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.vincentli.top/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Mysql/</loc>
+    <loc>http://www.vincentli.top/categories/SpringBoot/Java/</loc>
     <lastmod>2025-08-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1189,7 +1168,21 @@
   </url>
   
   <url>
+    <loc>http://www.vincentli.top/categories/%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Mysql/</loc>
+    <lastmod>2025-08-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://www.vincentli.top/categories/RabbitMQ/%E5%8D%9A%E5%AE%A2/</loc>
+    <lastmod>2025-08-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.vincentli.top/categories/mybatis/%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B0/</loc>
     <lastmod>2025-08-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -1218,6 +1211,13 @@
   
   <url>
     <loc>http://www.vincentli.top/categories/Tomcat/SpringBoot/</loc>
+    <lastmod>2025-08-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.vincentli.top/categories/Zookeeper/</loc>
     <lastmod>2025-08-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
