@@ -180,6 +180,42 @@
 <div class="card">
   
   <article class="card card-content">
+    <a href="/2019/07/29/seconds-kill-when-reduce-sku-stock-design/">
+      <h1 class="post-title">
+        秒杀系统扣减库存的常见几种设计
+      </h1>
+    </a>
+    <div class="card-excerpt">
+      
+      背景我以前参与做过一个社交电商平台，其中就有秒杀场景，现在我从事的互联网酒店行业也有类似的秒杀场景，所以准备写一点关于秒杀相关的文字，就当总结记录一下吧。秒杀最主要的一个业务部门和我们技术部门需要注意一点，就是要防止超卖，而这个是电商行业经常会出现的现象。没有接触过秒杀的童鞋，可能会觉得，库存 200 件就卖 200 件，在数据库里减到 0 不就好了啊，这有什么好麻烦的？是的，理论上是这样，但是具体到业务场景中，“减库存”就不是这么简单了。例如，我们平常在淘宝或者京东上购物都是这样，看到喜欢的商品然后下单，但并不是每个下单请求你都最后付款了。你说系统是用户下单了就算这个商品卖出去了，还是等到用户真正付款了才算卖出了呢？这是个值得我们一起探讨问题！我们可以先根据减库存是发生在下单阶段还是付款阶段，把减库存做一下划分。
+扣减库存主要有哪几种方式呢在正常的电商平台购物场景中，用户的实际购买过程一般分为两步：下单 和 付款。你想买一台佳能单反相机，在商品页面点了“立即购买”按钮，核对信息之后点击“提交订单”，这一步称为下单操作。下单之后，你只有真正完成付款操作才能算真正购买，也就是俗话说的“落袋为安”。那如果你是架构师，你会在哪个环节完成减库存的操作呢？总结来说，减库存操作一般有如下几个方式：
+      
+    </div>
+    <div class="card-post-footer">
+      <div class="post-meta">
+        <time datetime="2019-07-28T17:02:01.000Z">
+          <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+          <span>2019-07-29</span>
+        </time>
+        
+        <span class="dot"></span>
+        
+        <a href="categories/博客/" class="post-meta-link">博客</a>
+        
+        <a href="categories/博客/Java/" class="post-meta-link">Java</a>
+        
+        <a href="categories/博客/Java/分布式/" class="post-meta-link">分布式</a>
+        
+        
+      </div>
+      <a href="/2019/07/29/seconds-kill-when-reduce-sku-stock-design/">继续阅读 </a>
+    </div>
+  </article>
+</div>
+
+<div class="card">
+  
+  <article class="card card-content">
     <a href="/2019/06/19/docker-java-app-practise/">
       <h1 class="post-title">
         Docker容器化部署SpringBoot应用实践
@@ -318,39 +354,6 @@
   </article>
 </div>
 
-<div class="card">
-  
-  <article class="card card-content">
-    <a href="/2018/09/04/mybatis-common-interview-question/">
-      <h1 class="post-title">
-        Mybatis常见面试题
-      </h1>
-    </a>
-    <div class="card-excerpt">
-      
-      Mybatis是我们常用的ORM框架，经常用，但是对于 Mybatis 的技术架构和重要组成部分，以及基本运行原理，很多人了解的不多，我在网上见到了很多常考的面试题，整理了下相关答案（有些是自己想的，有些是网上搜索的），答案有不...
-      
-    </div>
-    <div class="card-post-footer">
-      <div class="post-meta">
-        <time datetime="2018-09-04T06:44:11.000Z">
-          <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
-          <span>2018-09-04</span>
-        </time>
-        
-        <span class="dot"></span>
-        
-        <a href="categories/mybatis/" class="post-meta-link">mybatis</a>
-        
-        <a href="categories/mybatis/技术笔记/" class="post-meta-link">技术笔记</a>
-        
-        
-      </div>
-      <a href="/2018/09/04/mybatis-common-interview-question/">继续阅读 </a>
-    </div>
-  </article>
-</div>
-
 
 <div class="nav">
   
@@ -387,11 +390,11 @@
 <p class="author-description">千里之行，始于足下。</p>
 <div class="author-message">
   <a class="author-posts-count" href="/archives">
-    <span>42</span>
+    <span>43</span>
     <span>文章</span>
   </a>
   <a class="author-categories-count" href="/categories">
-    <span>47</span>
+    <span>48</span>
     <span>分类</span>
   </a>
   <a class="author-tags-count" href="/tags">
@@ -752,7 +755,14 @@
       <a href="/categories/AI">
         <div class="categories-list-item">
           AI
-          <span class="categories-list-item-badge">1</span>
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/人工智能">
+        <div class="categories-list-item">
+          人工智能
+          <span class="categories-list-item-badge">2</span>
         </div>
       </a>
     
@@ -779,23 +789,23 @@
     
     <a href="\tags\SpringCloud" title="SpringCloud"><div class="tags-list-item">SpringCloud</div></a>
     
+    <a href="\tags\人工智能" title="人工智能"><div class="tags-list-item">人工智能</div></a>
+    
+    <a href="\tags\Agent" title="Agent"><div class="tags-list-item">Agent</div></a>
+    
     <a href="\tags\多线程" title="多线程"><div class="tags-list-item">多线程</div></a>
     
-    <a href="\tags\人工智能" title="人工智能"><div class="tags-list-item">人工智能</div></a>
+    <a href="\tags\AI" title="AI"><div class="tags-list-item">AI</div></a>
+    
+    <a href="\tags\大模型" title="大模型"><div class="tags-list-item">大模型</div></a>
+    
+    <a href="\tags\SKILL" title="SKILL"><div class="tags-list-item">SKILL</div></a>
     
     <a href="\tags\Zookeeper" title="Zookeeper"><div class="tags-list-item">Zookeeper</div></a>
     
     <a href="\tags\Tomcat" title="Tomcat"><div class="tags-list-item">Tomcat</div></a>
     
     <a href="\tags\Spring" title="Spring"><div class="tags-list-item">Spring</div></a>
-    
-    <a href="\tags\RabbitMQ" title="RabbitMQ"><div class="tags-list-item">RabbitMQ</div></a>
-    
-    <a href="\tags\Agent" title="Agent"><div class="tags-list-item">Agent</div></a>
-    
-    <a href="\tags\kafka" title="kafka"><div class="tags-list-item">kafka</div></a>
-    
-    <a href="\tags\git" title="git"><div class="tags-list-item">git</div></a>
     
   </div>
 </div>
@@ -836,9 +846,13 @@
     
       
         
+      
+    
+      
+        
           <a href="/archives/2025" class="archive-card-list-item">
               2025
-              <span class="archive-card-list-item-badge">3</span>
+              <span class="archive-card-list-item-badge">4</span>
           </a>
         
         
@@ -1063,6 +1077,11 @@
       </div>
     
       <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2025-12-23</div>
+        <a href="/2025/12/23/multi-agent-analysis/"><div class="recent-posts-item-content">多 Agent 系统技术分析：设计模式、性能权衡与场景选型</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
         <div class="recent-posts-item-title">2025-05-10</div>
         <a href="/2025/05/10/multi-agent-system-research-report/"><div class="recent-posts-item-content">多Agent协同技术该怎么选？</div></a>
       </div>
@@ -1070,11 +1089,6 @@
       <div class="recent-posts-item">
         <div class="recent-posts-item-title">2025-04-15</div>
         <a href="/2025/04/15/comparator-analysis-with-dify-coze-n8n/"><div class="recent-posts-item-content">Dify vs Coze vs n8n三大AI自动化工具，到底哪个最好用？</div></a>
-      </div>
-    
-      <div class="recent-posts-item">
-        <div class="recent-posts-item-title">2025-03-14</div>
-        <a href="/2025/03/14/ai-code-tool-recommond/"><div class="recent-posts-item-content">智能生产之AI辅助编程工具对比分析及使用场景推荐</div></a>
       </div>
     
   </div>
@@ -1116,9 +1130,13 @@
     
       
         
+      
+    
+      
+        
           <a href="/archives/2025" class="archive-card-list-item">
               2025
-              <span class="archive-card-list-item-badge">3</span>
+              <span class="archive-card-list-item-badge">4</span>
           </a>
         
         

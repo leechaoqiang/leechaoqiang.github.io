@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html  lang="zh-CN" >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="#fff" id="theme-color">
+  <meta name="description" content="攻城狮李猿外的博客,专注Java,Spring,Spring Boot,Spring Cloud,RocketMQ,Kafka,Spring AI,Redis,Golang,人工智能等技术学习记录。">
+  <link rel="icon" href="/images/logo.jpg">
+  <title>多 Agent 系统技术分析：设计模式、性能权衡与场景选型</title>
+  
+  
+  <meta property="og:title" content="多 Agent 系统技术分析：设计模式、性能权衡与场景选型">
+  
+  
+  <meta property="og:url" content="http://www.vincentli.top/2025/12/23/multi-agent-analysis/index.html">
+  
+  
+  <meta property="og:img" content="/images/logo.jpg">
+  
+  
+  <meta property="og:img" content="攻城狮李猿外的博客,专注Java,Spring,Spring Boot,Spring Cloud,RocketMQ,Kafka,Spring AI,Redis,Golang,人工智能等技术学习记录。">
+  
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:published_time" content="2025-12-23">
+  <meta property="og:article:modified_time" content="2026-02-26">
+  <meta property="og:article:author" content="李猿外">
+  
+  
+  <meta property="og:article:tag" content="AI">
+  
+  <meta property="og:article:tag" content="人工智能">
+  
+  <meta property="og:article:tag" content="Agent">
+  
+  <meta property="og:article:tag" content="SKILL">
+  
+  <meta property="og:article:tag" content="大模型">
+  
+  
+  
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+    var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+      }
+    };
+    setDarkmode();
+  </script>
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  </script>
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_f7g5jnuftcf.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  <link rel="preload" href="//cdn.jsdelivr.net/npm/fslightbox@3.1.0/index.min.js" as="script">
+  
+  
+  <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+  <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">
+  
+  
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_f7g5jnuftcf.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 5.0.2"></head>
+
+
+<body>
+  <div class="wrapper">
+    
+    <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+      <img class="navbar-logo-img" src="/images/logo.jpg" alt="logo">
+      
+      <span class="navbar-logo-dsc">攻城狮李猿外</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+    <a href="/" class="navbar-menu-item">
+    
+    首页
+    
+    </a>
+    
+    <a href="/archives" class="navbar-menu-item">
+    
+    归档
+    
+    </a>
+    
+    <a href="/tags" class="navbar-menu-item">
+    
+    标签
+    
+    </a>
+    
+    <a href="/categories" class="navbar-menu-item">
+    
+    分类
+    
+    </a>
+    
+    <a href="/about" class="navbar-menu-item">
+    
+    关于
+    
+    </a>
+    
+    <a href="/links" class="navbar-menu-item">
+    
+    友链
+    
+    </a>
+    
+    <a class="navbar-menu-item darknavbar" id="dark"><i class="iconfont icon-weather"></i></a>
+    <a class="navbar-menu-item searchnavbar" id="search"><i class="iconfont icon-search" style="font-size: 1.2rem; font-weight: 400;"></i></a>
+  </div>
+</nav>
+    
+    <div id="local-search" style="display: none;">
+      <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容...">
+      <div id="search-content"></div>
+    </div>
+    
+    <div class="section-wrap">
+      <div class="container">
+        <div class="columns">
+          <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      多 Agent 系统技术分析：设计模式、性能权衡与场景选型
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2025-12-23T08:58:08.000Z">
+      <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+      <span>2025-12-23</span>
+    </time>
+    
+    <span class="dot"></span>
+    
+    <a href="/categories/AI/" class="post-meta-link">AI</a>
+    
+    <a href="/categories/AI/人工智能/" class="post-meta-link">人工智能</a>
+    
+    
+    
+    <span class="dot"></span>
+    <span>3k 字</span>
+    
+  </div>
+  
+  <div class="post-meta post-show-meta" style="margin-top: -10px;">
+    <div style="display: flex; align-items: center;">
+      <i class="iconfont icon-biaoqian" style="margin-right: 2px; font-size: 1.15rem;"></i>
+      
+      
+        <a href="/tags/AI/" class="post-meta-link">AI</a>
+      
+      
+      <span class="dot"></span>
+      
+        <a href="/tags/人工智能/" class="post-meta-link">人工智能</a>
+      
+      
+      <span class="dot"></span>
+      
+        <a href="/tags/Agent/" class="post-meta-link">Agent</a>
+      
+      
+      <span class="dot"></span>
+      
+        <a href="/tags/SKILL/" class="post-meta-link">SKILL</a>
+      
+      
+      <span class="dot"></span>
+      
+        <a href="/tags/大模型/" class="post-meta-link">大模型</a>
+      
+    </div>
+  </div>
+  
+  </header>
+  <div id="section" class="post-content">
+    <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>在大语言模型驱动的智能系统开发中，单一Agent虽能通过适配工具和优化提示词完成诸多任务，但面对复杂工作流时，其在上下文管理、任务并行、团队协作开发等方面的短板逐渐显现。多Agent系统通过协调多个专业化组件，将复杂任务拆解、分配并协同完成，成为解决复杂场景的核心方案。本文基于LangChain多Agent开发文档，从核心价值、设计模式、性能指标、场景选型等维度，对多Agent系统进行全面技术分析，为开发者构建高效多Agent系统提供参考。</p>
+<h2 id="一、多Agent系统的核心价值与适用场景"><a href="#一、多Agent系统的核心价值与适用场景" class="headerlink" title="一、多Agent系统的核心价值与适用场景"></a>一、多Agent系统的核心价值与适用场景</h2><p>多Agent系统并非复杂任务的“万能解”，但在特定场景下能发挥单一Agent无法企及的优势，其核心价值围绕<strong>上下文管理、分布式开发、并行化</strong>三大能力展开，这也是开发者选择多Agent架构的核心诉求。</p>
+<ol>
+<li><strong>上下文管理</strong>：解决模型上下文窗口的容量限制问题，通过将专业知识拆分到不同Agent，实现相关信息的选择性调取，避免单一提示词中塞入过量知识导致的模型处理效率下降。</li>
+<li><strong>分布式开发</strong>：支持不同团队独立开发、维护各自的Agent能力，各组件边界清晰，可灵活组合为大型系统，大幅提升开发效率和系统可维护性。</li>
+<li><strong>并行化</strong>：为子任务分配专业化的Agent“工作节点”，实现多任务并发执行，显著缩短复杂任务的处理耗时。</li>
+</ol>
+<p>多Agent模式的<strong>核心适用场景</strong>为：单一Agent工具过多导致工具选择决策失准；任务需要具备大量上下文的专业知识，涉及长提示词和领域专属工具；任务需执行顺序约束，仅在满足特定条件后才能解锁后续能力。而多Agent设计的核心在于<strong>上下文工程</strong>——精准定义每个Agent可访问的信息，确保各Agent获得完成自身任务的最优数据，这直接决定了多Agent系统的性能上限。</p>
+<h2 id="二、多Agent系统的核心设计模式及工作原理"><a href="#二、多Agent系统的核心设计模式及工作原理" class="headerlink" title="二、多Agent系统的核心设计模式及工作原理"></a>二、多Agent系统的核心设计模式及工作原理</h2><p>LangChain定义了五种构建多Agent系统的核心模式，各模式的工作逻辑、组件协作方式截然不同，分别适配不同的业务需求，同时各模式可灵活组合，形成更复杂的定制化架构。其中Subagents、Handoffs、Skills、Router为基础模式，Custom workflow为基于LangGraph的定制化扩展模式。</p>
+<h3 id="（一）四大基础模式核心逻辑"><a href="#（一）四大基础模式核心逻辑" class="headerlink" title="（一）四大基础模式核心逻辑"></a>（一）四大基础模式核心逻辑</h3><table>
+<thead>
+<tr>
+<th>模式</th>
+<th>核心工作原理</th>
+<th>核心特征</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>子智能体（Subagents）</td>
+<td>主Agent作为核心协调者，将各子Agent视作工具调用，所有任务路由均通过主Agent，由其决定子Agent的调用时机和方式</td>
+<td>中心化控制，子Agent无自主路由权，各子Agent专注单一专业任务</td>
+</tr>
+<tr>
+<td>交接（Handoffs）</td>
+<td>基于系统状态动态改变行为，工具调用更新状态变量，触发路由/配置变更，实现Agent间的控制权转移或当前Agent的工具、提示词调整</td>
+<td>状态化设计，Agent可直接交接控制权，支持与用户直接交互</td>
+</tr>
+<tr>
+<td>技能（Skills）</td>
+<td>单个Agent保持全局控制权，根据任务需求<strong>按需加载</strong>专业化的提示词和知识上下文，无需切换Agent</td>
+<td>轻量灵活，无Agent切换开销，专业知识按需调用</td>
+</tr>
+<tr>
+<td>路由器（Router）</td>
+<td>增设独立的路由步骤，由路由组件对用户输入进行分类，将任务导向一个或多个专业化Agent，最终对各Agent结果进行合成输出</td>
+<td>显式路由，支持多Agent并行执行，结果统一聚合</td>
+</tr>
+</tbody>
+</table>
+<p><img src="/images/multi-agent/pattern-subagents.avif" alt="pattern-subagents" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/images/multi-agent/pattern-subagents.avif" class="lozad post-image"><br><img src="/images/multi-agent/pattern-handoffs.avif" alt="pattern-handoffs" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/images/multi-agent/pattern-handoffs.avif" class="lozad post-image"><br><img src="/images/multi-agent/pattern-skills.avif" alt="pattern-skills" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/images/multi-agent/pattern-skills.avif" class="lozad post-image"><br><img src="/images/multi-agent/pattern-router.avif" alt="pattern-router" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/images/multi-agent/pattern-router.avif" class="lozad post-image"></p>
+<h3 id="（二）定制化工作流（Custom-workflow）"><a href="#（二）定制化工作流（Custom-workflow）" class="headerlink" title="（二）定制化工作流（Custom workflow）"></a>（二）定制化工作流（Custom workflow）</h3><p>基于LangGraph构建专属的执行流，可混合确定性逻辑和Agent的自主行为，同时将上述基础模式作为节点嵌入工作流中。该模式为开发者提供了最高的灵活性，可根据业务需求定制Agent的协作逻辑、执行顺序和数据流转方式，适用于高度个性化的复杂场景。</p>
+<h2 id="三、多Agent模式的选型维度与能力对比"><a href="#三、多Agent模式的选型维度与能力对比" class="headerlink" title="三、多Agent模式的选型维度与能力对比"></a>三、多Agent模式的选型维度与能力对比</h2><p>选择多Agent模式的核心是匹配业务的核心需求，开发者可从<strong>分布式开发、并行化、多跳、直接用户交互</strong>四大核心维度进行评估，各基础模式在四大维度的能力表现存在显著差异（星级越高表示能力越强，—表示不支持）。</p>
+<h3 id="（一）核心选型维度定义"><a href="#（一）核心选型维度定义" class="headerlink" title="（一）核心选型维度定义"></a>（一）核心选型维度定义</h3><ol>
+<li><strong>分布式开发</strong>：不同团队能否独立维护各Agent组件，无需关注其他组件的实现细节；</li>
+<li><strong>并行化</strong>：多个Agent能否同时执行子任务，实现任务的并发处理；</li>
+<li><strong>多跳</strong>：模式是否支持串联调用多个子Agent，完成多步骤的复杂任务；</li>
+<li><strong>直接用户交互</strong>：子Agent能否绕过主协调者，与用户进行直接的对话交互。</li>
+</ol>
+<h3 id="（二）各模式能力星级对比"><a href="#（二）各模式能力星级对比" class="headerlink" title="（二）各模式能力星级对比"></a>（二）各模式能力星级对比</h3><table>
+<thead>
+<tr>
+<th>模式</th>
+<th>分布式开发</th>
+<th>并行化</th>
+<th>多跳</th>
+<th>直接用户交互</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Subagents</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>⭐</td>
+</tr>
+<tr>
+<td>Handoffs</td>
+<td>—</td>
+<td>—</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td>Skills</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>⭐⭐⭐</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td>Router</td>
+<td>⭐⭐⭐</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>—</td>
+<td>⭐⭐⭐</td>
+</tr>
+</tbody>
+</table>
+<p>从能力对比可看出，<strong>Subagents</strong>是全能力均衡的模式，在分布式开发、并行化、多跳方面均表现最优，仅在直接用户交互上较弱；<strong>Handoffs</strong>专注于多跳和直接用户交互，无分布式开发和并行化能力；<strong>Skills</strong>兼顾分布式开发、多跳和直接用户交互，并行化能力中等；<strong>Router</strong>擅长并行化，分布式开发和直接用户交互能力中等，不支持多跳。</p>
+<p>同时，各模式并非互斥，可灵活组合使用。例如，Subagents架构可调用包含Router Agent的工具，也可结合Skills模式实现上下文的按需加载，通过模式组合实现能力互补。</p>
+<h2 id="四、多Agent模式的性能指标与场景化性能对比"><a href="#四、多Agent模式的性能指标与场景化性能对比" class="headerlink" title="四、多Agent模式的性能指标与场景化性能对比"></a>四、多Agent模式的性能指标与场景化性能对比</h2><p>多Agent系统的性能直接决定了其落地效果，核心评估指标为<strong>模型调用次数</strong>和<strong>处理令牌数</strong>：模型调用次数越多，系统延迟越高、API调用成本越高（尤其是串行调用）；处理令牌数越多，上下文处理成本越高，且可能触发模型的上下文窗口限制。</p>
+<p>本文选取<strong>单次请求、重复请求、多领域任务</strong>三大典型场景，对四大基础模式的性能进行对比分析，这三大场景覆盖了绝大多数实际业务中的Agent使用场景。</p>
+<h3 id="（一）单次请求场景：简单单一任务处理"><a href="#（一）单次请求场景：简单单一任务处理" class="headerlink" title="（一）单次请求场景：简单单一任务处理"></a>（一）单次请求场景：简单单一任务处理</h3><p>场景示例为用户单次提出“买咖啡”需求，需调用专属工具完成任务。此场景的核心诉求是<strong>低调用次数、高执行效率</strong>。<br>各模式性能表现：Subagents需4次模型调用，Handoffs、Skills、Router均仅需3次调用。<br><strong>核心结论</strong>：Handoffs、Skills、Router为该场景的最优选择，Subagents因结果需回传主Agent，增加了一次调用开销，但该开销换来了中心化的全局控制能力。</p>
+<h3 id="（二）重复请求场景：同会话内的重复任务处理"><a href="#（二）重复请求场景：同会话内的重复任务处理" class="headerlink" title="（二）重复请求场景：同会话内的重复任务处理"></a>（二）重复请求场景：同会话内的重复任务处理</h3><p>场景示例为用户在同一会话中先提出“买咖啡”，后再次提出“再买一杯咖啡”。此场景的核心诉求是<strong>利用会话状态，减少重复调用</strong>。<br>各模式性能表现：Subagents无状态设计，二次请求仍需4次调用，总计8次；Handoffs、Skills为有状态设计，二次请求仅需2次调用，总计5次；Router无状态设计，二次请求仍需3次调用，总计6次。<br><strong>核心结论</strong>：Handoffs、Skills为该场景的最优选择，凭借状态持久化特性，节省40%-50%的模型调用次数——Handoffs保留活跃Agent，无需重新交接；Skills保留已加载的知识上下文，无需重新调取。Subagents和Router的无状态设计虽实现了强上下文隔离，但付出了重复调用的成本。</p>
+<h3 id="（三）多领域任务场景：跨领域复杂任务协同"><a href="#（三）多领域任务场景：跨领域复杂任务协同" class="headerlink" title="（三）多领域任务场景：跨领域复杂任务协同"></a>（三）多领域任务场景：跨领域复杂任务协同</h3><p>场景示例为用户提出“对比Python、JavaScript、Rust用于Web开发的优劣”，各领域Agent包含约2000令牌的专业文档，核心诉求是<strong>并行处理、低令牌开销、精准结果合成</strong>。<br>各模式性能表现：Subagents和Router均需5次调用，处理约9K令牌；Handoffs需7+次调用，处理约14K+令牌；Skills仅需3次调用，但处理约15K令牌。<br><strong>核心结论</strong>：Subagents和Router为该场景的最优选择，二者均支持并行执行，各领域Agent独立处理自身上下文，实现了低令牌开销；Handoffs因仅支持串行执行，调用次数和令牌开销大幅增加；Skills虽调用次数最少，但需加载所有领域的知识上下文，导致令牌开销激增，且后续所有调用均需处理全量上下文。</p>
+<h2 id="五、多Agent模式的综合选型指南与核心总结"><a href="#五、多Agent模式的综合选型指南与核心总结" class="headerlink" title="五、多Agent模式的综合选型指南与核心总结"></a>五、多Agent模式的综合选型指南与核心总结</h2><p>结合四大基础模式的工作原理、能力表现和三大典型场景的性能对比，可得出<strong>按业务优化目标划分</strong>的综合选型指南，开发者可根据核心诉求直接匹配最优模式，同时可结合业务复杂度进行模式组合。</p>
+<h3 id="（一）按优化目标的选型原则"><a href="#（一）按优化目标的选型原则" class="headerlink" title="（一）按优化目标的选型原则"></a>（一）按优化目标的选型原则</h3><table>
+<thead>
+<tr>
+<th>核心优化目标</th>
+<th>Subagents</th>
+<th>Handoffs</th>
+<th>Skills</th>
+<th>Router</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>单一简单请求处理</td>
+<td>—</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>同会话重复请求处理</td>
+<td>—</td>
+<td>✅</td>
+<td>✅</td>
+<td>—</td>
+</tr>
+<tr>
+<td>多任务并行执行</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>大上下文领域任务处理</td>
+<td>✅</td>
+<td>—</td>
+<td>—</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>简单聚焦型任务处理</td>
+<td>—</td>
+<td>—</td>
+<td>✅</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3 id="（二）多Agent系统开发核心总结"><a href="#（二）多Agent系统开发核心总结" class="headerlink" title="（二）多Agent系统开发核心总结"></a>（二）多Agent系统开发核心总结</h3><ol>
+<li><strong>非必要不使用多Agent</strong>：若单一Agent可通过适配动态工具、优化提示词完成任务，无需构建多Agent系统，避免过度设计带来的开发和维护成本；</li>
+<li><strong>上下文工程是核心</strong>：精准定义各Agent的访问数据，实现上下文的隔离与按需调取，是提升多Agent系统性能的关键；</li>
+<li><strong>状态与隔离的权衡</strong>：有状态模式（Handoffs、Skills）在重复请求中更高效，但上下文隔离性弱；无状态模式（Subagents、Router）上下文隔离性强，但重复请求成本高，需根据业务场景选择；</li>
+<li><strong>并行化是多领域任务的关键</strong>：处理跨领域复杂任务时，优先选择支持并行执行的模式（Subagents、Router），避免串行执行导致的性能损耗；</li>
+<li><strong>模式组合实现能力互补</strong>：基础模式可灵活嵌套、组合，例如在Subagents架构中融入Skills模式实现上下文按需加载，或基于LangGraph构建定制化工作流，适配复杂业务需求。</li>
+</ol>
+<h2 id="六、多Agent系统的未来开发趋势"><a href="#六、多Agent系统的未来开发趋势" class="headerlink" title="六、多Agent系统的未来开发趋势"></a>六、多Agent系统的未来开发趋势</h2><p>从LangChain的多Agent设计体系来看，未来多Agent系统的开发将朝着<strong>轻量化、模块化、智能化</strong>方向发展：一方面，轻量化的Skills模式将成为简单聚焦型任务的主流选择，降低Agent的开发和部署成本；另一方面，模块化的基础模式将通过灵活组合，形成适配不同场景的“Agent组件库”；同时，路由组件的智能化程度将持续提升，实现更精准的任务分类和Agent调度，进一步提升多Agent系统的执行效率。</p>
+<p>此外，多Agent系统与<strong>智能体记忆、工具调用优化、结果合成算法</strong>的结合将成为重要方向，通过增强Agent的长时记忆能力、优化工具调用策略、提升多结果的合成精度，解决多Agent协作中的上下文丢失、工具调用冗余、结果冲突等问题，推动多Agent系统在更复杂的工业级场景中落地。</p>
+
+  </div>
+  <div>
+  
+  <div class="post-note note-warning copyright" style="margin-top: 42px">
+    <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="http://www.vincentli.top/about">李猿外</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="http://www.vincentli.top/2025/12/23/multi-agent-analysis/">http://www.vincentli.top/2025/12/23/multi-agent-analysis/</a></p>
+    <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+  </div>
+  
+  </div>
+</article>
+<div class="nav">
+  
+  <div class="nav-item-prev">
+    <a href="/2026/02/01/mcp-skill-analysis/" class="nav-link">
+      <i class="iconfont icon-left nav-prev-icon"></i>
+      <div>
+        <div class="nav-label">上一篇</div>
+        
+        <div class="nav-title">MCP与SKILL技术深度分析：AI能力扩展的两种路径 </div>
+        
+      </div>
+    </a>
+  </div>
+  
+  
+  <div class="nav-item-next">
+    <a href="/2025/05/10/multi-agent-system-research-report/" class="nav-link">
+      <div>
+        <div class="nav-label">下一篇</div>
+        
+        <div class="nav-title">多Agent协同技术该怎么选？ </div>
+        
+      </div>
+      <i class="iconfont icon-right nav-next-icon"></i>
+    </a>
+  </div>
+  
+</div>
+
+<div class="card card-content comment-card" style="margin-top: 16px;">
+  <div class="comment-card-title">评论</div>
+  
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: 'SnVYhldRRlqYatvAs4y3N2qF-MdYXbMMI',
+        appKey: '2SwmjMzPEwYhnB7hqqNgknXM',
+        placeholder: '都来了，留句话呗...',
+        path: window.location.pathname,
+        avatar: 'wavatar',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'false',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+</div>
+
+<div class="card card-content toc-card" id="mobiletoc">
+  <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text">前言</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%A4%9AAgent%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%A0%B8%E5%BF%83%E4%BB%B7%E5%80%BC%E4%B8%8E%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-text">一、多Agent系统的核心价值与适用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%A4%9AAgent%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%A0%B8%E5%BF%83%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%8F%8A%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-text">二、多Agent系统的核心设计模式及工作原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89%E5%9B%9B%E5%A4%A7%E5%9F%BA%E7%A1%80%E6%A8%A1%E5%BC%8F%E6%A0%B8%E5%BF%83%E9%80%BB%E8%BE%91"><span class="toc-text">（一）四大基础模式核心逻辑</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89%E5%AE%9A%E5%88%B6%E5%8C%96%E5%B7%A5%E4%BD%9C%E6%B5%81%EF%BC%88Custom-workflow%EF%BC%89"><span class="toc-text">（二）定制化工作流（Custom workflow）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%A4%9AAgent%E6%A8%A1%E5%BC%8F%E7%9A%84%E9%80%89%E5%9E%8B%E7%BB%B4%E5%BA%A6%E4%B8%8E%E8%83%BD%E5%8A%9B%E5%AF%B9%E6%AF%94"><span class="toc-text">三、多Agent模式的选型维度与能力对比</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89%E6%A0%B8%E5%BF%83%E9%80%89%E5%9E%8B%E7%BB%B4%E5%BA%A6%E5%AE%9A%E4%B9%89"><span class="toc-text">（一）核心选型维度定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89%E5%90%84%E6%A8%A1%E5%BC%8F%E8%83%BD%E5%8A%9B%E6%98%9F%E7%BA%A7%E5%AF%B9%E6%AF%94"><span class="toc-text">（二）各模式能力星级对比</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E5%A4%9AAgent%E6%A8%A1%E5%BC%8F%E7%9A%84%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E4%B8%8E%E5%9C%BA%E6%99%AF%E5%8C%96%E6%80%A7%E8%83%BD%E5%AF%B9%E6%AF%94"><span class="toc-text">四、多Agent模式的性能指标与场景化性能对比</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89%E5%8D%95%E6%AC%A1%E8%AF%B7%E6%B1%82%E5%9C%BA%E6%99%AF%EF%BC%9A%E7%AE%80%E5%8D%95%E5%8D%95%E4%B8%80%E4%BB%BB%E5%8A%A1%E5%A4%84%E7%90%86"><span class="toc-text">（一）单次请求场景：简单单一任务处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89%E9%87%8D%E5%A4%8D%E8%AF%B7%E6%B1%82%E5%9C%BA%E6%99%AF%EF%BC%9A%E5%90%8C%E4%BC%9A%E8%AF%9D%E5%86%85%E7%9A%84%E9%87%8D%E5%A4%8D%E4%BB%BB%E5%8A%A1%E5%A4%84%E7%90%86"><span class="toc-text">（二）重复请求场景：同会话内的重复任务处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%88%E4%B8%89%EF%BC%89%E5%A4%9A%E9%A2%86%E5%9F%9F%E4%BB%BB%E5%8A%A1%E5%9C%BA%E6%99%AF%EF%BC%9A%E8%B7%A8%E9%A2%86%E5%9F%9F%E5%A4%8D%E6%9D%82%E4%BB%BB%E5%8A%A1%E5%8D%8F%E5%90%8C"><span class="toc-text">（三）多领域任务场景：跨领域复杂任务协同</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E5%A4%9AAgent%E6%A8%A1%E5%BC%8F%E7%9A%84%E7%BB%BC%E5%90%88%E9%80%89%E5%9E%8B%E6%8C%87%E5%8D%97%E4%B8%8E%E6%A0%B8%E5%BF%83%E6%80%BB%E7%BB%93"><span class="toc-text">五、多Agent模式的综合选型指南与核心总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89%E6%8C%89%E4%BC%98%E5%8C%96%E7%9B%AE%E6%A0%87%E7%9A%84%E9%80%89%E5%9E%8B%E5%8E%9F%E5%88%99"><span class="toc-text">（一）按优化目标的选型原则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89%E5%A4%9AAgent%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E6%A0%B8%E5%BF%83%E6%80%BB%E7%BB%93"><span class="toc-text">（二）多Agent系统开发核心总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E5%A4%9AAgent%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%9C%AA%E6%9D%A5%E5%BC%80%E5%8F%91%E8%B6%8B%E5%8A%BF"><span class="toc-text">六、多Agent系统的未来开发趋势</span></a></li></ol></li></ol>
+</div></main>
+          <aside class="left-column">
+            
+            <div class="card card-author">
+              
+<img src="/images/logo.jpg" class="author-img">
+
+<p class="author-name">李猿外</p>
+<p class="author-description">千里之行，始于足下。</p>
+<div class="author-message">
+  <a class="author-posts-count" href="/archives">
+    <span>43</span>
+    <span>文章</span>
+  </a>
+  <a class="author-categories-count" href="/categories">
+    <span>48</span>
+    <span>分类</span>
+  </a>
+  <a class="author-tags-count" href="/tags">
+    <span>99</span>
+    <span>标签</span>
+  </a>
+</div>
+
+<div class="author-card-society">
+  
+    <div class="author-card-society-icon">
+      <a target="_blank" rel="noopener" href="https://github.com/leechaoqiang">
+        <i class="iconfont icon-github society-icon"></i>
+      </a>
+    </div>
+  
+    <div class="author-card-society-icon">
+      <a href="mailto:vincentlee99@126.com">
+        <i class="iconfont icon-mail society-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+            </div>
+            
+            <div class="sticky-tablet">
+  
+  
+  <article class="display-when-two-columns spacer">
+    <div class="card card-content toc-card">
+      <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text">前言</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%A4%9AAgent%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%A0%B8%E5%BF%83%E4%BB%B7%E5%80%BC%E4%B8%8E%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-text">一、多Agent系统的核心价值与适用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%A4%9AAgent%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%A0%B8%E5%BF%83%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%8F%8A%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-text">二、多Agent系统的核心设计模式及工作原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89%E5%9B%9B%E5%A4%A7%E5%9F%BA%E7%A1%80%E6%A8%A1%E5%BC%8F%E6%A0%B8%E5%BF%83%E9%80%BB%E8%BE%91"><span class="toc-text">（一）四大基础模式核心逻辑</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89%E5%AE%9A%E5%88%B6%E5%8C%96%E5%B7%A5%E4%BD%9C%E6%B5%81%EF%BC%88Custom-workflow%EF%BC%89"><span class="toc-text">（二）定制化工作流（Custom workflow）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%A4%9AAgent%E6%A8%A1%E5%BC%8F%E7%9A%84%E9%80%89%E5%9E%8B%E7%BB%B4%E5%BA%A6%E4%B8%8E%E8%83%BD%E5%8A%9B%E5%AF%B9%E6%AF%94"><span class="toc-text">三、多Agent模式的选型维度与能力对比</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89%E6%A0%B8%E5%BF%83%E9%80%89%E5%9E%8B%E7%BB%B4%E5%BA%A6%E5%AE%9A%E4%B9%89"><span class="toc-text">（一）核心选型维度定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89%E5%90%84%E6%A8%A1%E5%BC%8F%E8%83%BD%E5%8A%9B%E6%98%9F%E7%BA%A7%E5%AF%B9%E6%AF%94"><span class="toc-text">（二）各模式能力星级对比</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E5%A4%9AAgent%E6%A8%A1%E5%BC%8F%E7%9A%84%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E4%B8%8E%E5%9C%BA%E6%99%AF%E5%8C%96%E6%80%A7%E8%83%BD%E5%AF%B9%E6%AF%94"><span class="toc-text">四、多Agent模式的性能指标与场景化性能对比</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89%E5%8D%95%E6%AC%A1%E8%AF%B7%E6%B1%82%E5%9C%BA%E6%99%AF%EF%BC%9A%E7%AE%80%E5%8D%95%E5%8D%95%E4%B8%80%E4%BB%BB%E5%8A%A1%E5%A4%84%E7%90%86"><span class="toc-text">（一）单次请求场景：简单单一任务处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89%E9%87%8D%E5%A4%8D%E8%AF%B7%E6%B1%82%E5%9C%BA%E6%99%AF%EF%BC%9A%E5%90%8C%E4%BC%9A%E8%AF%9D%E5%86%85%E7%9A%84%E9%87%8D%E5%A4%8D%E4%BB%BB%E5%8A%A1%E5%A4%84%E7%90%86"><span class="toc-text">（二）重复请求场景：同会话内的重复任务处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%88%E4%B8%89%EF%BC%89%E5%A4%9A%E9%A2%86%E5%9F%9F%E4%BB%BB%E5%8A%A1%E5%9C%BA%E6%99%AF%EF%BC%9A%E8%B7%A8%E9%A2%86%E5%9F%9F%E5%A4%8D%E6%9D%82%E4%BB%BB%E5%8A%A1%E5%8D%8F%E5%90%8C"><span class="toc-text">（三）多领域任务场景：跨领域复杂任务协同</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E5%A4%9AAgent%E6%A8%A1%E5%BC%8F%E7%9A%84%E7%BB%BC%E5%90%88%E9%80%89%E5%9E%8B%E6%8C%87%E5%8D%97%E4%B8%8E%E6%A0%B8%E5%BF%83%E6%80%BB%E7%BB%93"><span class="toc-text">五、多Agent模式的综合选型指南与核心总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89%E6%8C%89%E4%BC%98%E5%8C%96%E7%9B%AE%E6%A0%87%E7%9A%84%E9%80%89%E5%9E%8B%E5%8E%9F%E5%88%99"><span class="toc-text">（一）按优化目标的选型原则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89%E5%A4%9AAgent%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E6%A0%B8%E5%BF%83%E6%80%BB%E7%BB%93"><span class="toc-text">（二）多Agent系统开发核心总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E5%A4%9AAgent%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%9C%AA%E6%9D%A5%E5%BC%80%E5%8F%91%E8%B6%8B%E5%8A%BF"><span class="toc-text">六、多Agent系统的未来开发趋势</span></a></li></ol></li></ol>
+    </div>
+  </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header"><i class="iconfont icon-fenlei" style="padding-right: 2px;"></i>分类</div>
+  <div class="categories-list">
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">19</span>
+        </div>
+      </a>
+    
+      <a href="/categories/配置中心">
+        <div class="categories-list-item">
+          配置中心
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Docker">
+        <div class="categories-list-item">
+          Docker
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/微服务">
+        <div class="categories-list-item">
+          微服务
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/工具学习">
+        <div class="categories-list-item">
+          工具学习
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Golang学习笔记">
+        <div class="categories-list-item">
+          Golang学习笔记
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/缓存">
+        <div class="categories-list-item">
+          缓存
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringBoot">
+        <div class="categories-list-item">
+          SpringBoot
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/摄影">
+        <div class="categories-list-item">
+          摄影
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/gRPC">
+        <div class="categories-list-item">
+          gRPC
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/技术学习笔记">
+        <div class="categories-list-item">
+          技术学习笔记
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/RabbitMQ">
+        <div class="categories-list-item">
+          RabbitMQ
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/mybatis">
+        <div class="categories-list-item">
+          mybatis
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Spring">
+        <div class="categories-list-item">
+          Spring
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/tensorflow">
+        <div class="categories-list-item">
+          tensorflow
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Tomcat">
+        <div class="categories-list-item">
+          Tomcat
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+      <a href="/categories/AI">
+        <div class="categories-list-item">
+          AI
+          <span class="categories-list-item-badge">4</span>
+        </div>
+      </a>
+    
+      <a href="/categories/问题">
+        <div class="categories-list-item">
+          问题
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+      <a href="/categories/并发">
+        <div class="categories-list-item">
+          并发
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringBoot">
+        <div class="categories-list-item">
+          SpringBoot
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringCloud">
+        <div class="categories-list-item">
+          SpringCloud
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Mysql">
+        <div class="categories-list-item">
+          Mysql
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Mysql">
+        <div class="categories-list-item">
+          Mysql
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/技术笔记">
+        <div class="categories-list-item">
+          技术笔记
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Restful">
+        <div class="categories-list-item">
+          Restful
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringWebFlux">
+        <div class="categories-list-item">
+          SpringWebFlux
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/thread">
+        <div class="categories-list-item">
+          thread
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringBoot">
+        <div class="categories-list-item">
+          SpringBoot
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Zookeeper">
+        <div class="categories-list-item">
+          Zookeeper
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/人工智能">
+        <div class="categories-list-item">
+          人工智能
+          <span class="categories-list-item-badge">4</span>
+        </div>
+      </a>
+    
+      <a href="/categories/消息队列">
+        <div class="categories-list-item">
+          消息队列
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/消息队列">
+        <div class="categories-list-item">
+          消息队列
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/分布式">
+        <div class="categories-list-item">
+          分布式
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/多线程">
+        <div class="categories-list-item">
+          多线程
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringCloud">
+        <div class="categories-list-item">
+          SpringCloud
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/kafka">
+        <div class="categories-list-item">
+          kafka
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringCloud">
+        <div class="categories-list-item">
+          SpringCloud
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/消息队列">
+        <div class="categories-list-item">
+          消息队列
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/kafka">
+        <div class="categories-list-item">
+          kafka
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/AI">
+        <div class="categories-list-item">
+          AI
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/人工智能">
+        <div class="categories-list-item">
+          人工智能
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header"><i class="iconfont icon-biaoqian" style="padding-right: 2px;"></i>热门标签</div>
+  <div class="tags-list">
+    
+    <a href="\tags\Java" title="Java"><div class="tags-list-item">Java</div></a>
+    
+    <a href="\tags\SpringBoot" title="SpringBoot"><div class="tags-list-item">SpringBoot</div></a>
+    
+    <a href="\tags\分布式" title="分布式"><div class="tags-list-item">分布式</div></a>
+    
+    <a href="\tags\MQ" title="MQ"><div class="tags-list-item">MQ</div></a>
+    
+    <a href="\tags\消息队列" title="消息队列"><div class="tags-list-item">消息队列</div></a>
+    
+    <a href="\tags\微服务" title="微服务"><div class="tags-list-item">微服务</div></a>
+    
+    <a href="\tags\SpringCloud" title="SpringCloud"><div class="tags-list-item">SpringCloud</div></a>
+    
+    <a href="\tags\人工智能" title="人工智能"><div class="tags-list-item">人工智能</div></a>
+    
+    <a href="\tags\Agent" title="Agent"><div class="tags-list-item">Agent</div></a>
+    
+    <a href="\tags\多线程" title="多线程"><div class="tags-list-item">多线程</div></a>
+    
+    <a href="\tags\AI" title="AI"><div class="tags-list-item">AI</div></a>
+    
+    <a href="\tags\大模型" title="大模型"><div class="tags-list-item">大模型</div></a>
+    
+    <a href="\tags\SKILL" title="SKILL"><div class="tags-list-item">SKILL</div></a>
+    
+    <a href="\tags\Zookeeper" title="Zookeeper"><div class="tags-list-item">Zookeeper</div></a>
+    
+    <a href="\tags\Tomcat" title="Tomcat"><div class="tags-list-item">Tomcat</div></a>
+    
+    <a href="\tags\Spring" title="Spring"><div class="tags-list-item">Spring</div></a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+          <aside class="right-column">
+            <div class="sticky-widescreen">
+  
+  
+  <article class="card card-content toc-card">
+    <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text">前言</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%A4%9AAgent%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%A0%B8%E5%BF%83%E4%BB%B7%E5%80%BC%E4%B8%8E%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-text">一、多Agent系统的核心价值与适用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%A4%9AAgent%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%A0%B8%E5%BF%83%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%8F%8A%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-text">二、多Agent系统的核心设计模式及工作原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89%E5%9B%9B%E5%A4%A7%E5%9F%BA%E7%A1%80%E6%A8%A1%E5%BC%8F%E6%A0%B8%E5%BF%83%E9%80%BB%E8%BE%91"><span class="toc-text">（一）四大基础模式核心逻辑</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89%E5%AE%9A%E5%88%B6%E5%8C%96%E5%B7%A5%E4%BD%9C%E6%B5%81%EF%BC%88Custom-workflow%EF%BC%89"><span class="toc-text">（二）定制化工作流（Custom workflow）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%A4%9AAgent%E6%A8%A1%E5%BC%8F%E7%9A%84%E9%80%89%E5%9E%8B%E7%BB%B4%E5%BA%A6%E4%B8%8E%E8%83%BD%E5%8A%9B%E5%AF%B9%E6%AF%94"><span class="toc-text">三、多Agent模式的选型维度与能力对比</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89%E6%A0%B8%E5%BF%83%E9%80%89%E5%9E%8B%E7%BB%B4%E5%BA%A6%E5%AE%9A%E4%B9%89"><span class="toc-text">（一）核心选型维度定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89%E5%90%84%E6%A8%A1%E5%BC%8F%E8%83%BD%E5%8A%9B%E6%98%9F%E7%BA%A7%E5%AF%B9%E6%AF%94"><span class="toc-text">（二）各模式能力星级对比</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E5%A4%9AAgent%E6%A8%A1%E5%BC%8F%E7%9A%84%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E4%B8%8E%E5%9C%BA%E6%99%AF%E5%8C%96%E6%80%A7%E8%83%BD%E5%AF%B9%E6%AF%94"><span class="toc-text">四、多Agent模式的性能指标与场景化性能对比</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89%E5%8D%95%E6%AC%A1%E8%AF%B7%E6%B1%82%E5%9C%BA%E6%99%AF%EF%BC%9A%E7%AE%80%E5%8D%95%E5%8D%95%E4%B8%80%E4%BB%BB%E5%8A%A1%E5%A4%84%E7%90%86"><span class="toc-text">（一）单次请求场景：简单单一任务处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89%E9%87%8D%E5%A4%8D%E8%AF%B7%E6%B1%82%E5%9C%BA%E6%99%AF%EF%BC%9A%E5%90%8C%E4%BC%9A%E8%AF%9D%E5%86%85%E7%9A%84%E9%87%8D%E5%A4%8D%E4%BB%BB%E5%8A%A1%E5%A4%84%E7%90%86"><span class="toc-text">（二）重复请求场景：同会话内的重复任务处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%88%E4%B8%89%EF%BC%89%E5%A4%9A%E9%A2%86%E5%9F%9F%E4%BB%BB%E5%8A%A1%E5%9C%BA%E6%99%AF%EF%BC%9A%E8%B7%A8%E9%A2%86%E5%9F%9F%E5%A4%8D%E6%9D%82%E4%BB%BB%E5%8A%A1%E5%8D%8F%E5%90%8C"><span class="toc-text">（三）多领域任务场景：跨领域复杂任务协同</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E5%A4%9AAgent%E6%A8%A1%E5%BC%8F%E7%9A%84%E7%BB%BC%E5%90%88%E9%80%89%E5%9E%8B%E6%8C%87%E5%8D%97%E4%B8%8E%E6%A0%B8%E5%BF%83%E6%80%BB%E7%BB%93"><span class="toc-text">五、多Agent模式的综合选型指南与核心总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89%E6%8C%89%E4%BC%98%E5%8C%96%E7%9B%AE%E6%A0%87%E7%9A%84%E9%80%89%E5%9E%8B%E5%8E%9F%E5%88%99"><span class="toc-text">（一）按优化目标的选型原则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89%E5%A4%9AAgent%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E6%A0%B8%E5%BF%83%E6%80%BB%E7%BB%93"><span class="toc-text">（二）多Agent系统开发核心总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E5%A4%9AAgent%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%9C%AA%E6%9D%A5%E5%BC%80%E5%8F%91%E8%B6%8B%E5%8A%BF"><span class="toc-text">六、多Agent系统的未来开发趋势</span></a></li></ol></li></ol>
+  </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header"><i class="iconfont icon-wenzhang_huaban" style="padding-right: 2px;"></i>最近文章</div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-02-01</div>
+        <a href="/2026/02/01/mcp-skill-analysis/"><div class="recent-posts-item-content">MCP与SKILL技术深度分析：AI能力扩展的两种路径</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2025-12-23</div>
+        <a href="/2025/12/23/multi-agent-analysis/"><div class="recent-posts-item-content">多 Agent 系统技术分析：设计模式、性能权衡与场景选型</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2025-05-10</div>
+        <a href="/2025/05/10/multi-agent-system-research-report/"><div class="recent-posts-item-content">多Agent协同技术该怎么选？</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2025-04-15</div>
+        <a href="/2025/04/15/comparator-analysis-with-dify-coze-n8n/"><div class="recent-posts-item-content">Dify vs Coze vs n8n三大AI自动化工具，到底哪个最好用？</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>Copyright ©
+          
+          2016 -
+          
+          2026
+        </span>
+        &nbsp;
+        <a href="/" class="footer-link">攻城狮李猿外 </a>
+      </div>
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+        本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+        <span>&nbsp;|&nbsp;</span>
+        
+        
+        本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+    <script>
+    //百度链接提交
+      (function(){
+          var bp = document.createElement('script');
+          var curProtocol = window.location.protocol.split(':')[0];
+          if (curProtocol === 'https'){
+          bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else{
+          bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(bp, s);
+      })();
+    </script>
+    
+    <script>
+    //百度统计
+      var _hmt = _hmt || [];
+      (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?57e94335f06e1ca57d2246529a0150c7";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+</footer>
+  <a role="button" id="scrollbutton" class="basebutton"  aria-label="回到顶部">
+  <i class="iconfont icon-arrowleft button-icon"></i>
+</a>
+<a role="button" id="menubutton" class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a role="button" id="popbutton" class="basebutton" aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a role="button" id="darkbutton" class="basebutton darkwidget" aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a role="button" id="searchbutton" class="basebutton searchwidget" aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+
+  
+  
+  
+  <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img');
+    var i;
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a');
+      wrapper.setAttribute('data-fslightbox', 'gallery');
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'));
+      wrapper.setAttribute('aria-label', 'illustration');
+      wrapper.style.cssText = 'width: 100%; display: flex; justify-content: center;';
+      img[i].before(wrapper);
+      wrapper.append(img[i]);
+    }
+    refreshFsLightbox();
+  }
+</script>
+<script>loadScript("//cdn.jsdelivr.net/npm/fslightbox@3.1.0/index.min.js", addImgLayout)</script>
+  
+  
+  
+<script src="/js/main.js"></script>
+
+  
+  <script>loadScript("/js/lib/busuanzi.min.js")</script>
+  
+  
+  <script>
+    var addLazyload = function () {
+      var observer = lozad('.lozad', {
+        load: function (el) {
+          el.srcset = el.getAttribute('data-src');
+        },
+        loaded: function (el) {
+          el.classList.add('loaded');
+        }
+      });
+      observer.observe();
+    }
+  </script>
+  <script>loadScript("/js/lib/lozad.min.js", addLazyload)</script>
+  
+  
+</body>
+
+</html>
