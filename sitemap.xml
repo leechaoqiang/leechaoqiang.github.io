@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://www.vincentli.top/about/index.html</loc>
+    
+    <lastmod>2026-03-04</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://www.vincentli.top/2026/03/01/openclaw-for-personal-ai-agent-gateway/</loc>
     
     <lastmod>2026-03-04</lastmod>
@@ -33,13 +40,6 @@
     <loc>http://www.vincentli.top/2026/02/01/mcp-skill-analysis/</loc>
     
     <lastmod>2026-02-26</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://www.vincentli.top/about/index.html</loc>
-    
-    <lastmod>2025-08-22</lastmod>
     
   </url>
   
