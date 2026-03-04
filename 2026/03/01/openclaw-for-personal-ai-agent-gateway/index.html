@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html  lang="zh-CN" >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="#fff" id="theme-color">
+  <meta name="description" content="攻城狮李猿外的博客,专注Java,Spring,Spring Boot,Spring Cloud,RocketMQ,Kafka,Spring AI,Redis,Golang,人工智能等技术学习记录。">
+  <link rel="icon" href="/images/logo.jpg">
+  <title>你的个人AI全能助理</title>
+  
+  
+  <meta property="og:title" content="你的个人AI全能助理">
+  
+  
+  <meta property="og:url" content="http://www.vincentli.top/2026/03/01/openclaw-for-personal-ai-agent-gateway/index.html">
+  
+  
+  <meta property="og:img" content="/images/logo.jpg">
+  
+  
+  <meta property="og:img" content="攻城狮李猿外的博客,专注Java,Spring,Spring Boot,Spring Cloud,RocketMQ,Kafka,Spring AI,Redis,Golang,人工智能等技术学习记录。">
+  
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:published_time" content="2026-03-01">
+  <meta property="og:article:modified_time" content="2026-03-04">
+  <meta property="og:article:author" content="李猿外">
+  
+  
+  <meta property="og:article:tag" content="AI">
+  
+  <meta property="og:article:tag" content="人工智能">
+  
+  <meta property="og:article:tag" content="Agent">
+  
+  <meta property="og:article:tag" content="大模型">
+  
+  <meta property="og:article:tag" content="OpenClaw">
+  
+  
+  
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+    var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+      }
+    };
+    setDarkmode();
+  </script>
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  </script>
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_f7g5jnuftcf.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  <link rel="preload" href="//cdn.jsdelivr.net/npm/fslightbox@3.1.0/index.min.js" as="script">
+  
+  
+  <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+  <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">
+  
+  
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_f7g5jnuftcf.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 5.0.2"></head>
+
+
+<body>
+  <div class="wrapper">
+    
+    <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+      <img class="navbar-logo-img" src="/images/logo.jpg" alt="logo">
+      
+      <span class="navbar-logo-dsc">攻城狮李猿外</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+    <a href="/" class="navbar-menu-item">
+    
+    首页
+    
+    </a>
+    
+    <a href="/archives" class="navbar-menu-item">
+    
+    归档
+    
+    </a>
+    
+    <a href="/tags" class="navbar-menu-item">
+    
+    标签
+    
+    </a>
+    
+    <a href="/categories" class="navbar-menu-item">
+    
+    分类
+    
+    </a>
+    
+    <a href="/about" class="navbar-menu-item">
+    
+    关于
+    
+    </a>
+    
+    <a href="/links" class="navbar-menu-item">
+    
+    友链
+    
+    </a>
+    
+    <a class="navbar-menu-item darknavbar" id="dark"><i class="iconfont icon-weather"></i></a>
+    <a class="navbar-menu-item searchnavbar" id="search"><i class="iconfont icon-search" style="font-size: 1.2rem; font-weight: 400;"></i></a>
+  </div>
+</nav>
+    
+    <div id="local-search" style="display: none;">
+      <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容...">
+      <div id="search-content"></div>
+    </div>
+    
+    <div class="section-wrap">
+      <div class="container">
+        <div class="columns">
+          <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      你的个人AI全能助理
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2026-03-01T02:12:17.000Z">
+      <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+      <span>2026-03-01</span>
+    </time>
+    
+    <span class="dot"></span>
+    
+    <a href="/categories/AI/" class="post-meta-link">AI</a>
+    
+    <a href="/categories/AI/Agent/" class="post-meta-link">Agent</a>
+    
+    
+    
+    <span class="dot"></span>
+    <span>2.2k 字</span>
+    
+  </div>
+  
+  <div class="post-meta post-show-meta" style="margin-top: -10px;">
+    <div style="display: flex; align-items: center;">
+      <i class="iconfont icon-biaoqian" style="margin-right: 2px; font-size: 1.15rem;"></i>
+      
+      
+        <a href="/tags/AI/" class="post-meta-link">AI</a>
+      
+      
+      <span class="dot"></span>
+      
+        <a href="/tags/人工智能/" class="post-meta-link">人工智能</a>
+      
+      
+      <span class="dot"></span>
+      
+        <a href="/tags/Agent/" class="post-meta-link">Agent</a>
+      
+      
+      <span class="dot"></span>
+      
+        <a href="/tags/大模型/" class="post-meta-link">大模型</a>
+      
+      
+      <span class="dot"></span>
+      
+        <a href="/tags/OpenClaw/" class="post-meta-link">OpenClaw</a>
+      
+    </div>
+  </div>
+  
+  </header>
+  <div id="section" class="post-content">
+    <blockquote>
+<p><em>“去壳！去壳！”</em> — 大概是一只太空龙虾说的</p>
+</blockquote>
+<p>这只龙虾最近超级火爆，比麻辣🦞还受欢迎，想象一下，你有一个随时待命的个人 AI 助手，可以通过 WhatsApp、Telegram、Discord 甚至 iMessage 联系它。它不仅能回答问题、写代码、处理文件，还能帮你管理日程、生成简报。这不再是科幻小说——这就是 OpenClaw。</p>
+<h2 id="什么是-OpenClaw？"><a href="#什么是-OpenClaw？" class="headerlink" title="什么是 OpenClaw？"></a>什么是 OpenClaw？</h2><p>OpenClaw 是一个<strong>自托管的多渠道 AI 智能体网关</strong>。简单来说，它是一个运行在你自己机器上的”翻译官”，把你常用的聊天应用和强大的 AI 智能体连接起来。</p>
+<p><strong>核心特点：</strong></p>
+<ul>
+<li><strong>自托管</strong>：运行在你自己的硬件上，你的数据由你掌控</li>
+<li><strong>多渠道</strong>：一个网关同时支持 WhatsApp、Telegram、Discord、iMessage 等</li>
+<li><strong>智能体原生</strong>：专为编程智能体设计，支持工具使用、会话管理和多智能体路由</li>
+<li><strong>开源免费</strong>：MIT 许可证，社区驱动</li>
+</ul>
+<p><strong>适合谁？</strong> 开发者和高级用户，想要一个随叫随到的个人 AI 助手，而不想依赖托管服务或放弃数据控制权。</p>
+<h2 id="它是如何工作的？"><a href="#它是如何工作的？" class="headerlink" title="它是如何工作的？"></a>它是如何工作的？</h2><p>OpenClaw 的架构非常优雅：一个 Gateway（网关）进程作为唯一的”真相源”，负责会话管理、消息路由和渠道连接。</p>
+<pre class="highlight"><span class="line">┌─────────────────┐</span><br><span class="line">│   聊天应用       │</span><br><span class="line">│  WhatsApp       │</span><br><span class="line">│  Telegram       │</span><br><span class="line">│  Discord        │</span><br><span class="line">│  iMessage       │</span><br><span class="line">└────────┬────────┘</span><br><span class="line">         │</span><br><span class="line">         ▼</span><br><span class="line">┌─────────────────┐</span><br><span class="line">│   OpenClaw     │</span><br><span class="line">│   Gateway      │</span><br><span class="line">└────────┬────────┘</span><br><span class="line">         │</span><br><span class="line">    ┌────┼────┬────┐</span><br><span class="line">    ▼    ▼    ▼    ▼</span><br><span class="line">┌─────┬────┬────┬────┐</span><br><span class="line">│ Pi  │CLI │Web │<span class="keyword">Node</span><span class="title">│</span></span><br><span class="line"><span class="title">│Agent</span>│    │ UI │App │</span><br><span class="line">└─────┴────┴────┴────┘</span><br></pre>
+<p>Gateway 的职责：</p>
+<ul>
+<li>接收来自各个渠道的消息</li>
+<li>路由到正确的智能体或处理程序</li>
+<li>维护会话状态和记忆</li>
+<li>处理媒体文件（图片、音频、文档）</li>
+<li>提供安全访问控制</li>
+</ul>
+<h2 id="核心功能"><a href="#核心功能" class="headerlink" title="核心功能"></a>核心功能</h2><h3 id="1-多渠道支持"><a href="#1-多渠道支持" class="headerlink" title="1. 多渠道支持"></a>1. 多渠道支持</h3><p>通过单个 Gateway 网关进程，同时连接多个聊天应用：</p>
+<ul>
+<li><strong>WhatsApp</strong>：最常用的即时通讯工具</li>
+<li><strong>Telegram</strong>：速度快，支持机器人</li>
+<li><strong>Discord</strong>：适合社区和开发者交流</li>
+<li><strong>iMessage</strong>：macOS 和 iOS 用户原生支持</li>
+<li><strong>插件渠道</strong>：通过扩展添加 Mattermost 等</li>
+</ul>
+<h3 id="2-多智能体路由"><a href="#2-多智能体路由" class="headerlink" title="2. 多智能体路由"></a>2. 多智能体路由</h3><p>OpenClaw 的真正强大之处在于多智能体支持：</p>
+<ul>
+<li>按智能体隔离会话</li>
+<li>按工作区隔离</li>
+<li>按发送者隔离</li>
+<li>支持子智能体（sub-agents）和任务委派</li>
+</ul>
+<p>这意味着你可以同时运行多个专门的智能体，比如：</p>
+<ul>
+<li>编程助手（Pi、Claude Code）</li>
+<li>写作助手</li>
+<li>数据分析助手</li>
+<li>项目管理助手</li>
+</ul>
+<h3 id="3-媒体支持"><a href="#3-媒体支持" class="headerlink" title="3. 媒体支持"></a>3. 媒体支持</h3><ul>
+<li>发送和接收图片</li>
+<li>音频消息</li>
+<li>文档处理</li>
+<li>OCR 文字识别</li>
+<li>图片分析和生成</li>
+</ul>
+<h3 id="4-Web-控制界面"><a href="#4-Web-控制界面" class="headerlink" title="4. Web 控制界面"></a>4. Web 控制界面</h3><p>启动浏览器仪表板，可以：</p>
+<ul>
+<li>聊天交互</li>
+<li>配置管理</li>
+<li>会话监控</li>
+<li>节点管理</li>
+<li>日志查看</li>
+</ul>
+<p>默认地址：<a target="_blank" rel="noopener" href="http://127.0.0.1:18789/">http://127.0.0.1:18789/</a></p>
+<h3 id="5-移动节点支持"><a href="#5-移动节点支持" class="headerlink" title="5. 移动节点支持"></a>5. 移动节点支持</h3><p>配对 iOS 和 Android 设备作为节点，支持：</p>
+<ul>
+<li>Canvas 画布功能</li>
+<li>摄像头拍照</li>
+<li>屏幕录制</li>
+<li>位置服务</li>
+<li>推送通知</li>
+</ul>
+<h2 id="快速开始"><a href="#快速开始" class="headerlink" title="快速开始"></a>快速开始</h2><h3 id="系统要求"><a href="#系统要求" class="headerlink" title="系统要求"></a>系统要求</h3><ul>
+<li>Node.js 22+</li>
+<li>一个 API key（推荐 Anthropic 的 Claude）</li>
+<li>5 分钟时间</li>
+</ul>
+<h3 id="安装步骤"><a href="#安装步骤" class="headerlink" title="安装步骤"></a>安装步骤</h3><pre class="highlight"><span class="line"><span class="comment"># 1. 安装 OpenClaw</span></span><br><span class="line">npm install -g openclaw@latest</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 运行向导并安装服务</span></span><br><span class="line">openclaw onboard --install-daemon</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 登录渠道（以 WhatsApp 为例）</span></span><br><span class="line">openclaw channels login whatsapp</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4. 启动 Gateway</span></span><br><span class="line">openclaw gateway --port 18789</span><br></pre>
+<p>就这么简单！现在你可以在 WhatsApp 里给你的 AI 助手发消息了。</p>
+<h3 id="配置文件（可选）"><a href="#配置文件（可选）" class="headerlink" title="配置文件（可选）"></a>配置文件（可选）</h3><p>配置文件位于 <code>~/.openclaw/openclaw.json</code>。</p>
+<p>如果你不做任何修改，OpenClaw 会使用内置的 Pi 二进制文件，按发送者创建独立会话。</p>
+<p><strong>示例配置：限制访问</strong></p>
+<pre class="highlight"><span class="line">&#123;</span><br><span class="line">  channels: &#123;</span><br><span class="line">    whatsapp: &#123;</span><br><span class="line">      allowFrom: [&quot;+15555550123&quot;],  &#x2F;&#x2F; 只允许特定号码</span><br><span class="line">      groups: &#123;</span><br><span class="line">        &quot;*&quot;: &#123; requireMention: true &#125;  &#x2F;&#x2F; 群聊需要 @ 提及</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  messages: &#123;</span><br><span class="line">    groupChat: &#123;</span><br><span class="line">      mentionPatterns: [&quot;@openclaw&quot;]  &#x2F;&#x2F; 触发关键词</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre>
+<h2 id="实战案例：设置每日简报"><a href="#实战案例：设置每日简报" class="headerlink" title="实战案例：设置每日简报"></a>实战案例：设置每日简报</h2><p>让我们通过一个实际案例来展示 OpenClaw 的强大功能：<strong>自动生成并发送每日简报</strong>。</p>
+<h3 id="需求分析"><a href="#需求分析" class="headerlink" title="需求分析"></a>需求分析</h3><p>你希望：</p>
+<ul>
+<li>每天早上 9:00 自动收到一份简报</li>
+<li>包含当地天气情况</li>
+<li>列出当天的待办事项</li>
+<li>通过飞书（Feishu）发送</li>
+</ul>
+<h3 id="实现步骤"><a href="#实现步骤" class="headerlink" title="实现步骤"></a>实现步骤</h3><h4 id="步骤-1：配置用户信息"><a href="#步骤-1：配置用户信息" class="headerlink" title="步骤 1：配置用户信息"></a>步骤 1：配置用户信息</h4><p>首先，在 <code>USER.md</code> 中记录你的偏好：</p>
+<pre class="highlight"><span class="line"><span class="section"># USER.md - About Your Human</span></span><br><span class="line"></span><br><span class="line"><span class="bullet">-</span> <span class="strong">**Timezone:**</span> Asia/Shanghai</span><br><span class="line"></span><br><span class="line"><span class="section">## Preferences</span></span><br><span class="line"></span><br><span class="line"><span class="section">### Daily Briefing</span></span><br><span class="line"><span class="bullet">-</span> <span class="strong">**Send Time:**</span> 每天上午 9:00</span><br><span class="line"><span class="bullet">-</span> <span class="strong">**Location:**</span> 上海</span><br><span class="line"><span class="bullet">-</span> <span class="strong">**Content:**</span></span><br><span class="line"><span class="bullet">  -</span> 天气预报</span><br><span class="line"><span class="bullet">  -</span> 待办事项</span><br></pre>
+<h4 id="步骤-2：创建心跳脚本"><a href="#步骤-2：创建心跳脚本" class="headerlink" title="步骤 2：创建心跳脚本"></a>步骤 2：创建心跳脚本</h4><p>在 <code>HEARTBEAT.md</code> 中定义检查逻辑：</p>
+<pre class="highlight"><span class="line"><span class="section"># HEARTBEAT.md</span></span><br><span class="line"></span><br><span class="line"><span class="section">## Daily Briefing (每天 9:00 发送)</span></span><br><span class="line"></span><br><span class="line"><span class="bullet">1.</span> 获取上海天气</span><br><span class="line"><span class="bullet">2.</span> 汇总待办事项（从 memory/ 和其他来源）</span><br><span class="line"><span class="bullet">3.</span> 发送简报到飞书</span><br></pre>
+<h4 id="步骤-3：创建天气获取脚本"><a href="#步骤-3：创建天气获取脚本" class="headerlink" title="步骤 3：创建天气获取脚本"></a>步骤 3：创建天气获取脚本</h4><p>创建 <code>scripts/daily-briefing.js</code>：</p>
+<pre class="highlight"><span class="line"><span class="keyword">const</span> https = <span class="built_in">require</span>(<span class="string">&#x27;https&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取上海天气</span></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">getWeather</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> url = <span class="string">&#x27;https://wttr.in/Shanghai?format=j1&#x27;</span>;</span><br><span class="line">    https.get(url, <span class="function">(<span class="params">res</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">let</span> data = <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">      res.on(<span class="string">&#x27;data&#x27;</span>, <span class="function">(<span class="params">chunk</span>) =&gt;</span> data += chunk);</span><br><span class="line">      res.on(<span class="string">&#x27;end&#x27;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">          <span class="keyword">const</span> json = <span class="built_in">JSON</span>.parse(data);</span><br><span class="line">          <span class="keyword">const</span> current = json.current_condition[<span class="number">0</span>];</span><br><span class="line">          <span class="keyword">const</span> today = json.weather[<span class="number">0</span>];</span><br><span class="line"></span><br><span class="line">          resolve(&#123;</span><br><span class="line">            temp: current.temp_C,</span><br><span class="line">            feels_like: current.FeelsLikeC,</span><br><span class="line">            condition: current.lang_zh[<span class="number">0</span>].value,</span><br><span class="line">            humidity: current.humidity,</span><br><span class="line">            max_temp: today.maxtempC,</span><br><span class="line">            min_temp: today.mintempC,</span><br><span class="line">            rain_chance: today.hourly[<span class="number">0</span>].chanceofrain</span><br><span class="line">          &#125;);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (e) &#123;</span><br><span class="line">          reject(e);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;).on(<span class="string">&#x27;error&#x27;</span>, reject);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 生成简报</span></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">generateBriefing</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> date = <span class="keyword">new</span> <span class="built_in">Date</span>().toLocaleDateString(<span class="string">&#x27;zh-CN&#x27;</span>, &#123;</span><br><span class="line">    year: <span class="string">&#x27;numeric&#x27;</span>,</span><br><span class="line">    month: <span class="string">&#x27;long&#x27;</span>,</span><br><span class="line">    day: <span class="string">&#x27;numeric&#x27;</span>,</span><br><span class="line">    weekday: <span class="string">&#x27;long&#x27;</span></span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> weather = <span class="keyword">await</span> getWeather();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> message = <span class="string">`📅 **<span class="subst">$&#123;date&#125;</span> 每日简报**\n\n`</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 天气部分</span></span><br><span class="line">  message += <span class="string">`🌤️ **上海天气**\n`</span>;</span><br><span class="line">  message += <span class="string">`- 当前温度：<span class="subst">$&#123;weather.temp&#125;</span>°C（体感 <span class="subst">$&#123;weather.feels_like&#125;</span>°C）\n`</span>;</span><br><span class="line">  message += <span class="string">`- 天气状况：<span class="subst">$&#123;weather.condition&#125;</span>\n`</span>;</span><br><span class="line">  message += <span class="string">`- 湿度：<span class="subst">$&#123;weather.humidity&#125;</span>%\n`</span>;</span><br><span class="line">  message += <span class="string">`- 今日范围：<span class="subst">$&#123;weather.min_temp&#125;</span>°C - <span class="subst">$&#123;weather.max_temp&#125;</span>°C\n`</span>;</span><br><span class="line">  message += <span class="string">`- 降水概率：<span class="subst">$&#123;weather.rain_chance&#125;</span>%\n\n`</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 待办事项部分</span></span><br><span class="line">  message += <span class="string">`✅ **待办事项**\n`</span>;</span><br><span class="line">  message += <span class="string">`从 memory/ 目录读取今日待办...`</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 温馨提示</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">parseInt</span>(weather.rain_chance) &gt; <span class="number">50</span>) &#123;</span><br><span class="line">    message += <span class="string">`\n\n☔ **温馨提示**：今天有雨，记得带伞！`</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> message;</span><br><span class="line">&#125;</span><br></pre>
+<h4 id="步骤-4：启用-Heartbeat"><a href="#步骤-4：启用-Heartbeat" class="headerlink" title="步骤 4：启用 Heartbeat"></a>步骤 4：启用 Heartbeat</h4><p>运行以下命令启用 heartbeat 功能：</p>
+<pre class="highlight"><span class="line">openclaw heartbeat <span class="built_in">set</span> --prompt <span class="string">&quot;Read HEARTBEAT.md if it exists (workspace context). Follow it strictly. Do not infer or repeat old tasks from prior chats. If nothing needs attention, reply HEARTBEAT_OK.&quot;</span> --interval 30</span><br></pre>
+<p>这个命令会：</p>
+<ul>
+<li>每 30 分钟触发一次 heartbeat 检查</li>
+<li>读取 HEARTBEAT.md 文件</li>
+<li>检查是否是 9:00 并且今天还没发送过简报</li>
+<li>如果满足条件，自动生成并发送简报</li>
+</ul>
+<h4 id="步骤-5：配置状态追踪"><a href="#步骤-5：配置状态追踪" class="headerlink" title="步骤 5：配置状态追踪"></a>步骤 5：配置状态追踪</h4><p>创建 <code>memory/heartbeat-state.json</code> 来记录发送状态：</p>
+<pre class="highlight"><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;lastChecks&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;dailyBriefing&quot;</span>: <span class="literal">null</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre>
+<p>每次发送简报后，更新这个文件，避免重复发送。</p>
+<h3 id="最终效果"><a href="#最终效果" class="headerlink" title="最终效果"></a>最终效果</h3><p>每天早上 9:00，你会收到这样一条消息：</p>
+<pre class="highlight"><span class="line">📅 **<span class="number">2026</span>年<span class="number">3</span>月<span class="number">3</span>日 星期二 每日简报**</span><br><span class="line"></span><br><span class="line">🌤️ **上海天气**</span><br><span class="line">- 当前温度：<span class="number">18</span>°C（体感 <span class="number">16</span>°C）</span><br><span class="line">- 天气状况：多云</span><br><span class="line">- 湿度：<span class="number">65</span>%</span><br><span class="line">- 今日范围：<span class="number">14</span>°C - <span class="number">22</span>°C</span><br><span class="line">- 降水概率：<span class="number">30</span>%</span><br><span class="line"></span><br><span class="line">✅ **待办事项**</span><br><span class="line"><span class="number">1.</span> 完成项目文档撰写</span><br><span class="line"><span class="number">2.</span> 下午 <span class="number">2</span>:<span class="number">00</span> 参加团队会议</span><br><span class="line"><span class="number">3.</span> 审查 PR #<span class="number">123</span></span><br><span class="line"></span><br><span class="line">☔ **温馨提示**：今天可能有雨，记得带伞！</span><br></pre>
+<h3 id="扩展功能"><a href="#扩展功能" class="headerlink" title="扩展功能"></a>扩展功能</h3><p>你可以轻松扩展这个简报系统：</p>
+<ol>
+<li><strong>日程集成</strong>：从 Google Calendar 或 Apple Calendar 读取日程</li>
+<li><strong>邮件摘要</strong>：汇总未读邮件</li>
+<li><strong>GitHub 通知</strong>：列出待处理的 issues 和 PRs</li>
+<li><strong>股票价格</strong>：添加你关注的股票行情</li>
+<li><strong>新闻摘要</strong>：聚合相关领域的新闻</li>
+</ol>
+<p>所有这些都可以通过 OpenClaw 的丰富工具集实现！</p>
+<h2 id="更多可能性"><a href="#更多可能性" class="headerlink" title="更多可能性"></a>更多可能性</h2><p>OpenClaw 的能力远不止每日简报。以下是一些实用场景：</p>
+<h3 id="开发工作流"><a href="#开发工作流" class="headerlink" title="开发工作流"></a>开发工作流</h3><ul>
+<li>自动化代码审查</li>
+<li>CI/CD 状态监控</li>
+<li>依赖更新提醒</li>
+<li>性能监控</li>
+</ul>
+<h3 id="内容创作"><a href="#内容创作" class="headerlink" title="内容创作"></a>内容创作</h3><ul>
+<li>自动生成文章</li>
+<li>图片生成和编辑</li>
+<li>视频转写和总结</li>
+<li>多语言翻译</li>
+</ul>
+<h3 id="数据处理"><a href="#数据处理" class="headerlink" title="数据处理"></a>数据处理</h3><ul>
+<li>文件格式转换</li>
+<li>数据清洗和分析</li>
+<li>报表生成</li>
+<li>数据可视化</li>
+</ul>
+<h3 id="自动化任务"><a href="#自动化任务" class="headerlink" title="自动化任务"></a>自动化任务</h3><ul>
+<li>定时提醒</li>
+<li>条件触发器</li>
+<li>跨平台通知</li>
+<li>智能路由</li>
+</ul>
+<h2 id="安全与隐私"><a href="#安全与隐私" class="headerlink" title="安全与隐私"></a>安全与隐私</h2><p>OpenClaw 的自托管特性带来了显著的安全优势：</p>
+<ul>
+<li><strong>数据不离开你的机器</strong>：所有处理都在本地进行</li>
+<li><strong>完全控制</strong>：你决定谁可以访问、何时访问</li>
+<li><strong>可审计</strong>：所有操作都有日志记录</li>
+<li><strong>灵活配置</strong>：细粒度的访问控制和权限管理</li>
+</ul>
+<p>建议的实践：</p>
+<ol>
+<li>使用 allowlists 限制访问源</li>
+<li>在群聊中启用 mention 规则</li>
+<li>定期审查配置和日志</li>
+<li>保持依赖更新</li>
+<li>使用强密码和 API 密钥</li>
+</ol>
+<h2 id="学习资源"><a href="#学习资源" class="headerlink" title="学习资源"></a>学习资源</h2><ul>
+<li><strong>官方文档</strong>：<a target="_blank" rel="noopener" href="https://docs.openclaw.ai">https://docs.openclaw.ai</a></li>
+<li><strong>GitHub 仓库</strong>：<a target="_blank" rel="noopener" href="https://github.com/openclaw/openclaw">https://github.com/openclaw/openclaw</a></li>
+<li><strong>社区 Discord</strong>：<a target="_blank" rel="noopener" href="https://discord.com/invite/clawd">https://discord.com/invite/clawd</a></li>
+<li><strong>ClawHub</strong>：<a target="_blank" rel="noopener" href="https://clawhub.com（发现和安装技能）">https://clawhub.com（发现和安装技能）</a></li>
+</ul>
+<h2 id="开始你的-OpenClaw-之旅"><a href="#开始你的-OpenClaw-之旅" class="headerlink" title="开始你的 OpenClaw 之旅"></a>开始你的 OpenClaw 之旅</h2><p>OpenClaw 让 AI 助手从概念变成现实。它不是另一个需要你学习使用的工具，而是让 AI 服务于你的基础架构。</p>
+<p><strong>从今天开始：</strong></p>
+<ol>
+<li>安装 OpenClaw</li>
+<li>连接你常用的聊天应用</li>
+<li>尝试第一个自动化任务</li>
+<li>探索更多可能性</li>
+</ol>
+<p>你的个人 AI 助手，就在你口袋里。</p>
+<hr>
+<p><em>“真正的智能不是替代人类，而是让人类更强大。”</em></p>
+
+  </div>
+  <div>
+  
+  <div class="post-note note-warning copyright" style="margin-top: 42px">
+    <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="http://www.vincentli.top/about">李猿外</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="http://www.vincentli.top/2026/03/01/openclaw-for-personal-ai-agent-gateway/">http://www.vincentli.top/2026/03/01/openclaw-for-personal-ai-agent-gateway/</a></p>
+    <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+  </div>
+  
+  </div>
+</article>
+<div class="nav">
+  
+  
+  <div class="nav-item-next">
+    <a href="/2026/02/25/pi-agent-sample-practise/" class="nav-link">
+      <div>
+        <div class="nav-label">下一篇</div>
+        
+        <div class="nav-title">Pi Agent极简入门代码 </div>
+        
+      </div>
+      <i class="iconfont icon-right nav-next-icon"></i>
+    </a>
+  </div>
+  
+</div>
+
+<div class="card card-content comment-card" style="margin-top: 16px;">
+  <div class="comment-card-title">评论</div>
+  
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: 'SnVYhldRRlqYatvAs4y3N2qF-MdYXbMMI',
+        appKey: '2SwmjMzPEwYhnB7hqqNgknXM',
+        placeholder: '都来了，留句话呗...',
+        path: window.location.pathname,
+        avatar: 'wavatar',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'false',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+</div>
+
+<div class="card card-content toc-card" id="mobiletoc">
+  <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-OpenClaw%EF%BC%9F"><span class="toc-text">什么是 OpenClaw？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E6%98%AF%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%E7%9A%84%EF%BC%9F"><span class="toc-text">它是如何工作的？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E5%8A%9F%E8%83%BD"><span class="toc-text">核心功能</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%A4%9A%E6%B8%A0%E9%81%93%E6%94%AF%E6%8C%81"><span class="toc-text">1. 多渠道支持</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93%E8%B7%AF%E7%94%B1"><span class="toc-text">2. 多智能体路由</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%AA%92%E4%BD%93%E6%94%AF%E6%8C%81"><span class="toc-text">3. 媒体支持</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-Web-%E6%8E%A7%E5%88%B6%E7%95%8C%E9%9D%A2"><span class="toc-text">4. Web 控制界面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E7%A7%BB%E5%8A%A8%E8%8A%82%E7%82%B9%E6%94%AF%E6%8C%81"><span class="toc-text">5. 移动节点支持</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B"><span class="toc-text">快速开始</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E8%A6%81%E6%B1%82"><span class="toc-text">系统要求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E6%AD%A5%E9%AA%A4"><span class="toc-text">安装步骤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%EF%BC%88%E5%8F%AF%E9%80%89%EF%BC%89"><span class="toc-text">配置文件（可选）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E6%88%98%E6%A1%88%E4%BE%8B%EF%BC%9A%E8%AE%BE%E7%BD%AE%E6%AF%8F%E6%97%A5%E7%AE%80%E6%8A%A5"><span class="toc-text">实战案例：设置每日简报</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9C%80%E6%B1%82%E5%88%86%E6%9E%90"><span class="toc-text">需求分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E6%AD%A5%E9%AA%A4"><span class="toc-text">实现步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4-1%EF%BC%9A%E9%85%8D%E7%BD%AE%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF"><span class="toc-text">步骤 1：配置用户信息</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4-2%EF%BC%9A%E5%88%9B%E5%BB%BA%E5%BF%83%E8%B7%B3%E8%84%9A%E6%9C%AC"><span class="toc-text">步骤 2：创建心跳脚本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4-3%EF%BC%9A%E5%88%9B%E5%BB%BA%E5%A4%A9%E6%B0%94%E8%8E%B7%E5%8F%96%E8%84%9A%E6%9C%AC"><span class="toc-text">步骤 3：创建天气获取脚本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4-4%EF%BC%9A%E5%90%AF%E7%94%A8-Heartbeat"><span class="toc-text">步骤 4：启用 Heartbeat</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4-5%EF%BC%9A%E9%85%8D%E7%BD%AE%E7%8A%B6%E6%80%81%E8%BF%BD%E8%B8%AA"><span class="toc-text">步骤 5：配置状态追踪</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E7%BB%88%E6%95%88%E6%9E%9C"><span class="toc-text">最终效果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A9%E5%B1%95%E5%8A%9F%E8%83%BD"><span class="toc-text">扩展功能</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E5%A4%9A%E5%8F%AF%E8%83%BD%E6%80%A7"><span class="toc-text">更多可能性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%80%E5%8F%91%E5%B7%A5%E4%BD%9C%E6%B5%81"><span class="toc-text">开发工作流</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E5%AE%B9%E5%88%9B%E4%BD%9C"><span class="toc-text">内容创作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86"><span class="toc-text">数据处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%8A%A8%E5%8C%96%E4%BB%BB%E5%8A%A1"><span class="toc-text">自动化任务</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E4%B8%8E%E9%9A%90%E7%A7%81"><span class="toc-text">安全与隐私</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%BA%90"><span class="toc-text">学习资源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%80%E5%A7%8B%E4%BD%A0%E7%9A%84-OpenClaw-%E4%B9%8B%E6%97%85"><span class="toc-text">开始你的 OpenClaw 之旅</span></a></li></ol>
+</div></main>
+          <aside class="left-column">
+            
+            <div class="card card-author">
+              
+<img src="/images/logo.jpg" class="author-img">
+
+<p class="author-name">李猿外</p>
+<p class="author-description">千里之行，始于足下。</p>
+<div class="author-message">
+  <a class="author-posts-count" href="/archives">
+    <span>46</span>
+    <span>文章</span>
+  </a>
+  <a class="author-categories-count" href="/categories">
+    <span>49</span>
+    <span>分类</span>
+  </a>
+  <a class="author-tags-count" href="/tags">
+    <span>100</span>
+    <span>标签</span>
+  </a>
+</div>
+
+<div class="author-card-society">
+  
+    <div class="author-card-society-icon">
+      <a target="_blank" rel="noopener" href="https://github.com/leechaoqiang">
+        <i class="iconfont icon-github society-icon"></i>
+      </a>
+    </div>
+  
+    <div class="author-card-society-icon">
+      <a href="mailto:vincentlee99@126.com">
+        <i class="iconfont icon-mail society-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+            </div>
+            
+            <div class="sticky-tablet">
+  
+  
+  <article class="display-when-two-columns spacer">
+    <div class="card card-content toc-card">
+      <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-OpenClaw%EF%BC%9F"><span class="toc-text">什么是 OpenClaw？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E6%98%AF%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%E7%9A%84%EF%BC%9F"><span class="toc-text">它是如何工作的？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E5%8A%9F%E8%83%BD"><span class="toc-text">核心功能</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%A4%9A%E6%B8%A0%E9%81%93%E6%94%AF%E6%8C%81"><span class="toc-text">1. 多渠道支持</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93%E8%B7%AF%E7%94%B1"><span class="toc-text">2. 多智能体路由</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%AA%92%E4%BD%93%E6%94%AF%E6%8C%81"><span class="toc-text">3. 媒体支持</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-Web-%E6%8E%A7%E5%88%B6%E7%95%8C%E9%9D%A2"><span class="toc-text">4. Web 控制界面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E7%A7%BB%E5%8A%A8%E8%8A%82%E7%82%B9%E6%94%AF%E6%8C%81"><span class="toc-text">5. 移动节点支持</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B"><span class="toc-text">快速开始</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E8%A6%81%E6%B1%82"><span class="toc-text">系统要求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E6%AD%A5%E9%AA%A4"><span class="toc-text">安装步骤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%EF%BC%88%E5%8F%AF%E9%80%89%EF%BC%89"><span class="toc-text">配置文件（可选）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E6%88%98%E6%A1%88%E4%BE%8B%EF%BC%9A%E8%AE%BE%E7%BD%AE%E6%AF%8F%E6%97%A5%E7%AE%80%E6%8A%A5"><span class="toc-text">实战案例：设置每日简报</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9C%80%E6%B1%82%E5%88%86%E6%9E%90"><span class="toc-text">需求分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E6%AD%A5%E9%AA%A4"><span class="toc-text">实现步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4-1%EF%BC%9A%E9%85%8D%E7%BD%AE%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF"><span class="toc-text">步骤 1：配置用户信息</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4-2%EF%BC%9A%E5%88%9B%E5%BB%BA%E5%BF%83%E8%B7%B3%E8%84%9A%E6%9C%AC"><span class="toc-text">步骤 2：创建心跳脚本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4-3%EF%BC%9A%E5%88%9B%E5%BB%BA%E5%A4%A9%E6%B0%94%E8%8E%B7%E5%8F%96%E8%84%9A%E6%9C%AC"><span class="toc-text">步骤 3：创建天气获取脚本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4-4%EF%BC%9A%E5%90%AF%E7%94%A8-Heartbeat"><span class="toc-text">步骤 4：启用 Heartbeat</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4-5%EF%BC%9A%E9%85%8D%E7%BD%AE%E7%8A%B6%E6%80%81%E8%BF%BD%E8%B8%AA"><span class="toc-text">步骤 5：配置状态追踪</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E7%BB%88%E6%95%88%E6%9E%9C"><span class="toc-text">最终效果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A9%E5%B1%95%E5%8A%9F%E8%83%BD"><span class="toc-text">扩展功能</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E5%A4%9A%E5%8F%AF%E8%83%BD%E6%80%A7"><span class="toc-text">更多可能性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%80%E5%8F%91%E5%B7%A5%E4%BD%9C%E6%B5%81"><span class="toc-text">开发工作流</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E5%AE%B9%E5%88%9B%E4%BD%9C"><span class="toc-text">内容创作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86"><span class="toc-text">数据处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%8A%A8%E5%8C%96%E4%BB%BB%E5%8A%A1"><span class="toc-text">自动化任务</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E4%B8%8E%E9%9A%90%E7%A7%81"><span class="toc-text">安全与隐私</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%BA%90"><span class="toc-text">学习资源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%80%E5%A7%8B%E4%BD%A0%E7%9A%84-OpenClaw-%E4%B9%8B%E6%97%85"><span class="toc-text">开始你的 OpenClaw 之旅</span></a></li></ol>
+    </div>
+  </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header"><i class="iconfont icon-fenlei" style="padding-right: 2px;"></i>分类</div>
+  <div class="categories-list">
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">19</span>
+        </div>
+      </a>
+    
+      <a href="/categories/配置中心">
+        <div class="categories-list-item">
+          配置中心
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Docker">
+        <div class="categories-list-item">
+          Docker
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/微服务">
+        <div class="categories-list-item">
+          微服务
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/工具学习">
+        <div class="categories-list-item">
+          工具学习
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Golang学习笔记">
+        <div class="categories-list-item">
+          Golang学习笔记
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/缓存">
+        <div class="categories-list-item">
+          缓存
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringBoot">
+        <div class="categories-list-item">
+          SpringBoot
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/摄影">
+        <div class="categories-list-item">
+          摄影
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/gRPC">
+        <div class="categories-list-item">
+          gRPC
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/技术学习笔记">
+        <div class="categories-list-item">
+          技术学习笔记
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/RabbitMQ">
+        <div class="categories-list-item">
+          RabbitMQ
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/mybatis">
+        <div class="categories-list-item">
+          mybatis
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Spring">
+        <div class="categories-list-item">
+          Spring
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/tensorflow">
+        <div class="categories-list-item">
+          tensorflow
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Tomcat">
+        <div class="categories-list-item">
+          Tomcat
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+      <a href="/categories/AI">
+        <div class="categories-list-item">
+          AI
+          <span class="categories-list-item-badge">4</span>
+        </div>
+      </a>
+    
+      <a href="/categories/问题">
+        <div class="categories-list-item">
+          问题
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+      <a href="/categories/并发">
+        <div class="categories-list-item">
+          并发
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringBoot">
+        <div class="categories-list-item">
+          SpringBoot
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringCloud">
+        <div class="categories-list-item">
+          SpringCloud
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Mysql">
+        <div class="categories-list-item">
+          Mysql
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Mysql">
+        <div class="categories-list-item">
+          Mysql
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/技术笔记">
+        <div class="categories-list-item">
+          技术笔记
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Restful">
+        <div class="categories-list-item">
+          Restful
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringWebFlux">
+        <div class="categories-list-item">
+          SpringWebFlux
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/thread">
+        <div class="categories-list-item">
+          thread
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringBoot">
+        <div class="categories-list-item">
+          SpringBoot
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Zookeeper">
+        <div class="categories-list-item">
+          Zookeeper
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/人工智能">
+        <div class="categories-list-item">
+          人工智能
+          <span class="categories-list-item-badge">4</span>
+        </div>
+      </a>
+    
+      <a href="/categories/消息队列">
+        <div class="categories-list-item">
+          消息队列
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/消息队列">
+        <div class="categories-list-item">
+          消息队列
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/分布式">
+        <div class="categories-list-item">
+          分布式
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/博客">
+        <div class="categories-list-item">
+          博客
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/多线程">
+        <div class="categories-list-item">
+          多线程
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringCloud">
+        <div class="categories-list-item">
+          SpringCloud
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/kafka">
+        <div class="categories-list-item">
+          kafka
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/SpringCloud">
+        <div class="categories-list-item">
+          SpringCloud
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/消息队列">
+        <div class="categories-list-item">
+          消息队列
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/kafka">
+        <div class="categories-list-item">
+          kafka
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/AI">
+        <div class="categories-list-item">
+          AI
+          <span class="categories-list-item-badge">5</span>
+        </div>
+      </a>
+    
+      <a href="/categories/人工智能">
+        <div class="categories-list-item">
+          人工智能
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Agent">
+        <div class="categories-list-item">
+          Agent
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header"><i class="iconfont icon-biaoqian" style="padding-right: 2px;"></i>热门标签</div>
+  <div class="tags-list">
+    
+    <a href="\tags\Java" title="Java"><div class="tags-list-item">Java</div></a>
+    
+    <a href="\tags\人工智能" title="人工智能"><div class="tags-list-item">人工智能</div></a>
+    
+    <a href="\tags\Agent" title="Agent"><div class="tags-list-item">Agent</div></a>
+    
+    <a href="\tags\SpringBoot" title="SpringBoot"><div class="tags-list-item">SpringBoot</div></a>
+    
+    <a href="\tags\AI" title="AI"><div class="tags-list-item">AI</div></a>
+    
+    <a href="\tags\大模型" title="大模型"><div class="tags-list-item">大模型</div></a>
+    
+    <a href="\tags\分布式" title="分布式"><div class="tags-list-item">分布式</div></a>
+    
+    <a href="\tags\MQ" title="MQ"><div class="tags-list-item">MQ</div></a>
+    
+    <a href="\tags\消息队列" title="消息队列"><div class="tags-list-item">消息队列</div></a>
+    
+    <a href="\tags\微服务" title="微服务"><div class="tags-list-item">微服务</div></a>
+    
+    <a href="\tags\SpringCloud" title="SpringCloud"><div class="tags-list-item">SpringCloud</div></a>
+    
+    <a href="\tags\多线程" title="多线程"><div class="tags-list-item">多线程</div></a>
+    
+    <a href="\tags\SKILL" title="SKILL"><div class="tags-list-item">SKILL</div></a>
+    
+    <a href="\tags\Zookeeper" title="Zookeeper"><div class="tags-list-item">Zookeeper</div></a>
+    
+    <a href="\tags\Tomcat" title="Tomcat"><div class="tags-list-item">Tomcat</div></a>
+    
+    <a href="\tags\Spring" title="Spring"><div class="tags-list-item">Spring</div></a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+          <aside class="right-column">
+            <div class="sticky-widescreen">
+  
+  
+  <article class="card card-content toc-card">
+    <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-OpenClaw%EF%BC%9F"><span class="toc-text">什么是 OpenClaw？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%83%E6%98%AF%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%E7%9A%84%EF%BC%9F"><span class="toc-text">它是如何工作的？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E5%8A%9F%E8%83%BD"><span class="toc-text">核心功能</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%A4%9A%E6%B8%A0%E9%81%93%E6%94%AF%E6%8C%81"><span class="toc-text">1. 多渠道支持</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93%E8%B7%AF%E7%94%B1"><span class="toc-text">2. 多智能体路由</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%AA%92%E4%BD%93%E6%94%AF%E6%8C%81"><span class="toc-text">3. 媒体支持</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-Web-%E6%8E%A7%E5%88%B6%E7%95%8C%E9%9D%A2"><span class="toc-text">4. Web 控制界面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E7%A7%BB%E5%8A%A8%E8%8A%82%E7%82%B9%E6%94%AF%E6%8C%81"><span class="toc-text">5. 移动节点支持</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B"><span class="toc-text">快速开始</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E8%A6%81%E6%B1%82"><span class="toc-text">系统要求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E6%AD%A5%E9%AA%A4"><span class="toc-text">安装步骤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%EF%BC%88%E5%8F%AF%E9%80%89%EF%BC%89"><span class="toc-text">配置文件（可选）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E6%88%98%E6%A1%88%E4%BE%8B%EF%BC%9A%E8%AE%BE%E7%BD%AE%E6%AF%8F%E6%97%A5%E7%AE%80%E6%8A%A5"><span class="toc-text">实战案例：设置每日简报</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9C%80%E6%B1%82%E5%88%86%E6%9E%90"><span class="toc-text">需求分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E6%AD%A5%E9%AA%A4"><span class="toc-text">实现步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4-1%EF%BC%9A%E9%85%8D%E7%BD%AE%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF"><span class="toc-text">步骤 1：配置用户信息</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4-2%EF%BC%9A%E5%88%9B%E5%BB%BA%E5%BF%83%E8%B7%B3%E8%84%9A%E6%9C%AC"><span class="toc-text">步骤 2：创建心跳脚本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4-3%EF%BC%9A%E5%88%9B%E5%BB%BA%E5%A4%A9%E6%B0%94%E8%8E%B7%E5%8F%96%E8%84%9A%E6%9C%AC"><span class="toc-text">步骤 3：创建天气获取脚本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4-4%EF%BC%9A%E5%90%AF%E7%94%A8-Heartbeat"><span class="toc-text">步骤 4：启用 Heartbeat</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4-5%EF%BC%9A%E9%85%8D%E7%BD%AE%E7%8A%B6%E6%80%81%E8%BF%BD%E8%B8%AA"><span class="toc-text">步骤 5：配置状态追踪</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E7%BB%88%E6%95%88%E6%9E%9C"><span class="toc-text">最终效果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A9%E5%B1%95%E5%8A%9F%E8%83%BD"><span class="toc-text">扩展功能</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E5%A4%9A%E5%8F%AF%E8%83%BD%E6%80%A7"><span class="toc-text">更多可能性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%80%E5%8F%91%E5%B7%A5%E4%BD%9C%E6%B5%81"><span class="toc-text">开发工作流</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E5%AE%B9%E5%88%9B%E4%BD%9C"><span class="toc-text">内容创作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86"><span class="toc-text">数据处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%8A%A8%E5%8C%96%E4%BB%BB%E5%8A%A1"><span class="toc-text">自动化任务</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E4%B8%8E%E9%9A%90%E7%A7%81"><span class="toc-text">安全与隐私</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%BA%90"><span class="toc-text">学习资源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%80%E5%A7%8B%E4%BD%A0%E7%9A%84-OpenClaw-%E4%B9%8B%E6%97%85"><span class="toc-text">开始你的 OpenClaw 之旅</span></a></li></ol>
+  </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header"><i class="iconfont icon-wenzhang_huaban" style="padding-right: 2px;"></i>最近文章</div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-03-01</div>
+        <a href="/2026/03/01/openclaw-for-personal-ai-agent-gateway/"><div class="recent-posts-item-content">你的个人AI全能助理</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-02-25</div>
+        <a href="/2026/02/25/pi-agent-sample-practise/"><div class="recent-posts-item-content">Pi Agent极简入门代码</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-02-24</div>
+        <a href="/2026/02/24/pi-agent-from-zero-to-one/"><div class="recent-posts-item-content">Pi Agent初步学习</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-02-01</div>
+        <a href="/2026/02/01/mcp-skill-analysis/"><div class="recent-posts-item-content">MCP与SKILL技术深度分析：AI能力扩展的两种路径</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>Copyright ©
+          
+          2016 -
+          
+          2026
+        </span>
+        &nbsp;
+        <a href="/" class="footer-link">攻城狮李猿外 </a>
+      </div>
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+        本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+        <span>&nbsp;|&nbsp;</span>
+        
+        
+        本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+    <script>
+    //百度链接提交
+      (function(){
+          var bp = document.createElement('script');
+          var curProtocol = window.location.protocol.split(':')[0];
+          if (curProtocol === 'https'){
+          bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else{
+          bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(bp, s);
+      })();
+    </script>
+    
+    <script>
+    //百度统计
+      var _hmt = _hmt || [];
+      (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?57e94335f06e1ca57d2246529a0150c7";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+</footer>
+  <a role="button" id="scrollbutton" class="basebutton"  aria-label="回到顶部">
+  <i class="iconfont icon-arrowleft button-icon"></i>
+</a>
+<a role="button" id="menubutton" class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a role="button" id="popbutton" class="basebutton" aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a role="button" id="darkbutton" class="basebutton darkwidget" aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a role="button" id="searchbutton" class="basebutton searchwidget" aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+
+  
+  
+  
+  <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img');
+    var i;
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a');
+      wrapper.setAttribute('data-fslightbox', 'gallery');
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'));
+      wrapper.setAttribute('aria-label', 'illustration');
+      wrapper.style.cssText = 'width: 100%; display: flex; justify-content: center;';
+      img[i].before(wrapper);
+      wrapper.append(img[i]);
+    }
+    refreshFsLightbox();
+  }
+</script>
+<script>loadScript("//cdn.jsdelivr.net/npm/fslightbox@3.1.0/index.min.js", addImgLayout)</script>
+  
+  
+  
+<script src="/js/main.js"></script>
+
+  
+  <script>loadScript("/js/lib/busuanzi.min.js")</script>
+  
+  
+  <script>
+    var addLazyload = function () {
+      var observer = lozad('.lozad', {
+        load: function (el) {
+          el.srcset = el.getAttribute('data-src');
+        },
+        loaded: function (el) {
+          el.classList.add('loaded');
+        }
+      });
+      observer.observe();
+    }
+  </script>
+  <script>loadScript("/js/lib/lozad.min.js", addLazyload)</script>
+  
+  
+</body>
+
+</html>

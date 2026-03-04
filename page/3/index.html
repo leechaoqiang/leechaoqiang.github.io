@@ -180,6 +180,109 @@
 <div class="card">
   
   <article class="card card-content">
+    <a href="/2021/03/04/springwebflux-from-zero-to-deep/">
+      <h1 class="post-title">
+        SpringWebFlux响应式编程从入门到实践
+      </h1>
+    </a>
+    <div class="card-excerpt">
+      
+      Spring Boot ...
+      
+    </div>
+    <div class="card-post-footer">
+      <div class="post-meta">
+        <time datetime="2021-03-04T06:29:02.000Z">
+          <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+          <span>2021-03-04</span>
+        </time>
+        
+        <span class="dot"></span>
+        
+        <a href="categories/Spring/" class="post-meta-link">Spring</a>
+        
+        <a href="categories/Spring/SpringWebFlux/" class="post-meta-link">SpringWebFlux</a>
+        
+        <a href="categories/Spring/SpringWebFlux/博客/" class="post-meta-link">博客</a>
+        
+        <a href="categories/Spring/SpringWebFlux/博客/SpringCloud/" class="post-meta-link">SpringCloud</a>
+        
+        
+      </div>
+      <a href="/2021/03/04/springwebflux-from-zero-to-deep/">继续阅读 </a>
+    </div>
+  </article>
+</div>
+
+<div class="card">
+  
+  <article class="card card-content">
+    <a href="/2021/03/01/lowcase-start-word-json-serialize-error/">
+      <h1 class="post-title">
+        uName类似首字符小写属性Json序列化接收不到数据问题及解决办法
+      </h1>
+    </a>
+    <div class="card-excerpt">
+      
+      问题背景最近因为发现有一个表字段被设计成u_name，然后用工具生产的实体的属性字段是uName，就是首字母是小写，第二个字母是大写的这类属性，然后我们关于这个字段的一个接口的请求对象VO中字段也是沿用的uName。
+      
+    </div>
+    <div class="card-post-footer">
+      <div class="post-meta">
+        <time datetime="2021-03-01T14:13:25.000Z">
+          <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+          <span>2021-03-01</span>
+        </time>
+        
+        <span class="dot"></span>
+        
+        <a href="categories/SpringBoot/" class="post-meta-link">SpringBoot</a>
+        
+        <a href="categories/SpringBoot/Java/" class="post-meta-link">Java</a>
+        
+        
+      </div>
+      <a href="/2021/03/01/lowcase-start-word-json-serialize-error/">继续阅读 </a>
+    </div>
+  </article>
+</div>
+
+<div class="card">
+  
+  <article class="card card-content">
+    <a href="/2021/01/22/quick-start-gRPC-in-Java-simple/">
+      <h1 class="post-title">
+        Java快起开启一个gRPC示例
+      </h1>
+    </a>
+    <div class="card-excerpt">
+      
+      概述在gRPC中，客户机应用程序可以直接调用另一台机器上的服务器应用程序上的方法，就好像它是本地对...
+      
+    </div>
+    <div class="card-post-footer">
+      <div class="post-meta">
+        <time datetime="2021-01-22T08:51:28.000Z">
+          <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+          <span>2021-01-22</span>
+        </time>
+        
+        <span class="dot"></span>
+        
+        <a href="categories/gRPC/" class="post-meta-link">gRPC</a>
+        
+        <a href="categories/gRPC/Java/" class="post-meta-link">Java</a>
+        
+        
+      </div>
+      <a href="/2021/01/22/quick-start-gRPC-in-Java-simple/">继续阅读 </a>
+    </div>
+  </article>
+</div>
+
+<div class="card">
+  
+  <article class="card card-content">
     <a href="/2020/10/27/distribute-config-center-cmp-and-choose/">
       <h1 class="post-title">
         分布式配置中心技术选型以及我们推荐选择哪个？
@@ -239,106 +342,6 @@
   </article>
 </div>
 
-<div class="card">
-  
-  <article class="card card-content">
-    <a href="/2020/09/01/jvm-local-cache-case-caffeine/">
-      <h1 class="post-title">
-        JVM高性能本地缓存Caffeine使用案例
-      </h1>
-    </a>
-    <div class="card-excerpt">
-      
-      Background对于服务消费，响应时间（RT）的长短是衡量一个系统高效处理业务的重要指标，缓存就是必不可少的优化工具，在一个高并发的场景中往往占有着非常重要的角色，所以开发人员需要根据不同的应用场景来选择不同的缓存框架，比如分布式缓存redis，或者内存缓存GuavaCache。
-我们团队有一个调用比较频繁的服务，之前是和别的团队共用的Redis缓存服务，前不久突然得到消息，维护该redis团队要收回使用权，而我们服务使用也比较简单，只是用来做一个接口调用鉴权，从redis中拿出所有授权方的appKey，然后校验调用方的appKey是否合法。所以我第一想法是采用jvm本地缓存，因为这个调用方不会很多，而且数据是比较静态的，变化不会很频繁，放在jvm本地内存中，也不会占用很大空间，而且也不用担心多个部署实例缓存不一致的问题，经过调用有很多比较优秀的本地缓存比如GuavaCache，Caffeine等。我最后采用了Caffeine。
-      
-    </div>
-    <div class="card-post-footer">
-      <div class="post-meta">
-        <time datetime="2020-09-01T09:20:00.000Z">
-          <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
-          <span>2020-09-01</span>
-        </time>
-        
-        <span class="dot"></span>
-        
-        <a href="categories/缓存/" class="post-meta-link">缓存</a>
-        
-        
-      </div>
-      <a href="/2020/09/01/jvm-local-cache-case-caffeine/">继续阅读 </a>
-    </div>
-  </article>
-</div>
-
-<div class="card">
-  
-  <article class="card card-content">
-    <a href="/2020/08/25/mysql-procedure-batch-create-table-pratise/">
-      <h1 class="post-title">
-        减少重复劳动,使用Mysql存储过程批量创建表
-      </h1>
-    </a>
-    <div class="card-excerpt">
-      
-      背景相信很多公司发展到一定规模，数据量达到千万级甚至亿级别的时候，开始考虑分库分表，最近我们团队一个同事接到别的团队交接过来的一个应用服务，每天的数据增量在1千万，由于时间紧迫，存储数据在Mysql中，经过短暂调研我们采用了分库分表的中间件Apache ShardingSphere的分库分表组件ShardingSphere-JDBC,这不是本文的重点，重点是我们做分库分表时，需要一次性创建几十甚至上百张分表，如果Ctrl+C和Ctrl+V也是极其累的，同事问我有木有简单的方法，减少重复劳动，我第一个想法就是用Mysql的存储过程或者函数批量创建表，解放生产力。
-      
-    </div>
-    <div class="card-post-footer">
-      <div class="post-meta">
-        <time datetime="2020-08-25T08:13:08.000Z">
-          <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
-          <span>2020-08-25</span>
-        </time>
-        
-        <span class="dot"></span>
-        
-        <a href="categories/博客/" class="post-meta-link">博客</a>
-        
-        <a href="categories/博客/Mysql/" class="post-meta-link">Mysql</a>
-        
-        
-      </div>
-      <a href="/2020/08/25/mysql-procedure-batch-create-table-pratise/">继续阅读 </a>
-    </div>
-  </article>
-</div>
-
-<div class="card">
-  
-  <article class="card card-content">
-    <a href="/2020/07/06/tomcat-unsafe-hole-solution/">
-      <h1 class="post-title">
-        Tomcat高危安全漏洞影响SpringBoot和SpringCloud多个版本及解决方案
-      </h1>
-    </a>
-    <div class="card-excerpt">
-      
-      事件背景2020是庚子年，是不平凡的一年，据2020年6月25日Apache官方安全团队通过邮件公开报告显示，Tomcat版本8.5.0 至 8.5.55，9.0.0.M1 至 9.0.35，10.0.0-M1 至10.0.0-M5爆出了一个高危漏洞， 主要涉及HTTP/2拒绝服务漏洞的细节及解决方案。
-      
-    </div>
-    <div class="card-post-footer">
-      <div class="post-meta">
-        <time datetime="2020-07-06T12:14:49.000Z">
-          <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
-          <span>2020-07-06</span>
-        </time>
-        
-        <span class="dot"></span>
-        
-        <a href="categories/Tomcat/" class="post-meta-link">Tomcat</a>
-        
-        <a href="categories/Tomcat/SpringBoot/" class="post-meta-link">SpringBoot</a>
-        
-        <a href="categories/Tomcat/SpringBoot/SpringCloud/" class="post-meta-link">SpringCloud</a>
-        
-        
-      </div>
-      <a href="/2020/07/06/tomcat-unsafe-hole-solution/">继续阅读 </a>
-    </div>
-  </article>
-</div>
-
 
 <div class="nav">
   
@@ -375,15 +378,15 @@
 <p class="author-description">千里之行，始于足下。</p>
 <div class="author-message">
   <a class="author-posts-count" href="/archives">
-    <span>43</span>
+    <span>46</span>
     <span>文章</span>
   </a>
   <a class="author-categories-count" href="/categories">
-    <span>48</span>
+    <span>49</span>
     <span>分类</span>
   </a>
   <a class="author-tags-count" href="/tags">
-    <span>99</span>
+    <span>100</span>
     <span>标签</span>
   </a>
 </div>
@@ -740,7 +743,7 @@
       <a href="/categories/AI">
         <div class="categories-list-item">
           AI
-          <span class="categories-list-item-badge">2</span>
+          <span class="categories-list-item-badge">5</span>
         </div>
       </a>
     
@@ -748,6 +751,13 @@
         <div class="categories-list-item">
           人工智能
           <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Agent">
+        <div class="categories-list-item">
+          Agent
+          <span class="categories-list-item-badge">3</span>
         </div>
       </a>
     
@@ -762,7 +772,15 @@
     
     <a href="\tags\Java" title="Java"><div class="tags-list-item">Java</div></a>
     
+    <a href="\tags\人工智能" title="人工智能"><div class="tags-list-item">人工智能</div></a>
+    
+    <a href="\tags\Agent" title="Agent"><div class="tags-list-item">Agent</div></a>
+    
     <a href="\tags\SpringBoot" title="SpringBoot"><div class="tags-list-item">SpringBoot</div></a>
+    
+    <a href="\tags\AI" title="AI"><div class="tags-list-item">AI</div></a>
+    
+    <a href="\tags\大模型" title="大模型"><div class="tags-list-item">大模型</div></a>
     
     <a href="\tags\分布式" title="分布式"><div class="tags-list-item">分布式</div></a>
     
@@ -774,15 +792,7 @@
     
     <a href="\tags\SpringCloud" title="SpringCloud"><div class="tags-list-item">SpringCloud</div></a>
     
-    <a href="\tags\人工智能" title="人工智能"><div class="tags-list-item">人工智能</div></a>
-    
-    <a href="\tags\Agent" title="Agent"><div class="tags-list-item">Agent</div></a>
-    
     <a href="\tags\多线程" title="多线程"><div class="tags-list-item">多线程</div></a>
-    
-    <a href="\tags\AI" title="AI"><div class="tags-list-item">AI</div></a>
-    
-    <a href="\tags\大模型" title="大模型"><div class="tags-list-item">大模型</div></a>
     
     <a href="\tags\SKILL" title="SKILL"><div class="tags-list-item">SKILL</div></a>
     
@@ -812,9 +822,21 @@
     
       
         
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
           <a href="/archives/2026" class="archive-card-list-item">
               2026
-              <span class="archive-card-list-item-badge">1</span>
+              <span class="archive-card-list-item-badge">4</span>
           </a>
         
         
@@ -1057,23 +1079,23 @@
   <div class="recent-posts-list">
     
       <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-03-01</div>
+        <a href="/2026/03/01/openclaw-for-personal-ai-agent-gateway/"><div class="recent-posts-item-content">你的个人AI全能助理</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-02-25</div>
+        <a href="/2026/02/25/pi-agent-sample-practise/"><div class="recent-posts-item-content">Pi Agent极简入门代码</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-02-24</div>
+        <a href="/2026/02/24/pi-agent-from-zero-to-one/"><div class="recent-posts-item-content">Pi Agent初步学习</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
         <div class="recent-posts-item-title">2026-02-01</div>
         <a href="/2026/02/01/mcp-skill-analysis/"><div class="recent-posts-item-content">MCP与SKILL技术深度分析：AI能力扩展的两种路径</div></a>
-      </div>
-    
-      <div class="recent-posts-item">
-        <div class="recent-posts-item-title">2025-12-23</div>
-        <a href="/2025/12/23/multi-agent-analysis/"><div class="recent-posts-item-content">多 Agent 系统技术分析：设计模式、性能权衡与场景选型</div></a>
-      </div>
-    
-      <div class="recent-posts-item">
-        <div class="recent-posts-item-title">2025-05-10</div>
-        <a href="/2025/05/10/multi-agent-system-research-report/"><div class="recent-posts-item-content">多Agent协同技术该怎么选？</div></a>
-      </div>
-    
-      <div class="recent-posts-item">
-        <div class="recent-posts-item-title">2025-04-15</div>
-        <a href="/2025/04/15/comparator-analysis-with-dify-coze-n8n/"><div class="recent-posts-item-content">Dify vs Coze vs n8n三大AI自动化工具，到底哪个最好用？</div></a>
       </div>
     
   </div>
@@ -1096,9 +1118,21 @@
     
       
         
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
           <a href="/archives/2026" class="archive-card-list-item">
               2026
-              <span class="archive-card-list-item-badge">1</span>
+              <span class="archive-card-list-item-badge">4</span>
           </a>
         
         
