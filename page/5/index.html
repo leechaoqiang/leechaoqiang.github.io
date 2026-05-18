@@ -180,6 +180,71 @@
 <div class="card">
   
   <article class="card card-content">
+    <a href="/2020/09/01/jvm-local-cache-case-caffeine/">
+      <h1 class="post-title">
+        JVM高性能本地缓存Caffeine使用案例
+      </h1>
+    </a>
+    <div class="card-excerpt">
+      
+      Background对于服务消费，响应时间（RT）的长短是衡量一个系统高效处理业务的重要指标，缓存就是必不可少的优化工具，在一个高并发的场景中往往占有着非常重要的角色，所以开发人员需要根据不同的应用场景来选择不同的缓存框架，比如分布式缓存redis，或者内存缓存GuavaCache。
+我们团队有一个调用比较频繁的服务，之前是和别的团队共用的Redis缓存服务，前不久突然得到消息，维护该redis团队要收回使用权，而我们服务使用也比较简单，只是用来做一个接口调用鉴权，从redis中拿出所有授权方的appKey，然后校验调用方的appKey是否合法。所以我第一想法是采用jvm本地缓存，因为这个调用方不会很多，而且数据是比较静态的，变化不会很频繁，放在jvm本地内存中，也不会占用很大空间，而且也不用担心多个部署实例缓存不一致的问题，经过调用有很多比较优秀的本地缓存比如GuavaCache，Caffeine等。我最后采用了Caffeine。
+      
+    </div>
+    <div class="card-post-footer">
+      <div class="post-meta">
+        <time datetime="2020-09-01T09:20:00.000Z">
+          <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+          <span>2020-09-01</span>
+        </time>
+        
+        <span class="dot"></span>
+        
+        <a href="categories/缓存/" class="post-meta-link">缓存</a>
+        
+        
+      </div>
+      <a href="/2020/09/01/jvm-local-cache-case-caffeine/">继续阅读 </a>
+    </div>
+  </article>
+</div>
+
+<div class="card">
+  
+  <article class="card card-content">
+    <a href="/2020/08/25/mysql-procedure-batch-create-table-pratise/">
+      <h1 class="post-title">
+        减少重复劳动,使用Mysql存储过程批量创建表
+      </h1>
+    </a>
+    <div class="card-excerpt">
+      
+      背景相信很多公司发展到一定规模，数据量达到千万级甚至亿级别的时候，开始考虑分库分表，最近我们团队一个同事接到别的团队交接过来的一个应用服务，每天的数据增量在1千万，由于时间紧迫，存储数据在Mysql中，经过短暂调研我们采用了分库分表的中间件Apache ShardingSphere的分库分表组件ShardingSphere-JDBC,这不是本文的重点，重点是我们做分库分表时，需要一次性创建几十甚至上百张分表，如果Ctrl+C和Ctrl+V也是极其累的，同事问我有木有简单的方法，减少重复劳动，我第一个想法就是用Mysql的存储过程或者函数批量创建表，解放生产力。
+      
+    </div>
+    <div class="card-post-footer">
+      <div class="post-meta">
+        <time datetime="2020-08-25T08:13:08.000Z">
+          <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+          <span>2020-08-25</span>
+        </time>
+        
+        <span class="dot"></span>
+        
+        <a href="categories/博客/" class="post-meta-link">博客</a>
+        
+        <a href="categories/博客/Mysql/" class="post-meta-link">Mysql</a>
+        
+        
+      </div>
+      <a href="/2020/08/25/mysql-procedure-batch-create-table-pratise/">继续阅读 </a>
+    </div>
+  </article>
+</div>
+
+<div class="card">
+  
+  <article class="card card-content">
     <a href="/2020/07/06/tomcat-unsafe-hole-solution/">
       <h1 class="post-title">
         Tomcat高危安全漏洞影响SpringBoot和SpringCloud多个版本及解决方案
@@ -280,69 +345,6 @@
   </article>
 </div>
 
-<div class="card">
-  
-  <article class="card card-content">
-    <a href="/2020/04/17/zookeeper-from-start-to-deep-known-one/">
-      <h1 class="post-title">
-        Zookeeper从入门到精通（一）
-      </h1>
-    </a>
-    <div class="card-excerpt">
-      
-      Zookeeper 概念Zookeep...
-      
-    </div>
-    <div class="card-post-footer">
-      <div class="post-meta">
-        <time datetime="2020-04-17T04:02:03.000Z">
-          <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
-          <span>2020-04-17</span>
-        </time>
-        
-        <span class="dot"></span>
-        
-        <a href="categories/Zookeeper/" class="post-meta-link">Zookeeper</a>
-        
-        
-      </div>
-      <a href="/2020/04/17/zookeeper-from-start-to-deep-known-one/">继续阅读 </a>
-    </div>
-  </article>
-</div>
-
-<div class="card">
-  
-  <article class="card card-content">
-    <a href="/2020/03/30/git-commit-recommend-form/">
-      <h1 class="post-title">
-        推荐Git提交规范
-      </h1>
-    </a>
-    <div class="card-excerpt">
-      
-      Git 每次提交代码，都要写 Commit message（提交说明），否则就不允许提交。
-git commit -m &amp;quot;in...
-      
-    </div>
-    <div class="card-post-footer">
-      <div class="post-meta">
-        <time datetime="2020-03-30T08:59:30.000Z">
-          <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
-          <span>2020-03-30</span>
-        </time>
-        
-        <span class="dot"></span>
-        
-        <a href="categories/工具学习/" class="post-meta-link">工具学习</a>
-        
-        
-      </div>
-      <a href="/2020/03/30/git-commit-recommend-form/">继续阅读 </a>
-    </div>
-  </article>
-</div>
-
 
 <div class="nav">
   
@@ -379,15 +381,15 @@ git commit -m &amp;quot;in...
 <p class="author-description">千里之行，始于足下。</p>
 <div class="author-message">
   <a class="author-posts-count" href="/archives">
-    <span>49</span>
+    <span>51</span>
     <span>文章</span>
   </a>
   <a class="author-categories-count" href="/categories">
-    <span>49</span>
+    <span>50</span>
     <span>分类</span>
   </a>
   <a class="author-tags-count" href="/tags">
-    <span>104</span>
+    <span>109</span>
     <span>标签</span>
   </a>
 </div>
@@ -457,7 +459,7 @@ git commit -m &amp;quot;in...
       <a href="/categories/AI">
         <div class="categories-list-item">
           AI
-          <span class="categories-list-item-badge">8</span>
+          <span class="categories-list-item-badge">10</span>
         </div>
       </a>
     
@@ -562,7 +564,7 @@ git commit -m &amp;quot;in...
       <a href="/categories/Agent">
         <div class="categories-list-item">
           Agent
-          <span class="categories-list-item-badge">6</span>
+          <span class="categories-list-item-badge">8</span>
         </div>
       </a>
     
@@ -762,6 +764,13 @@ git commit -m &amp;quot;in...
         </div>
       </a>
     
+      <a href="/categories/Harness">
+        <div class="categories-list-item">
+          Harness
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
   </div>
 </div>
   </article>
@@ -773,13 +782,13 @@ git commit -m &amp;quot;in...
     
     <a href="\tags\人工智能" title="人工智能"><div class="tags-list-item">人工智能</div></a>
     
-    <a href="\tags\Java" title="Java"><div class="tags-list-item">Java</div></a>
-    
     <a href="\tags\Agent" title="Agent"><div class="tags-list-item">Agent</div></a>
     
     <a href="\tags\AI" title="AI"><div class="tags-list-item">AI</div></a>
     
     <a href="\tags\大模型" title="大模型"><div class="tags-list-item">大模型</div></a>
+    
+    <a href="\tags\Java" title="Java"><div class="tags-list-item">Java</div></a>
     
     <a href="\tags\SpringBoot" title="SpringBoot"><div class="tags-list-item">SpringBoot</div></a>
     
@@ -788,6 +797,8 @@ git commit -m &amp;quot;in...
     <a href="\tags\MQ" title="MQ"><div class="tags-list-item">MQ</div></a>
     
     <a href="\tags\消息队列" title="消息队列"><div class="tags-list-item">消息队列</div></a>
+    
+    <a href="\tags\Skills" title="Skills"><div class="tags-list-item">Skills</div></a>
     
     <a href="\tags\微服务" title="微服务"><div class="tags-list-item">微服务</div></a>
     
@@ -800,8 +811,6 @@ git commit -m &amp;quot;in...
     <a href="\tags\Tomcat" title="Tomcat"><div class="tags-list-item">Tomcat</div></a>
     
     <a href="\tags\Spring" title="Spring"><div class="tags-list-item">Spring</div></a>
-    
-    <a href="\tags\RabbitMQ" title="RabbitMQ"><div class="tags-list-item">RabbitMQ</div></a>
     
   </div>
 </div>
@@ -847,9 +856,17 @@ git commit -m &amp;quot;in...
     
       
         
+      
+    
+      
+        
+      
+    
+      
+        
           <a href="/archives/2026" class="archive-card-list-item">
               2026
-              <span class="archive-card-list-item-badge">7</span>
+              <span class="archive-card-list-item-badge">9</span>
           </a>
         
         
@@ -1092,6 +1109,16 @@ git commit -m &amp;quot;in...
   <div class="recent-posts-list">
     
       <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-05-18</div>
+        <a href="/2026/05/18/harness-suite-for-python-recommend/"><div class="recent-posts-item-content">Harness Suite for Python：提升Python项目质量的利器</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-04-29</div>
+        <a href="/2026/04/29/agent-skill-paper-recommend/"><div class="recent-posts-item-content">Agent Skill最新研究论文推荐</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
         <div class="recent-posts-item-title">2026-04-01</div>
         <a href="/2026/04/01/how-to-use-open-spec/"><div class="recent-posts-item-content">OpenSpec 详解：定义、作用、使用与实战案例</div></a>
       </div>
@@ -1099,16 +1126,6 @@ git commit -m &amp;quot;in...
       <div class="recent-posts-item">
         <div class="recent-posts-item-title">2026-03-20</div>
         <a href="/2026/03/20/how-to-evaluatint-skills/"><div class="recent-posts-item-content">基于 Eval 驱动的 Agent 技能评估：体系、方法与工程实践</div></a>
-      </div>
-    
-      <div class="recent-posts-item">
-        <div class="recent-posts-item-title">2026-03-04</div>
-        <a href="/2026/03/04/how-to-invoke-skill-in-claude-code/"><div class="recent-posts-item-content">claudecode中skill是怎样被大模型调用的？</div></a>
-      </div>
-    
-      <div class="recent-posts-item">
-        <div class="recent-posts-item-title">2026-03-01</div>
-        <a href="/2026/03/01/openclaw-for-personal-ai-agent-gateway/"><div class="recent-posts-item-content">OpenClaw-你的个人AI全能助理</div></a>
       </div>
     
   </div>
@@ -1155,9 +1172,17 @@ git commit -m &amp;quot;in...
     
       
         
+      
+    
+      
+        
+      
+    
+      
+        
           <a href="/archives/2026" class="archive-card-list-item">
               2026
-              <span class="archive-card-list-item-badge">7</span>
+              <span class="archive-card-list-item-badge">9</span>
           </a>
         
         
